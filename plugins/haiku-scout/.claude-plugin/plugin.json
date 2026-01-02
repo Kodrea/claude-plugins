@@ -1,0 +1,8 @@
+{
+  "name": "haiku-scout",
+  "description": "Low-cost codebase mapping agent using Haiku for fast exploration",
+  "author": {
+    "name": "Local",
+    "email": ""
+  }
+}

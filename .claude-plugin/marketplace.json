@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "local",
+  "description": "Private Claude Code plugins",
+  "owner": {
+    "name": "Cody",
+    "email": ""
+  },
+  "plugins": [
+    {
+      "name": "haiku-scout",
+      "description": "Low-cost codebase mapping agent using Haiku for fast exploration",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/haiku-scout",
+      "category": "development"
+    }
+  ]
+}
