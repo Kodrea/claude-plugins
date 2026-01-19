@@ -53,6 +53,85 @@ Ask: "Could this become a rule?"
 
 ---
 
+## Rule Promotion
+
+When the user asks to promote a proposed rule (e.g., "make that a rule", "promote that rule", "let's make that official"):
+
+### Step 1: Analyze the Proposed Rule
+
+Before creating the rule file, think through:
+
+- **Root cause**: What behavior or gap led to this insight?
+- **Scope**: Does this apply universally or only to certain file types/contexts?
+- **Wording**: Is the rule actionable and clear? Could it be misinterpreted?
+- **Trade-offs**: Could following this rule ever cause problems?
+- **Testability**: How would we know if the rule is working?
+
+Present this analysis to the user. Refine the rule wording together if needed.
+
+### Step 2: Ask Scope
+
+Ask the user where the rule should live:
+
+| Scope | Location | When to use |
+|-------|----------|-------------|
+| **Project** | `./.claude/rules/rule-name.md` | Shared with collaborators via git |
+| **User** | `~/.claude/rules/rule-name.md` | Personal, applies to all your projects |
+
+Note: User rules load first, but project rules take priority when both exist.
+
+### Step 3: Check for Path-Specific Scoping
+
+Ask: "Should this rule apply to all files, or only specific file types?"
+
+If path-specific, use YAML frontmatter with glob patterns:
+
+```markdown
+---
+paths:
+  - "src/api/**/*.ts"
+  - "**/*.config.js"
+---
+```
+
+Supported patterns:
+- `**/*.ts` - All TypeScript files
+- `src/**/*` - All files under src/
+- `src/**/*.{ts,tsx}` - Multiple extensions with brace expansion
+
+If universal, omit the frontmatter.
+
+### Step 4: Create the Rule File
+
+```markdown
+---
+paths:          # Optional - omit for universal rules
+  - "pattern"
+---
+
+# Rule Name
+
+[Clear, actionable rule statement]
+
+## Context
+
+[Why this rule exists - the insight that led to it]
+
+## Examples
+
+[Optional: good/bad examples if helpful]
+```
+
+### Step 5: Update SCRATCHPAD
+
+Mark the proposed rule as promoted:
+
+```markdown
+- [DATE] ~~Proposed rule description~~ → Promoted to `<location>/rule-name.md`
+```
+
+---
+
 ## Example Captures
 
 ### Quick Insight (SCRATCHPAD only)
