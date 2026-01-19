@@ -1,13 +1,8 @@
 {
-  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "self-learning",
   "description": "Capture structural insights and patterns before they're lost",
-  "version": "1.0.0",
   "author": {
     "name": "Cody",
     "email": ""
-  },
-  "components": {
-    "skills": ["skills/insight-capture/SKILL.md"]
   }
 }
