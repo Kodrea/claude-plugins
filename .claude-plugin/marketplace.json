@@ -17,6 +17,17 @@
       },
       "source": "./plugins/haiku-scout",
       "category": "development"
+    },
+    {
+      "name": "self-learning",
+      "description": "Capture structural insights and patterns before they're lost",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/self-learning",
+      "category": "productivity"
     }
   ]
 }
