@@ -1,0 +1,9 @@
+{
+  "name": "doc-pipeline",
+  "description": "4-tier documentation pipeline: fetch → scout (Haiku) → process (Sonnet) → audit (Opus) → PDF",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cody",
+    "email": ""
+  }
+}
