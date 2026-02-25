@@ -50,6 +50,17 @@
       },
       "source": "./plugins/permission-manager",
       "category": "productivity"
+    },
+    {
+      "name": "research",
+      "description": "Tiered subagent research pipeline: scout (Haiku) → analyst (Sonnet) → auditor (Opus)",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/research",
+      "category": "development"
     }
   ]
 }
