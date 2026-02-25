@@ -1,0 +1,8 @@
+{
+  "name": "permission-manager",
+  "description": "Configure Claude Code permission rules (allow/deny/ask) in settings.json to enable or restrict autonomous execution",
+  "author": {
+    "name": "Cody",
+    "email": ""
+  }
+}

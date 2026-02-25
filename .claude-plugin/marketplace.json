@@ -39,6 +39,17 @@
       },
       "source": "./plugins/doc-pipeline",
       "category": "development"
+    },
+    {
+      "name": "permission-manager",
+      "description": "Configure Claude Code permission rules (allow/deny/ask) in settings.json to enable or restrict autonomous execution",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/permission-manager",
+      "category": "productivity"
     }
   ]
 }
