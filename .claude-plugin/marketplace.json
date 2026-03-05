@@ -61,6 +61,17 @@
       },
       "source": "./plugins/research",
       "category": "development"
+    },
+    {
+      "name": "text-to-audio",
+      "description": "Convert documents to conversational audio via local TTS. Slash command: /generate-audio",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/text-to-audio",
+      "category": "productivity"
     }
   ]
 }
