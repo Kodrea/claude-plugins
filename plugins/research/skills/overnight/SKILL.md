@@ -10,8 +10,8 @@ When triggered, run the `/research:overnight` command with the user's topic. Thi
 
 ## How to proceed
 
-1. Parse the user's message for the research topic and any preferences (rounds, domain, slug).
-2. Invoke the `research:overnight` command by running the full pipeline as described in the overnight command.
+1. Parse the user's message for the research topic only.
+2. Invoke the `research:overnight` command — it will immediately use AskUserQuestion to collect optional settings (rounds, domain, slug) before starting.
 
 ## Quick reference
 
