@@ -1,7 +1,7 @@
 {
   "name": "research",
-  "description": "Tiered subagent research pipeline: scout (Haiku) -> analyst (Sonnet) -> auditor (Opus)",
-  "version": "1.2.0",
+  "description": "Tiered subagent research pipeline with single-pass and multi-round overnight modes",
+  "version": "1.3.0",
   "author": {
     "name": "Cody"
   }
