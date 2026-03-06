@@ -3,9 +3,11 @@
 All presets: no analogies by default, overridable with `--analogies`.
 
 ## casual-briefing (default)
-- **Prosody**: `"casual and encouraging, moderate pace"`
+- **Prosody**: `"casual and encouraging, brisk pace"`
 - **Speaker**: Sohee
+- **Speed**: `--speed 1.15` (post-generation tempo boost for punchier delivery)
 - **Rules**: Contractions, short sentences, "you" address, rhetorical questions OK, friendly tone.
+- **Accessibility**: Assume the listener is smart but unfamiliar with the domain. Define technical terms inline on first use. Re-anchor shorthand periodically using natural phrasing. Match the technical-explainer intermediate tier for jargon handling, but keep the casual delivery.
 
 ## technical-explainer
 - **Prosody**: `"clear and precise, measured pace"`

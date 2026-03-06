@@ -33,6 +33,12 @@
 - End every paragraph on a complete thought. Never leave a dangling clause.
 - This prevents tone resets and awkward pauses at chunk boundaries.
 
+## Accessibility (applies to all presets)
+- Define domain-specific terms on first use, not just acronyms. For example, "nominal voltage" should be explained as the average working voltage.
+- Never use compact notation as speech. "4S4P" in text becomes "four cells in series, four in parallel" in audio. After the first explanation, shorten to "four series, four parallel" — never "four S four P."
+- On revisits of notation, use natural phrasing: "a pack with ten in series and five in parallel" not "a ten S five P pack."
+- Periodically re-anchor shorthand so the listener doesn't lose track, but don't over-explain on every mention.
+
 ## Analogies
 - Do NOT use analogies or metaphors by default.
 - Only include them if the user explicitly requests via `--analogies` flag or says "include analogies".
