@@ -17,22 +17,29 @@ You receive via the Task prompt:
 - **DRAFT FILE**: path to the analyst's draft
 - **OUTPUT FILE**: where to write the final report (e.g. `research/{slug}/REPORT.md`)
 - **SOURCES**: source manifest for spot-checking original sources
+- **CACHE DIRECTORY**: path to cached web content from scouts (files named `{url-slug}.txt`, first line = original URL)
+- **REVIEW NOTES**: path to analyst's handoff notes file (`REVIEW-NOTES.md`)
 
 ## Workflow
 
-1. **Read the draft** from DRAFT FILE.
+1. **Read review notes:** If REVIEW NOTES file exists, read it first. Address every flagged item (TODO markers, contradictions, low-confidence items) before general verification. These are the analyst's known concerns and take priority.
 
-2. **Read ALL scout JSONs** from the scout directory using Glob and Read.
+2. **Read the draft** from DRAFT FILE.
 
-3. **Spot-check original sources.** You don't need to re-read every source, but you MUST verify:
-   - All code blocks / commands — check they match the original source verbatim
-   - All numerical values, addresses, sizes — check against scout `raw_excerpt` and original if possible
-   - All `<!-- TODO: verify -->` markers — resolve each one by checking the original source
-   - Any claims that seem surprising or that two scouts disagreed on
-   - For files: use Read with specific line ranges from `source_location` fields
-   - For URLs: use WebFetch to spot-check key claims
+3. **Read ALL scout JSONs** from the scout directory using Glob and Read.
 
-4. **Run the verification checklist:**
+4. **Spot-check original sources.** Cap at **3 highest-impact spot-checks** (plus resolving ALL `<!-- TODO: verify -->` markers regardless of cap). Prioritize in this order:
+   1. Numerical benchmarks, costs, and performance claims
+   2. Disputed claims (where scouts disagreed or analyst flagged contradictions)
+   3. Single-source claims with high impact
+   4. Technical specifics (commands, configs, API details)
+
+   For each spot-check:
+   - **Check cache first:** Look in CACHE DIRECTORY for a cached file matching the URL. Use Glob on the cache directory and Read matching files.
+   - **Only WebFetch if no cache exists** for that URL.
+   - For files: use Read with specific line ranges from `source_location` fields.
+
+5. **Run the verification checklist:**
 
    - [ ] **Completeness**: Every scout JSON is represented. No findings were silently dropped.
    - [ ] **Accuracy**: Excerpts match their sources. Technical values are correct.
@@ -41,14 +48,14 @@ You receive via the Task prompt:
    - [ ] **Structure**: Logical flow, consistent heading hierarchy, no orphan sections.
    - [ ] **TODO markers**: All `<!-- TODO: verify -->` markers resolved or explicitly flagged as unresolvable.
 
-5. **Fix all issues found** directly in the text. Never silently drop content — if something is wrong, correct it; if it can't be verified, flag it explicitly.
+6. **Fix all issues found** directly in the text. Never silently drop content — if something is wrong, correct it; if it can't be verified, flag it explicitly.
 
-6. **Write the final report** to OUTPUT FILE with:
+7. **Write the final report** to OUTPUT FILE with:
    - All corrections applied
    - TODO markers resolved
    - Contradictions resolved with reasoning
 
-7. **Append an audit log** at the bottom of the report:
+8. **Append an audit log** at the bottom of the report:
 
    ```markdown
    ---

@@ -61,7 +61,28 @@ You receive via the Task prompt:
 
 5. **Write the draft** to the OUTPUT FILE path.
 
-6. **Report summary** at the end: number of scout JSONs consumed, total findings synthesized, output file size.
+6. **Self-check pass:** Re-read the draft and check for:
+   1. **Temporal accuracy:** Are pre-2025 claims presented as current? Use `claim_era` from scout findings to verify. Flag any issues with `<!-- TEMPORAL: verify currency -->`.
+   2. **Finding count:** Does the Executive Summary total match the actual scout JSON finding totals? Fix if mismatched.
+   3. **Model/version consistency:** Are model names, product names, and version numbers spelled consistently across all sections? Fix any inconsistencies.
+   Fix any issues found in the draft before proceeding.
+
+7. **Write REVIEW-NOTES.md:** Collect all `<!-- TODO: verify -->` markers, unresolved contradictions, and low-confidence items. Write to `research/{slug}/analysis/REVIEW-NOTES.md` in checklist format:
+   ```markdown
+   # Review Notes for Auditor
+
+   ## TODO Markers
+   - [ ] {description and location of each TODO marker}
+
+   ## Unresolved Contradictions
+   - [ ] {description of each contradiction}
+
+   ## Low-Confidence Items
+   - [ ] {description of each low-confidence item}
+   ```
+   Create the file even if empty (write "No unresolved items.").
+
+8. **Report summary** at the end: number of scout JSONs consumed, total findings synthesized, output file size.
 
 ## Critical Rules
 
