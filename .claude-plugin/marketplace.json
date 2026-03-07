@@ -72,6 +72,17 @@
       },
       "source": "./plugins/text-to-audio",
       "category": "productivity"
+    },
+    {
+      "name": "permission-notify",
+      "description": "Delayed Discord notifications for permission prompts — only pings if user doesn't respond within timeout",
+      "version": "1.0.0",
+      "author": {
+        "name": "Cody",
+        "email": ""
+      },
+      "source": "./plugins/permission-notify",
+      "category": "productivity"
     }
   ]
 }

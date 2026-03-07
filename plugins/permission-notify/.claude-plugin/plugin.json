@@ -1,0 +1,5 @@
+{
+  "name": "permission-notify",
+  "description": "Delayed Discord notifications for permission prompts — only pings if user doesn't respond within timeout",
+  "author": { "name": "Cody" }
+}
