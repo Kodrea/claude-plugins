@@ -149,7 +149,7 @@ research/{slug}/
   scout/           # Haiku JSONs (audit trail - never delete)
   analysis/        # Sonnet draft
   cache/           # Cached web content from scouts (URL first line, content after)
-  REPORT.md        # Final audited output
+  {slug}-report.md  # Final audited output
   metadata.json    # Research config and stage completion tracking
 ```
 
@@ -248,7 +248,7 @@ prompt: |
   RESEARCH TOPIC: {topic}
   SCOUT DIRECTORY: research/{slug}/scout/
   DRAFT FILE: research/{slug}/analysis/DRAFT.md
-  OUTPUT FILE: research/{slug}/REPORT.md
+  OUTPUT FILE: research/{slug}/{slug}-report.md
   SOURCES: {source manifest for spot-checking}
   CACHE DIRECTORY: research/{slug}/cache/
   REVIEW NOTES: research/{slug}/analysis/REVIEW-NOTES.md
@@ -257,8 +257,8 @@ prompt: |
 After completion, print: `[PIPELINE] phase=auditor status=complete corrections={N} verdict={PASS|PASS_WITH_WARNINGS}`
 
 **Verification:**
-- Check `research/{slug}/REPORT.md` exists.
-- If REPORT.md is smaller than the draft: warn user that content may have been dropped.
+- Check `research/{slug}/{slug}-report.md` exists.
+- If the report is smaller than the draft: warn user that content may have been dropped.
 
 Update `metadata.json` → add `"auditor"` to `stages_completed`.
 
@@ -274,7 +274,7 @@ Then print a summary to the user:
 Research complete: {topic}
 Domain: {domain}
 Scouts: {N} | Sources: {M} | Findings: {F total across all scout JSONs}
-Output: research/{slug}/REPORT.md
+Output: research/{slug}/{slug}-report.md
 Scout JSONs: research/{slug}/scout/
 Draft: research/{slug}/analysis/DRAFT.md
 
@@ -298,4 +298,4 @@ Run `/research:operationalize {slug}` to create operational artifacts (quick ref
 - If >50% scouts produce 0 findings: AskUserQuestion whether to continue.
 - If any scout JSON is malformed: offer to re-run failed scouts only.
 - If analyst draft is suspiciously small (<2KB): warn before proceeding to auditor.
-- If auditor drops content (REPORT < DRAFT size): warn user.
+- If auditor drops content (report < draft size): warn user.

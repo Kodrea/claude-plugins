@@ -18,6 +18,6 @@ When triggered, run the `/research` command with the user's topic. This skill is
 The pipeline has 3 tiers:
 - **Scout (Haiku):** Fast, cheap extraction — reads sources, produces structured JSON with verbatim excerpts
 - **Analyst (Sonnet):** Synthesizes scout JSONs into a coherent draft document
-- **Auditor (Opus):** Verifies the draft against original sources, produces final REPORT.md
+- **Auditor (Opus):** Verifies the draft against original sources, produces final `{slug}-report.md`
 
 Output goes to `research/{slug}/` with scout JSONs, analyst draft, and final report.

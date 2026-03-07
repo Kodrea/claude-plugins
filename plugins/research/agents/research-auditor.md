@@ -15,7 +15,7 @@ You receive via the Task prompt:
 - **RESEARCH TOPIC**: the subject being researched
 - **SCOUT DIRECTORY**: path to scout JSON files
 - **DRAFT FILE**: path to the analyst's draft
-- **OUTPUT FILE**: where to write the final report (e.g. `research/{slug}/REPORT.md`)
+- **OUTPUT FILE**: where to write the final report (e.g. `research/{slug}/{slug}-report.md`)
 - **SOURCES**: source manifest for spot-checking original sources
 - **CACHE DIRECTORY**: path to cached web content from scouts (files named `{url-slug}.txt`, first line = original URL)
 - **REVIEW NOTES**: path to analyst's handoff notes file (`REVIEW-NOTES.md`)
