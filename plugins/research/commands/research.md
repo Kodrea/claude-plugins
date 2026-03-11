@@ -38,8 +38,44 @@ If the topic is too vague (fewer than 3 words AND no --files/--urls provided), u
 
 ### Web domain
 - Run 1-2 WebSearch calls with topic keywords.
-- **URL pre-validation:** WebFetch the first 1KB of each candidate URL. Drop URLs that return: HTTP errors, <100 chars of content, or security challenge text (e.g. "enable JavaScript", "captcha"). Replace dropped URLs with next-best WebSearch results. Log each drop: `[PIPELINE] url_dropped={URL} reason={reason}`
+- **Domain blacklist:** Immediately drop URLs matching these domains (do not fetch):
+  `medium.com, *.medium.com`
+  Log each: `[PIPELINE] url_dropped={URL} reason=blocked_domain`
+- **URL pre-validation:** For each remaining candidate URL, WebFetch it with a brief
+  extraction prompt. Drop URLs that return:
+  - HTTP errors (status >= 400)
+  - Less than 100 chars of visible text content
+  - Challenge text: "enable JavaScript", "captcha", "verify you are human",
+    "access denied", "subscription required", "sign in to view"
+  Log each drop: `[PIPELINE] url_dropped={URL} reason={reason}`
+- **Replacement:** For each dropped URL, run one WebSearch using the dropped URL's
+  relevance_note as query. Validate the replacement the same way. Max 1 replacement
+  attempt per dropped URL.
+- **Escape hatch:** If >70% of candidate URLs fail pre-validation, log
+  `[PIPELINE] url_validation_crisis sources_remaining={N}` and use AskUserQuestion
+  to ask whether to proceed, provide explicit URLs, or switch domain.
+- **Cache validated content:** Write each successfully fetched page to
+  `research/{slug}/cache/{url-slug}.txt` (first line: URL, rest: content).
+  Add `"validated": true` to each source in the manifest.
 - Collect validated URLs. **Cap at 30 URLs.**
+
+### Framework doc enrichment (web and mixed domains only)
+
+If the topic involves known frameworks or libraries (Apple frameworks, npm packages,
+Python libraries, etc.):
+
+1. Identify up to 3 framework names from the topic and extraction categories
+   (e.g., "AVAudioSession", "URLSession", "SwiftUI")
+2. For each, call `resolve-library-id` with the framework name
+3. If a library ID is found, call `query-docs` with the library ID and
+   topic-relevant query terms (max 3 queries per library)
+4. If query returns useful content (>200 chars), add as a source:
+   `{type: "context7", location: "context7://{library-id}", relevance_note: "...", validated: true}`
+   Write content to `cache/{library-slug}-context7.txt`
+5. If resolve-library-id returns no match:
+   `[PIPELINE] context7_miss library={name}` — continue without it
+
+Cap at 3 library lookups to avoid slowing discovery.
 
 ### Mixed domain
 - Run both codebase and web discovery. Merge into a single source manifest.
@@ -47,7 +83,7 @@ If the topic is too vague (fewer than 3 words AND no --files/--urls provided), u
 ### Source manifest format
 Build an internal list:
 ```
-[{type: "file"|"url", location: "path or URL", relevance_note: "why included"}]
+[{type: "file"|"url"|"context7", location: "path or URL or context7://lib-id", relevance_note: "why included"}]
 ```
 
 If discovery finds **zero sources**: use AskUserQuestion to ask the user to refine the topic or provide explicit paths/URLs. **Never spawn scouts with zero sources.**
@@ -205,8 +241,27 @@ After all scouts complete, print: `[PIPELINE] phase=scout-exec status=complete t
 2. If >50% of scouts produced 0 findings: use AskUserQuestion to ask whether to continue or refine the topic.
 3. If any JSON is malformed: offer to re-run only the failed scouts.
 4. **Source success rate check:** Check each scout's `metadata.source_success_rate`. Log degraded scouts (<0.5): `[PIPELINE] scout={id} source_success_rate={rate} status=degraded`
-5. **Retry degraded scouts:** For each scout with rate <0.5, collect its failed sources, spawn a retry scout (`scout-{NNN}-retry`) with only the failed sources. Max one retry per original scout. Log: `[PIPELINE] retry_scout={id} failed_sources={N}`
-6. **Gap deduplication:** Collect all gaps from all scouts. Merge gaps sharing 3+ significant words (excluding stopwords: the, a, an, of, in, to, for, and, or, is, are, was, were, not, no, with, from, by, on, at, this, that). Write `deduplicated_gaps` to `metadata.json`. Log: `[PIPELINE] gaps_raw={N} gaps_deduped={M}`
+5. **Retry with replacement sources:** For each scout with rate <0.5:
+   a. Collect its failed sources and their relevance_notes
+   b. For each failed source, run ONE WebSearch using the relevance_note as query
+   c. Pre-validate each candidate replacement URL (same criteria as Phase 1:
+      no blocked domains, WebFetch succeeds, >100 chars content, no challenge text)
+   d. Cache validated replacements to `research/{slug}/cache/`
+   e. If ≥2 validated replacements found, spawn retry scout (`scout-{NNN}-retry`)
+      with ONLY the validated replacement sources (not the original failed sources)
+   f. If <2 validated replacements found, skip the retry:
+      `[PIPELINE] retry_skipped scout={id} reason="insufficient accessible replacements"`
+   g. Max one retry per original scout. Retry inherits the same extraction categories.
+   Log: `[PIPELINE] retry_scout={id} replacement_sources={N}`
+6. **Gap deduplication:** Collect all gaps from all scouts. Merge gaps sharing 3+ significant words (excluding stopwords: the, a, an, of, in, to, for, and, or, is, are, was, were, not, no, with, from, by, on, at, this, that). Write `deduplicated_gaps` to `metadata.json`. Classify each deduplicated gap by `gap_type` and write a summary:
+   ```json
+   "deduplicated_gaps_summary": {
+     "total": M,
+     "source_failures": SF,
+     "knowledge_gaps": KG
+   }
+   ```
+   Log: `[PIPELINE] gaps_raw={N} gaps_deduped={M} source_failures={SF} knowledge_gaps={KG}`
 
 Update `metadata.json` → add `"scout"` to `stages_completed`.
 

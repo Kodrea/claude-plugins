@@ -134,7 +134,8 @@ Evaluate every rule below against the data from Steps 2-4. For each rule where t
 | Thin draft | draft_size < 5KB | warn | `{bytes}` |
 | Bloated draft | draft_size > 100KB | warn | `{bytes}` |
 | High corrections | auditor corrections > 5 | warn | `{count}` |
-| Many gaps | total gaps across scouts > 10 | warn | `{count, examples}` |
+| Many source failures | gaps with gap_type=="source_failure" > 5 | warn | `{count, threshold: 5, examples}` |
+| Many knowledge gaps | gaps with gap_type=="knowledge_gap" > 8 | warn | `{count, threshold: 8, examples}` |
 | Low relevance ratio | high-relevance findings < 30% of total | info | `{high, medium, low}` |
 
 ### Token Economy Rules
@@ -158,8 +159,14 @@ Review the triggered signals together. Consider how they interact — signals in
 - **Dead scout + unbalanced load** → source allocation was wrong, not just unlucky
 - **High corrections + thin draft** → analyst lacked data, not necessarily sloppy
 - **Phase bottleneck + slow scout** → one scout may have blocked the pipeline
-- **Low relevance ratio + many gaps** → extraction categories may not match the topic well
+- **Low relevance ratio + many knowledge gaps** → extraction categories may not match the topic well
 - **Expensive run + low cache utilization** → pipeline isn't benefiting from prompt caching
+- **Many source failures + high corrections** → source failures cascaded into analyst
+  speculation; fix pre-validation
+- **Many knowledge gaps + low relevance ratio** → extraction categories may not match
+  the topic's actual coverage in available sources
+- **Many source failures alone (no many_knowledge_gaps)** → sources were poorly chosen,
+  not a topic/category problem
 
 Generate 3-5 improvement suggestions. Each suggestion MUST:
 1. Reference the specific signal(s) that triggered it by rule name

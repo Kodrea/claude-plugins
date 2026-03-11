@@ -25,6 +25,12 @@ You receive via the Task prompt:
 
 1. **Process each assigned source:**
    - **Files:** Use Read to read the file content. For files >2000 lines, use Grep to locate relevant sections first, then Read specific line ranges. Note which ranges you read in `processing_notes`.
+   - **Cache-first for validated sources:** If a source has `validated: true` in the
+     assignment AND a corresponding cache file exists in CACHE_DIRECTORY, Read the
+     cache file instead of WebFetch. Only WebFetch if no cache file exists.
+   - **context7 sources:** Read from CACHE_DIRECTORY (the orchestrator pre-fetched
+     the content). Do not attempt to call context7 tools directly — they are not
+     available to scout agents.
    - **URLs:** Use WebFetch to retrieve content. If a URL fails, record it in `gaps[]` with the error and continue to the next source.
      - **Cache successful fetches:** Write content to `{CACHE_DIRECTORY}/{url-slug}.txt` where the first line is the original URL and the rest is the fetched content. Generate the URL slug: replace non-alphanumeric characters with dashes, truncate to 80 chars, append 8-char hash via `echo -n "URL" | md5sum | cut -c1-8`.
 

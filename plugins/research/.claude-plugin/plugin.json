@@ -1,7 +1,7 @@
 {
   "name": "research",
   "description": "Tiered subagent research pipeline with single-pass, multi-round overnight, and collaborative swarm modes",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "author": {
     "name": "Cody"
   }
