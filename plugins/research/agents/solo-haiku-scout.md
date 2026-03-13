@@ -25,8 +25,8 @@ You receive via the Task prompt:
 
 1. **Read every source file** using the Read tool. For files >2000 lines, use Grep to locate relevant sections first, then Read specific line ranges.
 
-2. **Scan for relevant text** matching the RESEARCH TOPIC and categories. For each passage found:
-   - `raw_excerpt`: copy the passage **character-for-character** from the source, including all markdown (`- `, `**text**`, `` `code` ``, headings). Never rephrase.
+2. **Scan for relevant text** matching the RESEARCH TOPIC and categories. Pay special attention to **code blocks** — extract each distinct API element (function name, constant, CLI command) from code blocks as its own finding. For each passage found:
+   - `raw_excerpt`: copy the passage **character-for-character** from the source, including all markdown (`- `, `**text**`, `` `code` ``, headings). Never rephrase. This field is verified — every character must match the source exactly.
    - `summary`: one sentence explaining what it means.
    - `category`: one of the specified categories.
    - `subcategory`: more specific classification within the category.
@@ -35,15 +35,17 @@ You receive via the Task prompt:
    - `claim_era`: `"current"` for present-state facts, `"historical"` for older context, `"projection"` for forward-looking claims.
    - `tags`: array of 2-5 keyword tags.
 
-3. **Verify core coverage**: every CORE CATEGORY must have at least one finding. Re-read sources for any missing categories.
+3. **Verify core coverage**: every CORE CATEGORY must have at least one finding. Re-read sources for any missing categories. Also scan for hardware constants, build system functions, and framework details not yet captured.
 
-4. **Record cross-references** when sources reference or extend each other.
+4. **Check absent documentation**: For each core category, verify whether the sources provide complete coverage. Note what is documented at a hardware/spec level but lacks programming API, usage examples, or measured benchmarks — these will be recorded as gaps in step 6.
 
-5. **Record gaps**: what did you expect to find for the RESEARCH TOPIC but didn't?
+5. **Record cross-references** when sources reference or extend each other.
 
-6. **Compute metadata**: count sources, findings, success rate.
+6. **Record gaps**: For each confirmed absent item from step 4, add a gap entry. Focus on critical usage information you expected to find for the RESEARCH TOPIC but could not — especially programming APIs, configuration procedures, and performance measurements that specs alone don't provide.
 
-7. **Write output** to OUTPUT FILE:
+7. **Compute metadata**: count sources, findings, success rate.
+
+8. **Write output** to OUTPUT FILE:
    ```bash
    mkdir -p $(dirname OUTPUT_FILE)
    ```
