@@ -45,7 +45,7 @@ Parse:
 
 6. **Initialize results.tsv** (or archive existing as `results-{old_tag}.tsv`):
    ```
-   experiment	commit	composite_score	finding_recall	verbatim_quality	category_coverage	precision	structure	cross_refs	gaps	status	description
+   experiment	commit	composite_score	status	description
    ```
 
 7. **Run baseline**: Execute one benchmark WITHOUT modifying the agent file. Log as experiment 0 with status `baseline`.
@@ -117,18 +117,15 @@ To run a single benchmark experiment:
      --json
    ```
 
-   Example output:
-   ```json
-   {"composite_score": 0.523400, "dimensions": {"finding_recall": 0.65, "verbatim_quality": 0.45, "category_coverage": 0.83, "precision": 0.72, "structure_quality": 1.0, "cross_references": 0.0, "gap_detection": 0.33}, "total_findings": 18, "scouts_evaluated": 1, "missed_findings": ["F005", "F012"]}
-   ```
+   The scorer returns JSON with at minimum a `composite_score` field (0.0-1.0). It may also include dimension breakdowns depending on configuration.
 
-4. **Parse the JSON** to get composite score and dimension breakdown.
+4. **Parse the JSON** to get the composite score. Use whatever fields are present.
 
 ## The Loop
 
 LOOP FOREVER (or until `--rounds` exhausted):
 
-1. **Check git state**: current branch and commit.
+1. **Check git state**: current branch and commit. **Re-read `results.tsv`** to refresh your memory of all prior experiments, scores, and strategies. This is essential — your context may have been compacted.
 
 2. **Make one experimental edit** to `plugins/research/agents/solo-haiku-scout.md`. Ideas:
    - Reorder sections for emphasis
@@ -185,9 +182,8 @@ LOOP FOREVER (or until `--rounds` exhausted):
 ## What You CANNOT Modify
 
 - Benchmark sources (`plugins/research/benchmark/sources/esp32s3/`)
-- Scorer (`plugins/research/benchmark/score.py`)
-- Rubric (`plugins/research/benchmark/rubric.json`)
-- Any other files
+- Scoring system (`plugins/research/benchmark/score.py`)
+- Any other files besides the target agent file
 
 ## Important Rules
 
@@ -203,14 +199,14 @@ LOOP FOREVER (or until `--rounds` exhausted):
 
 ## Strategy Guide
 
-Focus on the weakest dimension first. Common patterns:
+The composite score reflects overall extraction quality. Optimize by trying different approaches:
 
-1. **Finding recall (25%)**: Add more specific extraction guidance, examples, thoroughness rules.
-2. **Verbatim quality (20%)**: Emphasize copy-paste, add examples of good vs bad excerpts.
-3. **Category coverage (15%)**: Add minimum-per-category rules, category detection guidance.
-4. **Precision (15%)**: Clarify required fields, add validation rules.
-5. **Cross-references (10%)**: Add explicit cross-reference instructions, examples.
-6. **Gap detection (10%)**: Add guidance on identifying missing information.
-7. **Structure (5%)**: Simplify schema description, add concrete JSON example.
+- **Thoroughness**: Add extraction guidance, minimum finding counts, second-pass rules.
+- **Accuracy**: Emphasize verbatim copying, add copy-paste rules, remove paraphrasing escape hatches.
+- **Coverage**: Add minimum-per-category rules, category detection guidance.
+- **Completeness**: Clarify required fields, add validation rules.
+- **Connections**: Add cross-reference instructions between sources.
+- **Self-awareness**: Add guidance on identifying missing information.
+- **Simplicity**: Remove redundant instructions. Shorter prompts that maintain score are wins.
 
-When one dimension plateaus, shift to another. Try radical changes to escape local optima.
+When score plateaus, try radical changes to escape local optima. Re-read results.tsv to avoid repeating failed strategies.
