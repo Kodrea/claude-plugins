@@ -1,0 +1,302 @@
+{
+  "topic": "ESP32-S3 microcontroller capabilities, architecture, peripherals, AI features, and real-world usage",
+  "slug": "esp32s3-benchmark-sonnet",
+  "core_categories": [
+    "architecture",
+    "peripherals",
+    "memory",
+    "wireless",
+    "ai_acceleration",
+    "power_management"
+  ],
+  "adjacent_categories": [
+    "development_tools",
+    "security",
+    "gpio",
+    "interfaces",
+    "community_reports",
+    "workarounds"
+  ],
+  "expected_findings": [
+    {
+      "id": "F001",
+      "category": "architecture",
+      "description": "Dual-core Xtensa LX7 at 240 MHz",
+      "required_excerpt_fragment": "xtensa lx7",
+      "weight": 1.0
+    },
+    {
+      "id": "F002",
+      "category": "memory",
+      "description": "512 KB internal SRAM",
+      "required_excerpt_fragment": "512 kb",
+      "weight": 1.0
+    },
+    {
+      "id": "F003",
+      "category": "gpio",
+      "description": "45 programmable GPIO pins",
+      "required_excerpt_fragment": "45",
+      "weight": 0.8
+    },
+    {
+      "id": "F004",
+      "category": "wireless",
+      "description": "WiFi 802.11 b/g/n with 40 MHz bandwidth",
+      "required_excerpt_fragment": "802.11 b/g/n",
+      "weight": 1.0
+    },
+    {
+      "id": "F005",
+      "category": "wireless",
+      "description": "Bluetooth 5 LE with Coded PHY for long-range",
+      "required_excerpt_fragment": "coded phy",
+      "weight": 0.8
+    },
+    {
+      "id": "F006",
+      "category": "security",
+      "description": "AES-XTS flash encryption with 256-bit key",
+      "required_excerpt_fragment": "aes-xts",
+      "weight": 0.8
+    },
+    {
+      "id": "F007",
+      "category": "security",
+      "description": "World Controller for isolated execution environments",
+      "required_excerpt_fragment": "world controller",
+      "weight": 0.6
+    },
+    {
+      "id": "F008",
+      "category": "power_management",
+      "description": "Deep sleep current approximately 7 microamps",
+      "required_excerpt_fragment": "7 µa",
+      "weight": 0.8
+    },
+    {
+      "id": "F009",
+      "category": "peripherals",
+      "description": "USB 1.1 Full Speed OTG with device and host modes",
+      "required_excerpt_fragment": "usb 1.1",
+      "weight": 0.8
+    },
+    {
+      "id": "F010",
+      "category": "power_management",
+      "description": "ULP-RISC-V coprocessor for ultra-low-power operation",
+      "required_excerpt_fragment": "ulp-risc-v",
+      "weight": 0.8
+    },
+    {
+      "id": "F011",
+      "category": "gpio",
+      "description": "Strapping pins GPIO0, GPIO3, GPIO45, GPIO46 determine boot mode",
+      "required_excerpt_fragment": "strapping pins",
+      "weight": 0.6
+    },
+    {
+      "id": "F012",
+      "category": "gpio",
+      "description": "GPIO19/20 reserved for USB-JTAG",
+      "required_excerpt_fragment": "gpio19 and gpio20",
+      "weight": 0.6
+    },
+    {
+      "id": "F013",
+      "category": "peripherals",
+      "description": "SPI supports SPI2_HOST and SPI3_HOST; SPI0/1 not available",
+      "required_excerpt_fragment": "spi2_host",
+      "weight": 0.8
+    },
+    {
+      "id": "F014",
+      "category": "interfaces",
+      "description": "SPI max frequency constants up to 80 MHz",
+      "required_excerpt_fragment": "spi_master_freq_80m",
+      "weight": 0.6
+    },
+    {
+      "id": "F015",
+      "category": "peripherals",
+      "description": "SPI DMA buffers must be 32-bit aligned in DMA-capable memory",
+      "required_excerpt_fragment": "32-bit aligned",
+      "weight": 0.6
+    },
+    {
+      "id": "F016",
+      "category": "architecture",
+      "description": "ESP32-S3 is little-endian",
+      "required_excerpt_fragment": "little-endian chip",
+      "weight": 0.6
+    },
+    {
+      "id": "F017",
+      "category": "interfaces",
+      "description": "SPI polling transaction overhead ~9 microseconds vs interrupt ~24 microseconds",
+      "required_excerpt_fragment": "polling via cpu",
+      "weight": 0.6
+    },
+    {
+      "id": "F018",
+      "category": "development_tools",
+      "description": "CMake-based build system with idf_component_register",
+      "required_excerpt_fragment": "idf_component_register",
+      "weight": 0.8
+    },
+    {
+      "id": "F019",
+      "category": "development_tools",
+      "description": "idf.py set-target esp32s3 command",
+      "required_excerpt_fragment": "idf.py set-target",
+      "weight": 0.6
+    },
+    {
+      "id": "F020",
+      "category": "development_tools",
+      "description": "Common auto-required components include freertos, heap, log",
+      "required_excerpt_fragment": "freertos",
+      "weight": 0.6
+    },
+    {
+      "id": "F021",
+      "category": "development_tools",
+      "description": "Kconfig configuration system with sdkconfig file",
+      "required_excerpt_fragment": "kconfig",
+      "weight": 0.6
+    },
+    {
+      "id": "F022",
+      "category": "ai_acceleration",
+      "description": "ESP-DL uses FlatBuffers for zero-copy deserialization",
+      "required_excerpt_fragment": "flatbuffers",
+      "weight": 0.8
+    },
+    {
+      "id": "F023",
+      "category": "ai_acceleration",
+      "description": "Conv2D and DepthwiseConv2D support dual-core scheduling",
+      "required_excerpt_fragment": "conv2d and depthwiseconv2d",
+      "weight": 0.8
+    },
+    {
+      "id": "F024",
+      "category": "ai_acceleration",
+      "description": "8-bit LUT method for activation functions except ReLU and PReLU",
+      "required_excerpt_fragment": "8-bit lut",
+      "weight": 0.6
+    },
+    {
+      "id": "F025",
+      "category": "ai_acceleration",
+      "description": "ESP-PPQ quantization tool for ONNX, PyTorch, TensorFlow models",
+      "required_excerpt_fragment": "esp-ppq",
+      "weight": 0.8
+    },
+    {
+      "id": "F026",
+      "category": "ai_acceleration",
+      "description": "Face detection inference 30-50 ms per frame on ESP32-S3",
+      "required_excerpt_fragment": "30-50 ms",
+      "weight": 0.6
+    },
+    {
+      "id": "F027",
+      "category": "memory",
+      "description": "External PSRAM up to 32 MB via Octal SPI",
+      "required_excerpt_fragment": "32 mb",
+      "weight": 0.6
+    },
+    {
+      "id": "F028",
+      "category": "peripherals",
+      "description": "14 capacitive touch sensor channels",
+      "required_excerpt_fragment": "14",
+      "weight": 0.6
+    },
+    {
+      "id": "F029",
+      "category": "community_reports",
+      "description": "I2C requires pull-ups during initialization or kernel panic occurs",
+      "required_excerpt_fragment": "guru meditation error",
+      "weight": 0.8
+    },
+    {
+      "id": "F030",
+      "category": "community_reports",
+      "description": "NVS flash limits for BLE mesh provisioning (1000+ nodes)",
+      "required_excerpt_fragment": "nvs flash limits",
+      "weight": 0.6
+    },
+    {
+      "id": "F031",
+      "category": "workarounds",
+      "description": "ADC2 cannot be used alongside WiFi due to SAR ADC conflict",
+      "required_excerpt_fragment": "adc2 cannot be used alongside wifi",
+      "weight": 0.6
+    },
+    {
+      "id": "F032",
+      "category": "workarounds",
+      "description": "rtc_gpio_isolate() to minimize deep sleep leakage current",
+      "required_excerpt_fragment": "rtc_gpio_isolate",
+      "weight": 0.6
+    }
+  ],
+  "expected_cross_references": [
+    {
+      "id": "X001",
+      "from_source": "datasheet",
+      "to_source": "hw-reference",
+      "relationship": "documents",
+      "description": "Datasheet lists 45 GPIOs, hw-reference details pin categories and API"
+    },
+    {
+      "id": "X002",
+      "from_source": "datasheet",
+      "to_source": "ai-capabilities",
+      "relationship": "extends",
+      "description": "Datasheet mentions vector instructions, AI capabilities details ESP-DL framework"
+    },
+    {
+      "id": "X003",
+      "from_source": "hw-reference",
+      "to_source": "programming-guide",
+      "relationship": "documents",
+      "description": "HW reference covers peripheral APIs, programming guide covers build system to use them"
+    },
+    {
+      "id": "X004",
+      "from_source": "community-thread",
+      "to_source": "hw-reference",
+      "relationship": "extends",
+      "description": "Community reports I2C pull-up gotcha that relates to GPIO/I2C peripheral configuration"
+    }
+  ],
+  "expected_gaps": [
+    {
+      "id": "G001",
+      "description": "No WiFi API documentation — connection, scanning, AP mode configuration details missing",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "id": "G002",
+      "description": "No Bluetooth LE API documentation — GATT, GAP, pairing, bonding details missing",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "id": "G003",
+      "description": "No power consumption measurement data or benchmarks for different operating modes",
+      "gap_type": "knowledge_gap"
+    }
+  ],
+  "scoring_weights": {
+    "finding_recall": 0.25,
+    "verbatim_quality": 0.20,
+    "category_coverage": 0.15,
+    "precision": 0.15,
+    "structure_quality": 0.05,
+    "cross_references": 0.10,
+    "gap_detection": 0.10
+  }
+}
