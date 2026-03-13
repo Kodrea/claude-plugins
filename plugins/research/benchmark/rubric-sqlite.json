@@ -1,0 +1,295 @@
+{
+  "topic": "SQLite database engine internals, API, performance tuning, and SQL dialect",
+  "slug": "sqlite-benchmark",
+  "core_categories": [
+    "storage_engine",
+    "sql_dialect",
+    "c_api",
+    "performance",
+    "concurrency",
+    "indexing",
+    "configuration",
+    "type_system"
+  ],
+  "adjacent_categories": [
+    "memory_management",
+    "virtual_tables",
+    "error_handling",
+    "tooling"
+  ],
+  "expected_findings": [
+    {
+      "id": "F001",
+      "category": "storage_engine",
+      "description": "Default page size is 4096 bytes since version 3.12.0",
+      "required_excerpt_fragment": "4096 bytes",
+      "weight": 1.0
+    },
+    {
+      "id": "F002",
+      "category": "storage_engine",
+      "description": "Database header string is 'SQLite format 3' with null terminator",
+      "required_excerpt_fragment": "sqlite format 3",
+      "weight": 0.8
+    },
+    {
+      "id": "F003",
+      "category": "storage_engine",
+      "description": "Two types of B-trees: table B-trees (64-bit rowid key) and index B-trees",
+      "required_excerpt_fragment": "table b-trees",
+      "weight": 1.0
+    },
+    {
+      "id": "F004",
+      "category": "storage_engine",
+      "description": "Page type flags: 2=interior index, 5=interior table, 10=leaf index, 13=leaf table",
+      "required_excerpt_fragment": "13=leaf table",
+      "weight": 0.6
+    },
+    {
+      "id": "F005",
+      "category": "storage_engine",
+      "description": "SQLite varint encoding uses between 1 and 9 bytes for 64-bit integers",
+      "required_excerpt_fragment": "1 and 9 bytes",
+      "weight": 0.8
+    },
+    {
+      "id": "F006",
+      "category": "storage_engine",
+      "description": "Schema stored in sqlite_master table aliased as sqlite_schema since 3.33.0",
+      "required_excerpt_fragment": "sqlite_schema",
+      "weight": 0.8
+    },
+    {
+      "id": "F007",
+      "category": "concurrency",
+      "description": "WAL mode introduced in SQLite 3.7.0 allows concurrent readers and writer",
+      "required_excerpt_fragment": "readers do not block",
+      "weight": 1.0
+    },
+    {
+      "id": "F008",
+      "category": "concurrency",
+      "description": "Five lock states: UNLOCKED, SHARED, RESERVED, PENDING, EXCLUSIVE",
+      "required_excerpt_fragment": "reserved",
+      "weight": 0.8
+    },
+    {
+      "id": "F009",
+      "category": "concurrency",
+      "description": "WAL auto-checkpoint threshold default is 1000 pages",
+      "required_excerpt_fragment": "1000 pages",
+      "weight": 0.8
+    },
+    {
+      "id": "F010",
+      "category": "configuration",
+      "description": "Rollback journal modes: DELETE, TRUNCATE, PERSIST, MEMORY, OFF",
+      "required_excerpt_fragment": "truncate",
+      "weight": 0.8
+    },
+    {
+      "id": "F011",
+      "category": "type_system",
+      "description": "Five type affinities: TEXT, NUMERIC, INTEGER, REAL, BLOB",
+      "required_excerpt_fragment": "five type affinities",
+      "weight": 1.0
+    },
+    {
+      "id": "F012",
+      "category": "type_system",
+      "description": "Type affinity determined by declared type containing INT, CHAR, BLOB, REAL, etc.",
+      "required_excerpt_fragment": "contains the string",
+      "weight": 0.8
+    },
+    {
+      "id": "F013",
+      "category": "type_system",
+      "description": "STRICT tables enforce type checking, allowed types: INT, INTEGER, REAL, TEXT, BLOB, ANY",
+      "required_excerpt_fragment": "strict",
+      "weight": 0.8
+    },
+    {
+      "id": "F014",
+      "category": "sql_dialect",
+      "description": "WITHOUT ROWID tables stored as index B-trees, must have explicit PRIMARY KEY",
+      "required_excerpt_fragment": "without rowid",
+      "weight": 0.8
+    },
+    {
+      "id": "F015",
+      "category": "sql_dialect",
+      "description": "RETURNING clause available since SQLite 3.35.0 for INSERT/UPDATE/DELETE",
+      "required_excerpt_fragment": "returning",
+      "weight": 0.6
+    },
+    {
+      "id": "F016",
+      "category": "sql_dialect",
+      "description": "Maximum database size approximately 281 terabytes with default page size",
+      "required_excerpt_fragment": "281 terabytes",
+      "weight": 0.6
+    },
+    {
+      "id": "F017",
+      "category": "sql_dialect",
+      "description": "UPSERT support via INSERT ... ON CONFLICT since version 3.24.0",
+      "required_excerpt_fragment": "on conflict",
+      "weight": 0.6
+    },
+    {
+      "id": "F018",
+      "category": "c_api",
+      "description": "Core workflow: sqlite3_open_v2, sqlite3_prepare_v2, sqlite3_step, sqlite3_finalize, sqlite3_close_v2",
+      "required_excerpt_fragment": "sqlite3_prepare_v2",
+      "weight": 1.0
+    },
+    {
+      "id": "F019",
+      "category": "c_api",
+      "description": "sqlite3_step returns SQLITE_ROW for each result row, SQLITE_DONE when finished",
+      "required_excerpt_fragment": "sqlite_row",
+      "weight": 0.8
+    },
+    {
+      "id": "F020",
+      "category": "c_api",
+      "description": "SQLITE_BUSY (code 5) returned when database is locked",
+      "required_excerpt_fragment": "sqlite_busy",
+      "weight": 0.8
+    },
+    {
+      "id": "F021",
+      "category": "c_api",
+      "description": "Bind parameter index is 1-based; destructor can be SQLITE_STATIC or SQLITE_TRANSIENT",
+      "required_excerpt_fragment": "sqlite_transient",
+      "weight": 0.6
+    },
+    {
+      "id": "F022",
+      "category": "c_api",
+      "description": "Default threading mode is serialized (SQLITE_THREADSAFE=1) with full mutex protection",
+      "required_excerpt_fragment": "sqlite_threadsafe=1",
+      "weight": 0.8
+    },
+    {
+      "id": "F023",
+      "category": "c_api",
+      "description": "Amalgamation is a single C file of ~155,000 lines compiling to ~750 KB",
+      "required_excerpt_fragment": "155,000 lines",
+      "weight": 0.6
+    },
+    {
+      "id": "F024",
+      "category": "performance",
+      "description": "Memory-mapped I/O via PRAGMA mmap_size, disabled by default",
+      "required_excerpt_fragment": "mmap_size",
+      "weight": 0.8
+    },
+    {
+      "id": "F025",
+      "category": "performance",
+      "description": "Batch inserts in single transaction 50-100x faster than individual inserts",
+      "required_excerpt_fragment": "50-100x faster",
+      "weight": 0.8
+    },
+    {
+      "id": "F026",
+      "category": "performance",
+      "description": "ANALYZE command gathers index statistics into sqlite_stat1 table for query planner",
+      "required_excerpt_fragment": "sqlite_stat1",
+      "weight": 0.8
+    },
+    {
+      "id": "F027",
+      "category": "indexing",
+      "description": "Covering indexes eliminate need to access table B-tree; shown as USING COVERING INDEX",
+      "required_excerpt_fragment": "covering index",
+      "weight": 0.8
+    },
+    {
+      "id": "F028",
+      "category": "indexing",
+      "description": "Partial indexes only index rows matching a WHERE clause, since version 3.8.0",
+      "required_excerpt_fragment": "partial index",
+      "weight": 0.6
+    },
+    {
+      "id": "F029",
+      "category": "indexing",
+      "description": "Multi-column index left-most prefix rule: index on (a,b,c) usable for (a), (a,b), (a,b,c)",
+      "required_excerpt_fragment": "left-most prefix",
+      "weight": 0.8
+    },
+    {
+      "id": "F030",
+      "category": "performance",
+      "description": "Bloom filter optimization for joins introduced in SQLite 3.38.0",
+      "required_excerpt_fragment": "bloom filter",
+      "weight": 0.6
+    },
+    {
+      "id": "F031",
+      "category": "configuration",
+      "description": "PRAGMA synchronous levels: OFF(0), NORMAL(1), FULL(2), EXTRA(3)",
+      "required_excerpt_fragment": "synchronous",
+      "weight": 0.8
+    },
+    {
+      "id": "F032",
+      "category": "configuration",
+      "description": "PRAGMA busy_timeout sets milliseconds to wait for lock; default returns SQLITE_BUSY immediately",
+      "required_excerpt_fragment": "busy_timeout",
+      "weight": 0.6
+    }
+  ],
+  "expected_cross_references": [
+    {
+      "id": "X001",
+      "from_source": "architecture",
+      "to_source": "performance",
+      "relationship": "extends",
+      "description": "Architecture describes WAL structure and journal modes; performance details WAL tuning and checkpointing"
+    },
+    {
+      "id": "X002",
+      "from_source": "architecture",
+      "to_source": "sql-reference",
+      "relationship": "documents",
+      "description": "Architecture describes B-tree storage; SQL reference describes WITHOUT ROWID tables using index B-trees"
+    },
+    {
+      "id": "X003",
+      "from_source": "c-api",
+      "to_source": "performance",
+      "relationship": "documents",
+      "description": "C API defines threading modes and open flags; performance covers shared cache and busy handling"
+    }
+  ],
+  "expected_gaps": [
+    {
+      "id": "G001",
+      "description": "No documentation on encryption or the SQLite Encryption Extension (SEE)",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "id": "G002",
+      "description": "No documentation on FTS5 full-text search internals, tokenizers, or ranking",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "id": "G003",
+      "description": "No documentation on the online backup API (sqlite3_backup_init, step, finish)",
+      "gap_type": "knowledge_gap"
+    }
+  ],
+  "scoring_weights": {
+    "finding_recall": 0.25,
+    "verbatim_quality": 0.20,
+    "category_coverage": 0.15,
+    "precision": 0.15,
+    "structure_quality": 0.05,
+    "cross_references": 0.10,
+    "gap_detection": 0.10
+  }
+}
