@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQLite Training Loop: Post-Mortem & Options</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; line-height: 1.7; color: #1a1a1a; background: #fafafa; }
+  h1 { font-size: 1.6rem; border-bottom: 2px solid #333; padding-bottom: 0.5rem; }
+  h2 { font-size: 1.25rem; margin-top: 2rem; color: #2c3e50; }
+  h3 { font-size: 1.05rem; margin-top: 1.5rem; }
+  .metric { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 1rem 1.25rem; margin: 1rem 0; }
+  .metric-row { display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px dotted #eee; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { font-weight: 500; }
+  .metric-val { font-family: 'SF Mono', 'Fira Code', monospace; }
+  .good { color: #27ae60; }
+  .bad { color: #c0392b; }
+  .warn { color: #e67e22; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #ccc; padding: 0.4rem 0.75rem; text-align: left; font-size: 0.9rem; }
+  th { background: #f0f0f0; }
+  .option { background: #fff; border-left: 4px solid #3498db; padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .option h3 { margin-top: 0; color: #2980b9; }
+  .option-effort { font-size: 0.85rem; color: #777; }
+  code { background: #f4f4f4; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.9em; }
+  blockquote { border-left: 3px solid #bbb; margin: 1rem 0; padding: 0.5rem 1rem; color: #555; background: #fff; }
+</style>
+</head>
+<body>
+
+<h1>SQLite Training Loop Post-Mortem</h1>
+<p><strong>Date:</strong> 2026-03-15 &nbsp;|&nbsp; <strong>Run:</strong> parallel-20260315-121312/sqlite &nbsp;|&nbsp; <strong>Result:</strong> 0 keeps, 3 timeouts, 5 rounds</p>
+
+<h2>1. What Happened</h2>
+
+<p>The agent training loop iteratively edits an AI agent's instruction file (the "trainee") to improve its performance on a benchmark task. A second AI (the "editor," Claude Sonnet) reads scores and missed-finding data, proposes one change to the instruction file, and the trainee (Claude Haiku) reruns the benchmark. If the score improves, the change is kept; otherwise it is discarded.</p>
+
+<p>The SQLite benchmark asks the trainee to read four technical documents (1,438 total lines) about SQLite internals and extract structured findings, cross-references, and documentation gaps into JSON. A rubric with 32 expected findings, 3 expected cross-references, and 3 expected gaps scores the output across seven dimensions.</p>
+
+<p>The baseline (round 0) scored <strong>0.886</strong> composite in 198 seconds. This is already high: 30 of 32 findings matched, verbatim accuracy was perfect, all categories covered. The only zero was <code>gap_detection</code>. The loop then ran 5 rounds with zero successful improvements:</p>
+
+<table>
+<tr><th>Round</th><th>Composite</th><th>Elapsed</th><th>Outcome</th><th>Editor's Change</th></tr>
+<tr><td>0</td><td>0.886</td><td>198s</td><td>baseline</td><td>--</td></tr>
+<tr><td>1</td><td>--</td><td>&gt;300s</td><td class="bad">TIMEOUT</td><td>Prose extraction emphasis</td></tr>
+<tr><td>2</td><td>0.886</td><td>262s</td><td class="warn">DISCARD (=)</td><td>Prose paragraph scanning pass</td></tr>
+<tr><td>3</td><td>0.820</td><td>363s</td><td class="bad">DISCARD (-0.066)</td><td>Table-row extraction callout</td></tr>
+<tr><td>4</td><td>--</td><td>&gt;300s</td><td class="bad">TIMEOUT</td><td>Raise extraction target 8&rarr;12</td></tr>
+<tr><td>5</td><td>--</td><td>&gt;300s</td><td class="bad">TIMEOUT</td><td>Switch model haiku&rarr;sonnet</td></tr>
+</table>
+
+<h2>2. Why Did 3 of 5 Rounds Time Out?</h2>
+
+<p>The 300-second timeout was calibrated for the ESP32-S3 benchmark (1,173 lines across 5 files). The SQLite benchmark is 23% larger (1,438 lines across 4 files), which alone pushes execution time closer to the limit. The baseline already took 198 seconds &mdash; 66% of the budget with no extra instructions.</p>
+
+<p>Each editor change added work. Round 1 added a prose extraction emphasis, likely adding a second pass over all prose paragraphs. Round 3 (which did complete, at 363s &mdash; over the limit) added table-row emphasis that produced more findings (115 vs 86 baseline) but took significantly longer. Round 4 raised the extraction target, encouraging the agent to do more re-reading. Round 5 changed the model to Sonnet, which is slower per token.</p>
+
+<p><strong>Root cause:</strong> The timeout margin was only ~100 seconds (300s budget minus 198s baseline = 102s slack). Any instruction change that adds even one additional read-verify cycle per source file (4 files &times; ~25s each) exhausts this margin. The instructions already mandate multiple expensive steps: re-reading every excerpt for verbatim verification, JSON validation, 5-finding spot-checks, and a 20-gap expansion pass. Adding more thoroughness on top of this pushes Haiku past the wall.</p>
+
+<p>The <code>coroutine 'ClaudeSDKClient.interrupt' was never awaited</code> warning suggests the timeout kill is not cleanly handled &mdash; the SDK's interrupt coroutine is created but not awaited, which is a minor bug in the loop harness.</p>
+
+<h2>3. Why Did gap_detection Stay at 0.0?</h2>
+
+<p>This is a <strong>rubric calibration problem</strong>, not a trainee performance problem.</p>
+
+<p>The scorer works by keyword matching: it splits each expected gap description into words longer than 4 characters, then checks what fraction appear in the scout's gap text. A match requires &gt;40% of key terms to appear. The rubric defines three expected gaps:</p>
+
+<blockquote>
+<strong>G001:</strong> "No documentation on encryption or the SQLite Encryption Extension (SEE)"<br>
+Key terms: documentation, encryption, sqlite, encryption, extension, (see) &mdash; 6 terms<br>
+Scout matched: "documentation", "sqlite" = 2/6 = 33% &mdash; <span class="bad">FAIL</span>
+</blockquote>
+<blockquote>
+<strong>G002:</strong> "No documentation on FTS5 full-text search internals, tokenizers, or ranking"<br>
+Key terms: documentation, full-text, search, internals, tokenizers, ranking &mdash; 6 terms<br>
+Scout matched: "documentation" = 1/6 = 17% &mdash; <span class="bad">FAIL</span>
+</blockquote>
+<blockquote>
+<strong>G003:</strong> "No documentation on the online backup API (sqlite3_backup_init, step, finish)"<br>
+Key terms: documentation, online, backup, (sqlite3_backup_init,, step,, finish) &mdash; 6 terms<br>
+Scout matched: "documentation" = 1/6 = 17% &mdash; <span class="bad">FAIL</span>
+</blockquote>
+
+<p>The scout DID produce 22 gaps covering missing examples, missing benchmarks, missing error handling, and more. But none mentioned encryption/SEE, FTS5, or the backup API specifically. These expected gaps describe topics <em>entirely absent from the source documents</em>. The scout cannot know to mention "encryption" or "FTS5" unless it has prior knowledge of SQLite's full feature surface &mdash; the four source documents simply never mention these features. The agent instructions tell it to look for gaps in what IS documented, not to hypothesize about what an ideal documentation set would cover.</p>
+
+<p>The gap_detection dimension is effectively <strong>unwinnable</strong> under the current rubric. It requires world knowledge that a document-extraction agent should not be expected to have, and the keyword-matching threshold is miscalibrated for descriptions containing domain-specific jargon.</p>
+
+<h2>4. Why Couldn't the Editor Improve the Score?</h2>
+
+<p>Three compounding factors:</p>
+
+<ol>
+<li><strong>Ceiling effect.</strong> The baseline already achieves 94.4% finding recall, 100% on five other dimensions. The only improvable dimensions are finding_recall (+2 findings, worth ~1.4 composite points) and gap_detection (worth 10 points but unwinnable). The theoretical maximum composite with gap_detection locked at 0.0 is ~0.929. The gap to close is only 0.043 points.</li>
+
+<li><strong>Negative-sum edits.</strong> The editor's changes added instruction text to a small model (Haiku) that was already near its instruction-following capacity for this task. Round 2 had no effect; round 3 actively degraded recall (from 94% to 73%) and verbatim quality (from 100% to 93%). More instructions did not help &mdash; they confused the agent or forced it to spend time on low-value activities, pushing it toward the timeout and degrading output quality.</li>
+
+<li><strong>Editor cannot see the real problem.</strong> The skill-gap data showed 2 missed prose findings and gap_detection=0.0. The editor correctly tried to fix finding recall but had no information about WHY gap_detection was zero (the rubric mismatch). It could not know that gap_detection is structurally unwinnable. The editor eventually tried switching models entirely (round 5), which was creative but invalid &mdash; the loop is designed to optimize Haiku-specific instructions, not pick models.</li>
+</ol>
+
+<h2>5. Options</h2>
+
+<div class="option">
+<h3>Option A: Fix the Rubric's Gap Expectations</h3>
+<p class="option-effort">Effort: Low (30 min) | Impact: Unlocks 10% of composite score</p>
+<p>Replace the three "world knowledge" gaps (G001-G003) with gaps that can be detected from the source documents themselves. Examples: "Performance doc mentions WAL mode but doesn't document WAL-mode page size interaction" or "C API doc describes sqlite3_open_v2 flags but doesn't show SQLITE_OPEN_NOMUTEX usage." These are gaps a document scanner CAN identify because they reference content that IS in the docs but is incomplete.</p>
+<p><strong>Tradeoff:</strong> Changes the benchmark definition, so historical comparisons break. But the current gap_detection is measuring the wrong thing &mdash; it tests world knowledge, not extraction quality.</p>
+</div>
+
+<div class="option">
+<h3>Option B: Increase the Timeout to 600 Seconds</h3>
+<p class="option-effort">Effort: Trivial (config change) | Impact: Eliminates ~60% of failures</p>
+<p>The baseline takes 198s. Round 3 (the only completed non-baseline round with instruction changes) took 363s. A 600s timeout gives 3x the baseline and accommodates instruction bloat. The ESP32-S3 benchmark completes faster (~150s baseline), so this is SQLite-specific.</p>
+<p><strong>Tradeoff:</strong> Slower iteration. 100 rounds at 600s worst-case = 17 hours vs 8.3 hours at 300s. Consider making timeout benchmark-specific in the config file.</p>
+</div>
+
+<div class="option">
+<h3>Option C: Add Benchmark-Specific Timeout to Config</h3>
+<p class="option-effort">Effort: Low (code + config) | Impact: Structural fix for all benchmarks</p>
+<p>Add a <code>"timeout_s"</code> field to <code>haiku-sqlite.json</code> (and other benchmark configs). The loop reads this instead of a hardcoded default. SQLite gets 600s; ESP32-S3 keeps 300s. This scales to future benchmarks of varying sizes without needing to pick a single global value.</p>
+<p><strong>Tradeoff:</strong> Requires a small loop code change, but is forward-compatible and prevents this class of problem from recurring.</p>
+</div>
+
+<div class="option">
+<h3>Option D: Constrain the Editor's Edit Scope</h3>
+<p class="option-effort">Effort: Medium (editor prompt change) | Impact: Prevents wasted rounds</p>
+<p>The editor in round 5 changed <code>model: haiku</code> to <code>model: sonnet</code> in the agent file &mdash; outside the optimization scope. Add constraints to the editor prompt: "Do not change the model field, frontmatter metadata, or tool list. Only modify instruction text." Also add: "The agent's time budget is tight. Do not add new mandatory passes, verification steps, or increase extraction targets &mdash; these risk timeout. Prefer rewording existing instructions over adding new ones."</p>
+<p><strong>Tradeoff:</strong> Limits editor creativity, but prevents wasted rounds on invalid or counterproductive changes. The editor already demonstrated that adding more text hurts Haiku's performance.</p>
+</div>
+
+<div class="option">
+<h3>Option E: Give the Editor the Gap Scoring Formula</h3>
+<p class="option-effort">Effort: Low (editor prompt change) | Impact: Enables gap_detection improvement</p>
+<p>The editor sees <code>gap_detection: 0.0</code> but has no idea how the scorer works or what it expects. If the editor knew that gap_detection does keyword matching against specific expected descriptions, it could potentially craft instructions that prime the scout to mention those topics. For example: "After recording gaps from the documents, consider whether the documentation set is missing coverage of common database features like encryption, full-text search, or backup APIs."</p>
+<p><strong>Tradeoff:</strong> This is "teaching to the test." The agent would be hard-coded to mention specific gaps rather than developing general gap-detection ability. It improves the benchmark number without improving the agent's real-world utility.</p>
+</div>
+
+<h2>6. Recommended Approach</h2>
+
+<p>Apply <strong>A + C + D</strong> together:</p>
+<ol>
+<li><strong>Fix the rubric</strong> (Option A) so gap_detection measures something achievable from the source documents. This is the single biggest issue &mdash; 10% of the composite score is structurally unwinnable.</li>
+<li><strong>Add per-benchmark timeout</strong> (Option C) so SQLite gets 600s while ESP32-S3 keeps 300s. This prevents 60% of rounds from producing no usable data.</li>
+<li><strong>Constrain the editor</strong> (Option D) to prevent model-switching and instruction bloat that caused both the regression in round 3 and the timeouts in rounds 4-5.</li>
+</ol>
+
+<p>Skip Option E &mdash; it optimizes for the benchmark metric rather than the agent's general capability, which defeats the training loop's purpose.</p>
+
+</body>
+</html>

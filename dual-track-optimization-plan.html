@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dual-Track Research Agent Optimization Plan</title>
+<style>
+  :root {
+    --bg: #1a1b26;
+    --surface: #24283b;
+    --surface2: #2f3347;
+    --border: #3b4261;
+    --text: #c0caf5;
+    --text-muted: #565f89;
+    --heading: #7aa2f7;
+    --accent: #9ece6a;
+    --accent2: #e0af68;
+    --accent3: #f7768e;
+    --code-bg: #1f2335;
+    --link: #7dcfff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { color: var(--heading); font-size: 1.8rem; margin-bottom: 0.5rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+  h2 { color: var(--accent); font-size: 1.3rem; margin-top: 2rem; margin-bottom: 0.75rem; padding-left: 0.5rem; border-left: 3px solid var(--accent); }
+  h3 { color: var(--accent2); font-size: 1.1rem; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  p, li { margin-bottom: 0.5rem; }
+  ul, ol { padding-left: 1.5rem; }
+  .context { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; }
+  .track { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1.5rem 0; }
+  .track-haiku { border-left: 4px solid #9ece6a; }
+  .track-sonnet { border-left: 4px solid #7aa2f7; }
+  .track-shared { border-left: 4px solid #e0af68; }
+  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-haiku { background: #2d3a2d; color: #9ece6a; }
+  .badge-sonnet { background: #1f2d4a; color: #7aa2f7; }
+  .badge-both { background: #3a3020; color: #e0af68; }
+  .badge-create { background: #1a3a2a; color: #73daca; }
+  .badge-modify { background: #3a2a1a; color: #e0af68; }
+  code { background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 3px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; color: #bb9af7; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; line-height: 1.5; margin: 0.75rem 0; color: var(--text); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9em; }
+  th { background: var(--surface2); color: var(--heading); text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid var(--border); }
+  td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: var(--surface); }
+  .loop-diagram { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.5rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; text-align: center; color: var(--accent); }
+  .metric { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 1rem; margin: 0.25rem; text-align: center; }
+  .metric-value { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  .metric-label { font-size: 0.75rem; color: var(--text-muted); }
+  .fix-item { background: var(--surface2); border-radius: 4px; padding: 0.5rem 0.75rem; margin: 0.4rem 0; border-left: 3px solid var(--accent3); }
+  .build-step { display: flex; align-items: flex-start; gap: 0.75rem; margin: 0.75rem 0; }
+  .step-num { background: var(--heading); color: var(--bg); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  .note { background: #1a2a3a; border: 1px solid #2a4a6a; border-radius: 6px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.9em; }
+  .note::before { content: "Note: "; color: var(--link); font-weight: 600; }
+  .warn { background: #2a1a1a; border: 1px solid #6a2a2a; border-radius: 6px; padding: 0.75rem 1rem; margin: 1rem 0; font-size: 0.9em; }
+  .warn::before { content: "Important: "; color: var(--accent3); font-weight: 600; }
+  .source-list { list-style: none; padding: 0; }
+  .source-list li { background: var(--surface2); border-radius: 4px; padding: 0.6rem 0.75rem; margin: 0.4rem 0; border-left: 3px solid var(--link); }
+  .source-list li strong { color: var(--link); }
+  .roles-table td:first-child { font-weight: 600; color: var(--accent2); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<h1>Dual-Track Research Agent Optimization</h1>
+<p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+  Autoresearch-style loop for Claude Code research plugin &middot; March 2026 &middot; ESP32-S3 Benchmark
+</p>
+
+<div class="context">
+  <p>This system iteratively improves research agent instructions by running a loop: edit the agent's instruction file, run a benchmark research task, score the output, and keep or discard the change based on whether the score improved. Two parallel optimization tracks target different agent types.</p>
+  <p style="margin-top:0.5rem">The benchmark uses <strong>real ESP32-S3 documentation</strong> cached locally for deterministic, repeatable scoring. No synthetic data.</p>
+</div>
+
+<!-- ============================================ -->
+<h2>How It Works</h2>
+<!-- ============================================ -->
+
+<table class="roles-table">
+  <tr><th>Role</th><th>Who</th><th>What They Do</th></tr>
+  <tr><td>Optimizer</td><td>Your main Claude Code conversation (Opus)</td><td>Decides what to change in the instruction file, makes the edit, runs the benchmark, reads the score, decides keep/discard</td></tr>
+  <tr><td>Test Subject</td><td>Fresh agent spawned each experiment (Haiku or Sonnet)</td><td>Receives the modified instructions, processes benchmark sources, outputs structured JSON</td></tr>
+  <tr><td>Judge</td><td><code>score.py</code> (Python script, no LLM)</td><td>Reads the JSON output, compares against rubric of expected findings, outputs a composite score 0.0&ndash;1.0</td></tr>
+</table>
+
+<div class="loop-diagram">
+  edit instruction file &rarr; git commit &rarr; spawn agent &rarr; score output &rarr; keep or discard &rarr; repeat forever
+</div>
+
+<div class="warn">No optimization loops will run until explicitly triggered. This plan only builds the infrastructure.</div>
+
+<!-- ============================================ -->
+<h2>Benchmark: ESP32-S3 Capabilities</h2>
+<!-- ============================================ -->
+
+<div class="track" style="border-left: 4px solid var(--link);">
+  <p>Real ESP32-S3 documentation fetched and cached locally. Sources:</p>
+  <ul class="source-list">
+    <li><strong>Datasheet</strong> &mdash; Features, peripherals, pin configs, power modes<br>
+      <code style="font-size:0.8em">espressif.com/.../esp32-s3_datasheet_en.pdf</code></li>
+    <li><strong>Technical Reference Manual</strong> &mdash; Register-level: WiFi, BLE, USB-OTG, SPI, I2C, GPIO<br>
+      <code style="font-size:0.8em">docs.espressif.com/.../esp32s3/hw-reference/</code></li>
+    <li><strong>ESP-IDF Programming Guide</strong> &mdash; SDK/API docs, getting started, peripheral APIs<br>
+      <code style="font-size:0.8em">docs.espressif.com/.../esp32s3/get-started/</code></li>
+    <li><strong>ESP-DL AI Capabilities</strong> &mdash; Vector instructions, neural network acceleration<br>
+      <code style="font-size:0.8em">docs.espressif.com/projects/esp-dl/.../esp32s3/</code></li>
+    <li><strong>Community/Forum Source</strong> <span class="badge badge-sonnet">Sonnet only</span> &mdash; Real user reports, workarounds, unverified claims</li>
+  </ul>
+
+  <h3>Rubric Generation</h3>
+  <p>A Sonnet agent reads all cached sources, identifies 25&ndash;30 key verifiable facts with verbatim excerpt fragments, and outputs a draft <code>rubric.json</code>. You review and finalize before any loops run.</p>
+</div>
+
+<!-- ============================================ -->
+<h2>Track 1: Solo Haiku Scout</h2>
+<!-- ============================================ -->
+
+<div class="track track-haiku">
+  <div style="display: flex; gap: 1rem; margin: 0.5rem 0 1rem; flex-wrap: wrap;">
+    <div class="metric"><div class="metric-value">30-40</div><div class="metric-label">experiments / hour</div></div>
+    <div class="metric"><div class="metric-value">1</div><div class="metric-label">Haiku agent / run</div></div>
+    <div class="metric"><div class="metric-value">4</div><div class="metric-label">source docs</div></div>
+  </div>
+
+  <p><strong>Target file:</strong> <code>plugins/research/agents/solo-haiku-scout.md</code> <span class="badge badge-create">NEW</span></p>
+  <p>Copied from <code>research-scout.md</code> as starting point. Full rewrite allowed &mdash; the optimizer can restructure everything. Only the JSON output schema is fixed.</p>
+
+  <div class="loop-diagram">
+    edit solo-haiku-scout.md &rarr; spawn Haiku on 4 ESP32-S3 sources &rarr; score JSON &rarr; keep/discard
+  </div>
+
+  <h3>Files</h3>
+  <ol>
+    <li><code>plugins/research/agents/solo-haiku-scout.md</code> &mdash; agent instructions (the file being optimized)</li>
+    <li><code>plugins/research/commands/optimize-haiku.md</code> &mdash; loop command</li>
+  </ol>
+
+  <div class="note">Single agent processes ALL sources. No allocation splitting, no multi-agent variance. Fastest feedback loop.</div>
+</div>
+
+<!-- ============================================ -->
+<h2>Track 2: Solo Sonnet Researcher</h2>
+<!-- ============================================ -->
+
+<div class="track track-sonnet">
+  <div style="display: flex; gap: 1rem; margin: 0.5rem 0 1rem; flex-wrap: wrap;">
+    <div class="metric"><div class="metric-value">12-15</div><div class="metric-label">experiments / hour</div></div>
+    <div class="metric"><div class="metric-value">1</div><div class="metric-label">Sonnet agent / run</div></div>
+    <div class="metric"><div class="metric-value">5</div><div class="metric-label">source docs</div></div>
+  </div>
+
+  <p><strong>Target file:</strong> <code>plugins/research/agents/solo-sonnet-researcher.md</code> <span class="badge badge-create">NEW</span></p>
+  <p>A combined search+analyze agent. Outputs structured JSON findings <strong>plus</strong> a <code>synthesis</code> markdown section for downstream use by Claude.</p>
+
+  <h3>Output Format</h3>
+  <pre>{
+  "findings": [ ... ],          <span style="color:#9ece6a">// scored by score.py</span>
+  "synthesis": "## Key Findings\n...",  <span style="color:#565f89">// included but NOT scored in loop</span>
+  "cross_references": [ ... ],
+  "gaps": [ ... ],
+  "metadata": { ... }
+}</pre>
+
+  <p><strong>Scoring:</strong> Same automated <code>score.py</code> as Haiku track (JSON findings only). Synthesis quality is evaluated manually after the loop converges.</p>
+
+  <div class="loop-diagram">
+    edit solo-sonnet-researcher.md &rarr; spawn Sonnet on 5 sources &rarr; score JSON &rarr; keep/discard
+  </div>
+
+  <h3>Files</h3>
+  <ol>
+    <li><code>plugins/research/agents/solo-sonnet-researcher.md</code> &mdash; agent instructions</li>
+    <li><code>plugins/research/benchmark/sources/esp32s3/community-thread.md</code> &mdash; cached forum source</li>
+    <li><code>plugins/research/benchmark/rubric-sonnet.json</code> &mdash; extended rubric</li>
+    <li><code>plugins/research/commands/optimize-sonnet.md</code> &mdash; loop command</li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<h2>Scoring Dimensions</h2>
+<!-- ============================================ -->
+
+<table>
+  <tr><th>Dimension</th><th>Weight</th><th>What It Measures</th></tr>
+  <tr><td>Finding Recall</td><td>25%</td><td>Did the agent find the expected facts? (string match against rubric fragments)</td></tr>
+  <tr><td>Verbatim Quality</td><td>20%</td><td>Are excerpts actually copied from the source? (substring comparison)</td></tr>
+  <tr><td>Category Coverage</td><td>15%</td><td>Findings spread across all core categories?</td></tr>
+  <tr><td>Precision</td><td>15%</td><td>Are findings well-formed with all required fields?</td></tr>
+  <tr><td>Cross-References</td><td>10%</td><td>Did it identify relationships between sources?</td></tr>
+  <tr><td>Gap Detection</td><td>10%</td><td>Did it identify missing information?</td></tr>
+  <tr><td>Structure Quality</td><td>5%</td><td>Valid JSON with correct schema?</td></tr>
+</table>
+
+<div class="note">All scoring is deterministic Python &mdash; no LLM involved in judging. Same script for both tracks.</div>
+
+<!-- ============================================ -->
+<h2>Audit Fixes (Applied to Shared Infrastructure)</h2>
+<!-- ============================================ -->
+
+<div class="track track-shared">
+  <h3>score.py Fixes</h3>
+  <div class="fix-item">Placeholder detection: regex instead of <code>startswith("[")</code> &mdash; was catching markdown links and JSON arrays</div>
+  <div class="fix-item">Category coverage: exact match instead of bidirectional substring &mdash; was inflating scores</div>
+  <div class="fix-item">Verbatim window: <code>max(5, ...)</code> floor &mdash; short excerpts could pass by coincidence</div>
+  <div class="fix-item">New: cross-reference and gap scoring functions</div>
+
+  <h3>optimize.md Fixes</h3>
+  <div class="fix-item">Resume protocol &mdash; recover state from results.tsv after conversation crash</div>
+  <div class="fix-item">Inline JSON schema &mdash; don't rely on agent reading another file</div>
+  <div class="fix-item">3-minute experiment timeout &mdash; kill hung agents</div>
+  <div class="fix-item">Crash retry logic &mdash; retry once if fixable, then revert</div>
+  <div class="fix-item">Source pre-check &mdash; verify benchmark files exist before starting</div>
+  <div class="fix-item">Rewind guidance &mdash; 15+ consecutive discards triggers revert to best</div>
+  <div class="fix-item">Plateau detection &mdash; 10 consecutive discards triggers radical changes</div>
+  <div class="fix-item">Baseline logging &mdash; explicit first entry in results.tsv</div>
+</div>
+
+<!-- ============================================ -->
+<h2>All Files</h2>
+<!-- ============================================ -->
+
+<table>
+  <tr><th>File</th><th>Action</th><th>Track</th></tr>
+  <tr><td><code>benchmark/sources/esp32s3/*.md</code></td><td><span class="badge badge-create">CREATE</span> cached docs (4-5 files)</td><td><span class="badge badge-both">Both</span></td></tr>
+  <tr><td><code>benchmark/rubric.json</code></td><td><span class="badge badge-create">CREATE</span> generated from cached content</td><td><span class="badge badge-haiku">Haiku</span></td></tr>
+  <tr><td><code>benchmark/rubric-sonnet.json</code></td><td><span class="badge badge-create">CREATE</span> extended w/ community source</td><td><span class="badge badge-sonnet">Sonnet</span></td></tr>
+  <tr><td><code>benchmark/score.py</code></td><td><span class="badge badge-modify">MODIFY</span> audit fixes</td><td><span class="badge badge-both">Both</span></td></tr>
+  <tr><td><code>agents/solo-haiku-scout.md</code></td><td><span class="badge badge-create">CREATE</span></td><td><span class="badge badge-haiku">Haiku</span></td></tr>
+  <tr><td><code>commands/optimize-haiku.md</code></td><td><span class="badge badge-create">CREATE</span></td><td><span class="badge badge-haiku">Haiku</span></td></tr>
+  <tr><td><code>agents/solo-sonnet-researcher.md</code></td><td><span class="badge badge-create">CREATE</span></td><td><span class="badge badge-sonnet">Sonnet</span></td></tr>
+  <tr><td><code>commands/optimize-sonnet.md</code></td><td><span class="badge badge-create">CREATE</span></td><td><span class="badge badge-sonnet">Sonnet</span></td></tr>
+  <tr><td><code>commands/optimize.md</code></td><td><span class="badge badge-modify">MODIFY</span> shared fixes</td><td><span class="badge badge-both">Both</span></td></tr>
+</table>
+<p style="color: var(--text-muted); font-size: 0.85em;">All paths relative to <code>plugins/research/</code></p>
+
+<!-- ============================================ -->
+<h2>Build Order</h2>
+<!-- ============================================ -->
+
+<div class="build-step"><div class="step-num">1</div><div><strong>Fetch and cache ESP32-S3 sources</strong> &mdash; WebFetch docs, save to <code>benchmark/sources/esp32s3/</code></div></div>
+<div class="build-step"><div class="step-num">2</div><div><strong>Generate rubric</strong> &mdash; Sonnet reads cached sources, identifies 25-30 key facts. User reviews and finalizes.</div></div>
+<div class="build-step"><div class="step-num">3</div><div><strong>Apply audit fixes</strong> to <code>score.py</code> and <code>optimize.md</code></div></div>
+<div class="build-step"><div class="step-num">4</div><div><strong>Build Haiku track</strong> &mdash; <code>solo-haiku-scout.md</code> + <code>optimize-haiku.md</code></div></div>
+<div class="build-step"><div class="step-num">5</div><div><strong>Build Sonnet track</strong> &mdash; community source, <code>solo-sonnet-researcher.md</code>, <code>rubric-sonnet.json</code>, <code>optimize-sonnet.md</code></div></div>
+<div class="build-step"><div class="step-num">6</div><div><strong>Verify</strong> &mdash; run one baseline experiment on each track (no loop, just one benchmark + score)</div></div>
+
+<div class="warn">Loops will NOT run until you explicitly say to start them.</div>
+
+<!-- ============================================ -->
+<h2>Verification Checklist</h2>
+<!-- ============================================ -->
+
+<ol>
+  <li>Cached sources exist in <code>benchmark/sources/esp32s3/</code> with real content (&gt;1KB each)</li>
+  <li>Rubric has 25-30 expected findings with specific verbatim excerpt fragments</li>
+  <li><code>python3 score.py</code> scores all 7 dimensions correctly on test JSON</li>
+  <li>Solo Haiku baseline: spawn agent, score output, verify reasonable baseline (expect 0.4&ndash;0.6)</li>
+  <li>Solo Sonnet baseline: spawn agent, score JSON + synthesis, verify scorer works</li>
+  <li>Run 3 experiments on each track manually to confirm loop works end-to-end</li>
+</ol>
+
+<hr>
+<p style="color: var(--text-muted); font-size: 0.85em; text-align: center; margin-top: 1rem;">
+  Based on Karpathy's autoresearch &middot; Adapted for Claude Code research plugin &middot; ESP32-S3 benchmark
+</p>
+
+</body>
+</html>
