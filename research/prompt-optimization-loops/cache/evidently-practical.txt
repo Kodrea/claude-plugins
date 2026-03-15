@@ -1,0 +1,2 @@
+https://www.evidentlyai.com/blog/automated-prompt-optimization
+Practical implementation. Loop: execute->score->log->decide->generate. Data split 40/40/20 train/val/test. Early stopping via max_iterations, min_score_gain, target_score. Feedback-driven mutation analyzes classification failures. Explicit anti-overfitting instruction in prompts. Multiple starts mitigate stochastic variance. 5-10 labeled examples often sufficient.

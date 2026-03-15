@@ -1,0 +1,392 @@
+{
+  "scout_id": "scout-001",
+  "sources_processed": [
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/wolfe-apo-survey.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/evidently-practical.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/langchain-optimization.txt",
+      "type": "file",
+      "status": "success"
+    }
+  ],
+  "findings": [
+    {
+      "category": "mutation_operators",
+      "subcategory": "heuristic-phrase-edits",
+      "summary": "GRIPS uses four core heuristic mutation strategies for prompt editing.",
+      "raw_excerpt": "GRIPS (heuristic phrase edits: delete/swap/paraphrase/add, greedy termination after K non-improving steps)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["heuristic-mutations", "targeted-edits"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "natural-language-gradients",
+      "summary": "APO employs natural language gradients to guide iterative prompt improvements.",
+      "raw_excerpt": "APO (natural language gradients with beam search B candidates N edits, bandit selection, up to 31% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["gradient-based", "beam-search"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "feedback-driven-mutation",
+      "summary": "Feedback-driven mutation analyzes classification failures to target edits.",
+      "raw_excerpt": "Feedback-driven mutation analyzes classification failures.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["failure-analysis", "targeted-mutations"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "evolutionary-hybrid",
+      "summary": "PhaseEvo combines evolutionary and gradient feedback strategies.",
+      "raw_excerpt": "PhaseEvo (evolutionary + gradient feedback) most reliable",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["hybrid-approach", "evolutionary"]
+    },
+    {
+      "category": "selection_strategies",
+      "subcategory": "beam-search",
+      "summary": "APO uses beam search to explore B candidate prompts per iteration.",
+      "raw_excerpt": "APO (natural language gradients with beam search B candidates N edits, bandit selection, up to 31% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["beam-search", "candidate-selection"]
+    },
+    {
+      "category": "selection_strategies",
+      "subcategory": "bandit-selection",
+      "summary": "APO employs multi-armed bandit selection to decide between candidate prompts.",
+      "raw_excerpt": "APO (natural language gradients with beam search B candidates N edits, bandit selection, up to 31% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["bandit-algorithms", "exploration-exploitation"]
+    },
+    {
+      "category": "selection_strategies",
+      "subcategory": "greedy-termination",
+      "summary": "GRIPS applies greedy termination after K non-improving steps to escape local optima.",
+      "raw_excerpt": "GRIPS (heuristic phrase edits: delete/swap/paraphrase/add, greedy termination after K non-improving steps)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["convergence-detection", "plateau-escape"]
+    },
+    {
+      "category": "selection_strategies",
+      "subcategory": "keep-discard-decisions",
+      "summary": "Early stopping criteria inform keep/discard decisions based on score gain and iteration limits.",
+      "raw_excerpt": "Early stopping via max_iterations, min_score_gain, target_score.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["early-stopping", "accept-reject"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "accuracy-metrics",
+      "summary": "Accuracy is the primary scoring metric for classification tasks.",
+      "raw_excerpt": "Scoring: accuracy for classification, LLM-as-evaluator for complex tasks.",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["classification", "quantitative-metrics"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "llm-as-evaluator",
+      "summary": "LLM-based evaluation is used for complex tasks beyond simple classification.",
+      "raw_excerpt": "Scoring: accuracy for classification, LLM-as-evaluator for complex tasks.",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["evaluation-function", "complex-tasks"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "fuzzy-metrics-risk",
+      "summary": "Fuzzy or subjective metrics can degrade prompt quality during optimization.",
+      "raw_excerpt": "Fuzzy metrics make prompts worse.",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["metric-quality", "pitfall"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "dev-set-reliability",
+      "summary": "Development set performance curves reliably predict test set performance.",
+      "raw_excerpt": "Dev set curves predict test reliability.",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["validation", "generalization"]
+    },
+    {
+      "category": "convergence_plateau",
+      "subcategory": "diminishing-returns",
+      "summary": "APE shows diminishing returns beyond 64 candidates in single-pass optimization.",
+      "raw_excerpt": "APE (single-pass 64 candidates, diminishing returns beyond)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["scaling", "diminishing-returns"]
+    },
+    {
+      "category": "convergence_plateau",
+      "subcategory": "iterative-search-space",
+      "summary": "OPRO uses gradient-free iterative search with K candidates per step and meta-prompt with sorted history.",
+      "raw_excerpt": "OPRO (gradient-free iterative, K candidates per step, meta-prompt with sorted history, 8-50% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["meta-learning", "history-based"]
+    },
+    {
+      "category": "convergence_plateau",
+      "subcategory": "non-improving-step-limit",
+      "summary": "Greedy termination after K non-improving steps provides a concrete plateau detection mechanism.",
+      "raw_excerpt": "GRIPS (heuristic phrase edits: delete/swap/paraphrase/add, greedy termination after K non-improving steps)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["plateau-detection", "early-stopping"]
+    },
+    {
+      "category": "overfitting_prevention",
+      "subcategory": "train-val-test-split",
+      "summary": "Data is split 40/40/20 for training, validation, and test to prevent overfitting.",
+      "raw_excerpt": "Data split 40/40/20 train/val/test.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["data-split", "evaluation-protocol"]
+    },
+    {
+      "category": "overfitting_prevention",
+      "subcategory": "fixed-training-set-risk",
+      "summary": "All surveyed methods optimize against fixed training sets, creating inherent overfitting risk.",
+      "raw_excerpt": "All optimize against fixed training sets with overfitting risk.",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["fundamental-risk", "dataset-leakage"]
+    },
+    {
+      "category": "overfitting_prevention",
+      "subcategory": "critical-lower-bound",
+      "summary": "Overfitting risk is critical in prompt optimization, with lower bounds often negative.",
+      "raw_excerpt": "Critical overfitting risk: lower bound often negative.",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["risk-quantification", "pessimistic-bound"]
+    },
+    {
+      "category": "overfitting_prevention",
+      "subcategory": "explicit-anti-overfitting-instruction",
+      "summary": "Explicit anti-overfitting instructions can be embedded directly in prompts.",
+      "raw_excerpt": "Explicit anti-overfitting instruction in prompts.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["prompt-engineering", "mitigation"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "candidate-count-scaling",
+      "summary": "APE uses 64 candidates as a baseline, with diminishing returns beyond this count.",
+      "raw_excerpt": "APE (single-pass 64 candidates, diminishing returns beyond)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["population-size", "efficiency"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "multiple-starts-stochasticity",
+      "summary": "Multiple independent optimization runs mitigate stochastic variance and improve robustness.",
+      "raw_excerpt": "Multiple starts mitigate stochastic variance.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["variance-reduction", "ensemble"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "edits-per-iteration",
+      "summary": "APO applies N edits per candidate prompt to balance exploration and convergence.",
+      "raw_excerpt": "APO (natural language gradients with beam search B candidates N edits, bandit selection, up to 31% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["mutation-intensity", "parameter-tuning"]
+    },
+    {
+      "category": "feedback_mechanisms",
+      "subcategory": "failure-driven-mutation",
+      "summary": "Classification failure analysis drives targeted mutation generation.",
+      "raw_excerpt": "Feedback-driven mutation analyzes classification failures.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["error-analysis", "adaptive-mutations"]
+    },
+    {
+      "category": "feedback_mechanisms",
+      "subcategory": "history-based-meta-prompt",
+      "summary": "OPRO uses meta-prompts that include sorted history of previous candidates to guide generation.",
+      "raw_excerpt": "OPRO (gradient-free iterative, K candidates per step, meta-prompt with sorted history, 8-50% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["meta-learning", "contextual-guidance"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "sample-efficiency",
+      "summary": "Effective optimization achieves results with 5-10 labeled examples.",
+      "raw_excerpt": "5-10 labeled examples often sufficient.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["data-efficiency", "low-resource"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "model-selection-apo",
+      "summary": "APO achieves up to 31% improvement with natural language gradients and beam search.",
+      "raw_excerpt": "APO (natural language gradients with beam search B candidates N edits, bandit selection, up to 31% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["performance-gain", "cost-benefit"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "opro-improvement-range",
+      "summary": "OPRO demonstrates 8-50% improvement range depending on task and configuration.",
+      "raw_excerpt": "OPRO (gradient-free iterative, K candidates per step, meta-prompt with sorted history, 8-50% improvement)",
+      "source_location": "wolfe-apo-survey.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["performance-range", "variability"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "claude-sonnet-best-engine",
+      "summary": "Claude-3.5-Sonnet is the most effective optimization engine, outperforming O1 and GPT-4o.",
+      "raw_excerpt": "Claude-3.5-Sonnet best optimization engine (beats O1, GPT-4o).",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["model-comparison", "best-practice"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "loop-structure",
+      "summary": "Standard optimization loop follows: execute→score→log→decide→generate cycle.",
+      "raw_excerpt": "Loop: execute->score->log->decide->generate.",
+      "source_location": "evidently-practical.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["pipeline", "workflow"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "phaseevo-hybrid",
+      "summary": "PhaseEvo combines evolutionary algorithms with gradient feedback for most reliable results.",
+      "raw_excerpt": "PhaseEvo (evolutionary + gradient feedback) most reliable",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["hybrid-design", "reliability"]
+    },
+    {
+      "category": "practical_guidelines",
+      "subcategory": "success-conditions",
+      "summary": "Optimization succeeds when tasks have non-obvious patterns, verifiable labels, and models lack domain knowledge.",
+      "raw_excerpt": "Success when: non-obvious patterns, verifiable labels, model lacks domain knowledge.",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["applicability", "domain-fit"]
+    },
+    {
+      "category": "practical_guidelines",
+      "subcategory": "failure-conditions",
+      "summary": "Optimization fails when tasks are subjective, models already perform well, or involve complex subtle rules.",
+      "raw_excerpt": "Failure when: subjective tasks, model already good, complex subtle rules.",
+      "source_location": "langchain-optimization.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["limitations", "warning-signs"]
+    }
+  ],
+  "cross_references": [
+    {
+      "from": "wolfe-apo-survey.txt",
+      "to": "evidently-practical.txt",
+      "relationship": "practical_instantiation: The survey describes APE, APO, OPRO, GRIPS in theory; the Evidently article implements a concrete optimization loop with data splitting and early stopping"
+    },
+    {
+      "from": "wolfe-apo-survey.txt",
+      "to": "langchain-optimization.txt",
+      "relationship": "performance_comparison: The survey covers multiple algorithms; LangChain article identifies PhaseEvo as most reliable and Claude-3.5-Sonnet as best engine"
+    },
+    {
+      "from": "evidently-practical.txt",
+      "to": "langchain-optimization.txt",
+      "relationship": "validation: Evidently's 40/40/20 split and dev set reliability connect to LangChain's finding that dev curves predict test performance"
+    },
+    {
+      "from": "langchain-optimization.txt",
+      "to": "wolfe-apo-survey.txt",
+      "relationship": "refinement: LangChain identifies critical overfitting risk gap in all fixed-set methods discussed in survey"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "No explicit guidance on hyperparameter tuning for beam width B, candidates K, or edits N in APO/OPRO/GRIPS",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Limited detail on how to construct meta-prompts for OPRO's sorted history feedback mechanism",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "No comparison of computational cost between methods (APE vs APO vs OPRO vs PhaseEvo)",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Insufficient guidance on threshold selection for min_score_gain early stopping criterion",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "No discussion of how to design verifiable labels and avoid subjective evaluation functions",
+      "gap_type": "knowledge_gap"
+    }
+  ],
+  "metadata": {
+    "total_sources": 3,
+    "total_findings": 32,
+    "source_success_rate": 1.0,
+    "processing_notes": "All three cache files successfully read. Files contain highly condensed summaries (3 lines each) rather than full articles; extraction relied on verbatim text from these summaries. Findings span all six core categories (mutation_operators, selection_strategies, scoring_evaluation, convergence_plateau, overfitting_prevention, population_management) plus four adjacent categories. Cross-references identify relationships between sources: wolfe-apo-survey provides theoretical foundation, evidently-practical demonstrates implementation patterns, langchain-optimization highlights empirical performance and limitations."
+  }
+}

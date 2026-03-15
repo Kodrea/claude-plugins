@@ -1,0 +1,267 @@
+{
+  "scout_id": "scout-002",
+  "sources_processed": [
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/dspy-optimizers.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/promptbreeder.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "/home/cody/Projects/utilities/claude-plugins/research/prompt-optimization-loops/cache/turintech-evolutionary.txt",
+      "type": "file",
+      "status": "success"
+    }
+  ],
+  "findings": [
+    {
+      "category": "architecture_patterns",
+      "subcategory": "optimizer_types",
+      "summary": "DSPy provides multiple optimizer types with different trade-offs: few-shot bootstrapping, coordinate ascent, Bayesian discrete search, and stochastic mini-batch approaches.",
+      "raw_excerpt": "BootstrapFewShot (teacher-generated demos, metric-validated). BootstrapFewShotWithRandomSearch (multiple attempts, 50+ examples). COPRO (coordinate ascent hill-climbing for instructions). MIPROv2 (3-stage: bootstrap traces, grounded proposals, Bayesian discrete search, 40+ trials 200+ examples). SIMBA (stochastic mini-batch, targets high-variability examples, self-reflective improvement rules). GEPA (trajectory reflection, domain feedback integration). BetterTogether (sequences prompt and weight optimization).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "optimizer_catalog", "architecture_comparison"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "cost_and_duration",
+      "summary": "DSPy optimizers typically cost around $2 and require approximately 10 minutes to run.",
+      "raw_excerpt": "Typical cost $2, ~10 minutes.",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["cost_metric", "performance_metric"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "llm_based_mutations",
+      "summary": "PromptBreeder employs multiple mutation strategies including LLM paraphrasing and edit operators for structural transformation.",
+      "raw_excerpt": "PromptBreeder mutation operators: LLM paraphrasing, edit operators (swap/drop/clarify), structural rewrites.",
+      "source_location": "promptbreeder.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["PromptBreeder", "mutation_types", "operator_catalog"]
+    },
+    {
+      "category": "selection_strategies",
+      "subcategory": "selection_mechanisms",
+      "summary": "PromptBreeder uses multiple selection mechanisms including elitism, roulette-wheel selection, softmax-based fitness ranking, and UCB-based exploration-exploitation.",
+      "raw_excerpt": "Selection: elitism, roulette-wheel, softmax over fitness, UCB exploration-exploitation.",
+      "source_location": "promptbreeder.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["PromptBreeder", "selection_methods", "bandit_algorithms"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "population_parameters",
+      "summary": "PromptBreeder recommends population size 20-50, generations 10-30, with mutation pool of 5-20 candidates.",
+      "raw_excerpt": "Population size 20-50, generations 10-30, mutation pool 5-20.",
+      "source_location": "promptbreeder.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["PromptBreeder", "hyperparameters", "population_sizing"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "crossover_strategies",
+      "summary": "PromptBreeder implements four crossover mechanisms: single-point, uniform, section-wise, and clause-level swapping.",
+      "raw_excerpt": "Crossover: single-point, uniform, section-wise, clause-level swapping.",
+      "source_location": "promptbreeder.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["PromptBreeder", "genetic_operators", "recombination"]
+    },
+    {
+      "category": "feedback_mechanisms",
+      "subcategory": "reflective_modules",
+      "summary": "PromptBreeder uses reflective modules with exponential smoothing alpha parameter 0.7-0.9 and maintains long-term reflection memory.",
+      "raw_excerpt": "Reflective modules with smoothing alpha=0.7-0.9. Long-term reflection memory.",
+      "source_location": "promptbreeder.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["PromptBreeder", "reflection", "meta_learning"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "ensemble_mutations",
+      "summary": "Turintech Artemis platform uses semantic genetic algorithms with LLM ensemble mutations to generate candidate variations.",
+      "raw_excerpt": "Semantic genetic algorithms with LLM ensemble mutations.",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "ensemble_methods", "semantic_mutations"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "hierarchical_optimization",
+      "summary": "Turintech uses hierarchical evaluation with Local (GA for independent components) and Global (Bayesian for interacting components) optimization levels.",
+      "raw_excerpt": "Local (GA for independent components) + Global (Bayesian for interacting).",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "hierarchical_search", "decomposition"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "filter_strategies",
+      "summary": "Turintech employs hierarchical evaluation with cheap filters followed by expensive benchmarks to manage cost.",
+      "raw_excerpt": "Hierarchical evaluation: cheap filters then expensive benchmarks.",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "cost_control", "evaluation_strategy"]
+    },
+    {
+      "category": "scoring_evaluation",
+      "subcategory": "effectiveness_metrics",
+      "summary": "Turintech Artemis reports improvement rates of 9.3-36.9% depending on baseline tuning quality and metric definition.",
+      "raw_excerpt": "Results 9.3-36.9% improvement.",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "performance_gains", "benchmarking"]
+    },
+    {
+      "category": "practical_guidelines",
+      "subcategory": "applicability_conditions",
+      "summary": "Evolutionary optimization works best when baselines are poorly tuned and metrics are well-defined.",
+      "raw_excerpt": "Works best with poorly tuned baselines and well-defined metrics.",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "best_practices", "prerequisites"]
+    },
+    {
+      "category": "cost_optimization",
+      "subcategory": "computational_cost",
+      "summary": "Turintech reports variable computation cost ranging from 9-671 hours depending on problem complexity and configuration.",
+      "raw_excerpt": "Cost varies 9-671 hours.",
+      "source_location": "turintech-evolutionary.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["Turintech", "computational_cost", "scalability"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "stage_progression",
+      "summary": "MIPROv2 uses a three-stage approach: bootstrap traces for diversity, grounded proposals for relevance, and Bayesian discrete search for optimization.",
+      "raw_excerpt": "MIPROv2 (3-stage: bootstrap traces, grounded proposals, Bayesian discrete search, 40+ trials 200+ examples).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "MIPROv2", "multi_stage_optimization"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "sample_sizing",
+      "summary": "MIPROv2 generates 40+ trials across 200+ examples during its optimization process.",
+      "raw_excerpt": "40+ trials 200+ examples",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "MIPROv2", "trial_planning"]
+    },
+    {
+      "category": "population_management",
+      "subcategory": "sample_sizing",
+      "summary": "BootstrapFewShotWithRandomSearch generates 50+ examples during optimization exploration.",
+      "raw_excerpt": "BootstrapFewShotWithRandomSearch (multiple attempts, 50+ examples).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "BootstrapFewShot", "sample_generation"]
+    },
+    {
+      "category": "mutation_operators",
+      "subcategory": "target_selection",
+      "summary": "SIMBA targets high-variability examples for mutation, focusing optimization effort where uncertainty is highest.",
+      "raw_excerpt": "SIMBA (stochastic mini-batch, targets high-variability examples, self-reflective improvement rules).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "high",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "SIMBA", "variance_targeting"]
+    },
+    {
+      "category": "convergence_plateau",
+      "subcategory": "plateau_detection",
+      "summary": "COPRO uses coordinate ascent hill-climbing for instruction optimization, which is subject to local optima and plateau challenges.",
+      "raw_excerpt": "COPRO (coordinate ascent hill-climbing for instructions).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "COPRO", "hill_climbing_limitations"]
+    },
+    {
+      "category": "feedback_mechanisms",
+      "subcategory": "trajectory_analysis",
+      "summary": "GEPA integrates domain feedback and trajectory reflection to guide optimization decisions.",
+      "raw_excerpt": "GEPA (trajectory reflection, domain feedback integration).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "GEPA", "feedback_integration"]
+    },
+    {
+      "category": "architecture_patterns",
+      "subcategory": "joint_optimization",
+      "summary": "BetterTogether sequences prompt and weight optimization in a coordinated manner rather than treating them independently.",
+      "raw_excerpt": "BetterTogether (sequences prompt and weight optimization).",
+      "source_location": "dspy-optimizers.txt:2",
+      "relevance": "medium",
+      "claim_era": "2025-2026",
+      "tags": ["DSPy", "BetterTogether", "coupled_optimization"]
+    }
+  ],
+  "cross_references": [
+    {
+      "from": "dspy-optimizers.txt",
+      "to": "promptbreeder.txt",
+      "relationship": "Both implement stochastic mini-batch and gradient-based selection strategies, though DSPy SIMBA targets high-variability examples while PromptBreeder uses roulette-wheel and UCB mechanisms"
+    },
+    {
+      "from": "dspy-optimizers.txt",
+      "to": "turintech-evolutionary.txt",
+      "relationship": "Both platforms provide multiple optimizer types with hierarchical evaluation; DSPy uses Bayesian discrete search while Turintech uses ensemble mutations with local GA and global Bayesian search"
+    },
+    {
+      "from": "promptbreeder.txt",
+      "to": "turintech-evolutionary.txt",
+      "relationship": "Both use genetic algorithm foundations with population-based search; PromptBreeder emphasizes reflective modules while Turintech emphasizes semantic mutations and hierarchical filtering"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "No specific convergence criteria or stopping conditions for PromptBreeder iterations",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "DSPy documentation does not provide guidance on avoiding overfitting in optimization procedures",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Turintech cost model details and how computational cost relates to problem size/complexity",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Specific hyperparameter tuning strategies for PromptBreeder smoothing alpha and mutation pool sizes",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "DSPy guidance on how to detect and escape local optima in COPRO's coordinate ascent",
+      "gap_type": "knowledge_gap"
+    }
+  ],
+  "metadata": {
+    "total_sources": 3,
+    "total_findings": 20,
+    "source_success_rate": 1.0,
+    "processing_notes": "All three cached sources successfully processed. dspy-optimizers.txt contained comprehensive catalog of 7 optimizer types with architectural patterns and cost metrics. promptbreeder.txt provided detailed mutation operators, selection strategies, and population parameters. turintech-evolutionary.txt described hierarchical evaluation architecture and reported effectiveness metrics. Cross-references identified shared concepts (genetic algorithms, hierarchical search, ensemble mutations) across platforms. Gaps identified in convergence criteria, overfitting prevention strategies, and detailed cost modeling."
+  }
+}

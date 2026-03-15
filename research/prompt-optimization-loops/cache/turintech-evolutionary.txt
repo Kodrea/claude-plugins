@@ -1,0 +1,2 @@
+https://www.turintech.ai/blog/how-evolutionary-optimization-outperforms-manual-tuning-for-llm-based-agents
+Artemis platform. Semantic genetic algorithms with LLM ensemble mutations. Local (GA for independent components) + Global (Bayesian for interacting). Hierarchical evaluation: cheap filters then expensive benchmarks. Results 9.3-36.9% improvement. Works best with poorly tuned baselines and well-defined metrics. No-code interface. Cost varies 9-671 hours.

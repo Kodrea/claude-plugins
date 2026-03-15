@@ -1,0 +1,23 @@
+{
+  "topic": "Automated LLM prompt optimization and agent instruction tuning",
+  "domain": "web",
+  "slug": "prompt-optimization-loops",
+  "created": "2026-03-15T02:10:00Z",
+  "sources": [
+    {"type": "url", "location": "https://arxiv.org/html/2512.09108", "relevance_note": "Evolving Excellence: automated optimization of LLM agents via evolutionary strategies", "validated": true},
+    {"type": "url", "location": "https://cameronrwolfe.substack.com/p/automatic-prompt-optimization", "relevance_note": "Comprehensive survey of APE, APO, OPRO, GRIPS techniques", "validated": true},
+    {"type": "url", "location": "https://www.evidentlyai.com/blog/automated-prompt-optimization", "relevance_note": "Practical implementation of prompt optimization loops with overfitting prevention", "validated": true},
+    {"type": "url", "location": "https://dspy.ai/learn/optimization/optimizers/", "relevance_note": "DSPy optimizer catalog: MIPRO, SIMBA, GEPA, BootstrapFewShot", "validated": true},
+    {"type": "url", "location": "https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1613007/full", "relevance_note": "GAAPO: genetic algorithm for prompt optimization", "validated": true},
+    {"type": "url", "location": "https://arxiv.org/html/2507.03223", "relevance_note": "SI-Agent: feedback-driven system instruction generation and tuning", "validated": true},
+    {"type": "url", "location": "https://blog.langchain.com/exploring-prompt-optimization/", "relevance_note": "LangChain practical findings on optimization convergence and overfitting", "validated": true},
+    {"type": "url", "location": "https://www.turintech.ai/blog/how-evolutionary-optimization-outperforms-manual-tuning-for-llm-based-agents", "relevance_note": "Artemis platform: evolutionary optimization with hierarchical evaluation", "validated": true},
+    {"type": "url", "location": "https://www.emergentmind.com/topics/promptbreeder", "relevance_note": "PromptBreeder: self-referential mutation operators and population management", "validated": true},
+    {"type": "url", "location": "https://arxiv.org/pdf/2512.02840", "relevance_note": "promptolution: unified framework for prompt optimization", "validated": true}
+  ],
+  "extraction_categories": {
+    "core": ["mutation_operators", "selection_strategies", "scoring_evaluation", "convergence_plateau", "overfitting_prevention", "population_management"],
+    "adjacent": ["architecture_patterns", "cost_optimization", "feedback_mechanisms", "practical_guidelines"]
+  },
+  "stages_completed": ["scout", "analyst", "auditor"]
+}

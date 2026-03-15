@@ -1,0 +1,2 @@
+https://www.emergentmind.com/topics/promptbreeder
+PromptBreeder mutation operators: LLM paraphrasing, edit operators (swap/drop/clarify), structural rewrites. Selection: elitism, roulette-wheel, softmax over fitness, UCB exploration-exploitation. Population size 20-50, generations 10-30, mutation pool 5-20. Crossover: single-point, uniform, section-wise, clause-level swapping. Reflective modules with smoothing alpha=0.7-0.9. Long-term reflection memory.

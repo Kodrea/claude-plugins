@@ -1,0 +1,2 @@
+https://arxiv.org/html/2507.03223
+SI-Agent feedback-driven instruction generation. Three feedback mechanisms: LLM-based refinement (critiques in meta-prompts), evolutionary selection (scores as fitness), preference learning. Maintains SI history and scores. 20-50 iterations typical convergence. Multi-dimensional evaluation: task performance + readability. Quantitative+qualitative feedback most effective. Historical context prevents repeated failures.

@@ -1,0 +1,2 @@
+https://blog.langchain.com/exploring-prompt-optimization
+Claude-3.5-Sonnet best optimization engine (beats O1, GPT-4o). PhaseEvo (evolutionary + gradient feedback) most reliable. Critical overfitting risk: lower bound often negative. Success when: non-obvious patterns, verifiable labels, model lacks domain knowledge. Failure when: subjective tasks, model already good, complex subtle rules. Dev set curves predict test reliability. Fuzzy metrics make prompts worse.
