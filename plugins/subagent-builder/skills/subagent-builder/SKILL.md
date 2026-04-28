@@ -7,6 +7,9 @@ description: >
   agents", "create an agent definition", "what frontmatter fields does a subagent need",
   "configure a subagent for Y task". Routes role characteristics to effort first;
   model and tools follow from that choice.
+  Also triggers on: "review this agent", "audit this agent definition",
+  "is this agent well-shaped", "check this subagent file", "critique this agent".
+  Use /review-agent for an explicit audit of an existing agent file.
 allowed-tools: [Read, Write, Glob, Grep, AskUserQuestion, Task]
 ---
 
@@ -90,6 +93,22 @@ For every agent definition, justify these six decisions in the body or a comment
 5. **permissionMode** — explicit choice + why (never rely on session inheritance)
 6. **isolation** — single-subagent or team-teammate + one-sentence rationale
 </required_outputs>
+
+<review_mode>
+When asked to review or audit an existing agent definition (or when /review-agent fires):
+
+1. Read the agent file completely
+2. Apply the six required decisions as a checklist — mark each:
+   - ✓ present and correct
+   - ⚠ present but questionable (explain why; suggest fix)
+   - ✗ missing or wrong (state what's absent; give the corrected value)
+3. Run the anti-pattern quick check below — flag every match with its number
+4. Give a one-paragraph overall assessment
+5. Do NOT rewrite the agent file unless the user asks
+
+Read `reference/anti-patterns.md` for full anti-pattern context (use the Glob path from
+§ Navigating the Reference Layer to resolve the installed path first).
+</review_mode>
 
 ## Agent File Destination
 
