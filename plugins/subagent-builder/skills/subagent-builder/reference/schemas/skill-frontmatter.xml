@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from research/sources/official-skills.md -->
+<schema source_doc="official-skills.md" extracted_at="2026-04-28T12:00:00-04:00" field_count="14">
+
+  <frontmatter_field name="name">
+    type: string
+    required: false
+    default: directory name
+    applicability: cli
+    excerpt: |
+      Display name for the skill. If omitted, uses the directory name. Lowercase letters,
+      numbers, and hyphens only (max 64 characters).
+    caveats:
+      - "Max 64 characters. Lowercase letters, numbers, and hyphens only."
+      - "If omitted, the directory name is used as the slash-command name."
+      - "Name collision resolution: enterprise > personal > project. Plugin skills use plugin-name:skill-name namespace."
+    notes_for_skill:
+      - "The subagent-builder skill should set this explicitly to control the /slash-command name."
+      - "Name must be unique within the same priority level; conflicts resolved by priority tier."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="description">
+    type: string
+    required: false
+    default: first paragraph of markdown content
+    applicability: cli
+    excerpt: |
+      What the skill does and when to use it. Claude uses this to decide when to apply
+      the skill. If omitted, uses the first paragraph of markdown content. Front-load
+      the key use case: the combined `description` and `when_to_use` text is truncated
+      at 1,536 characters in the skill listing to reduce context usage.
+    caveats:
+      - "Combined description + when_to_use is capped at 1,536 characters in the skill listing."
+      - "If disable-model-invocation is true, the description is NOT loaded into context — Claude never sees it."
+      - "With user-invocable: false, the description IS in context but the user cannot invoke it from the / menu."
+      - "Front-load the key use case since text gets truncated from the end."
+    notes_for_skill:
+      - "Critical for auto-invocation: Claude uses this field to decide when to load the skill automatically."
+      - "For a subagent-builder skill, description should front-load trigger phrases like 'create a subagent', 'build an agent', 'add a subagent'."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="when_to_use">
+    type: string
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Additional context for when Claude should invoke the skill, such as trigger phrases
+      or example requests. Appended to `description` in the skill listing and counts
+      toward the 1,536-character cap.
+    caveats:
+      - "Counts toward the shared 1,536-character cap with description — use sparingly."
+      - "Appended to description in the skill listing; not a separate context window entry."
+    notes_for_skill:
+      - "Useful for listing alternate phrasings that trigger the skill (e.g. 'make an agent', 'set up a subagent')."
+      - "Keep short since it eats into the description budget."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="argument-hint">
+    type: string
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Hint shown during autocomplete to indicate expected arguments. Example: `[issue-number]`
+      or `[filename] [format]`.
+    caveats:
+      - "Display only — does not enforce argument structure or count."
+    notes_for_skill:
+      - "Useful for documenting expected input format in the autocomplete menu."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="disable-model-invocation">
+    type: boolean
+    required: false
+    default: false
+    values: [true, false]
+    applicability: cli
+    excerpt: |
+      Set to `true` to prevent Claude from automatically loading this skill. Use for
+      workflows you want to trigger manually with `/name`. Default: `false`.
+
+      `disable-model-invocation: true`: Only you can invoke the skill. Use this for
+      workflows with side effects or that you want to control timing, like `/commit`,
+      `/deploy`, or `/send-slack-message`. You don't want Claude deciding to deploy
+      because your code looks ready.
+    caveats:
+      - "When true, the skill description is NOT loaded into Claude's context — Claude is unaware the skill exists."
+      - "Per the invocation table: Description not in context, full skill loads only when the user invokes."
+      - "The user-invocable field only controls menu visibility, not Skill tool access. Use disable-model-invocation: true to block programmatic invocation."
+    notes_for_skill:
+      - "A subagent-builder skill should set this to true if it has significant side effects (file creation in .claude/agents/)."
+      - "If you want Claude to proactively suggest the skill, leave it false and rely on description matching."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Control who invokes a skill"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="user-invocable">
+    type: boolean
+    required: false
+    default: true
+    values: [true, false]
+    applicability: cli
+    excerpt: |
+      Set to `false` to hide from the `/` menu. Use for background knowledge users
+      shouldn't invoke directly. Default: `true`.
+
+      `user-invocable: false`: Only Claude can invoke the skill. Use this for background
+      knowledge that isn't actionable as a command. A `legacy-system-context` skill
+      explains how an old system works. Claude should know this when relevant, but
+      `/legacy-system-context` isn't a meaningful action for users to take.
+    caveats:
+      - "Controls menu visibility only — does NOT block Claude's Skill tool access."
+      - "To block Claude from invoking a skill, use disable-model-invocation: true instead."
+      - "When false, description is still in context so Claude can find and load the skill automatically."
+    notes_for_skill:
+      - "A subagent-builder skill is intentionally user-invocable (user types /create-subagent or similar), so leave this true."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Control who invokes a skill"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="allowed-tools">
+    type: list
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Tools Claude can use without asking permission when this skill is active. Accepts
+      a space-separated string or a YAML list.
+
+      The `allowed-tools` field grants permission for the listed tools while the skill
+      is active, so Claude can use them without prompting you for approval. It does not
+      restrict which tools are available: every tool remains callable, and your permission
+      settings still govern tools that are not listed.
+    caveats:
+      - "Grants permission for listed tools only while the skill is active — not a global permission change."
+      - "Does NOT restrict other tools: every tool remains callable; unlisted tools still follow normal permission settings."
+      - "Accepts space-separated string (e.g. 'Read Grep Bash(git *)') or YAML list format."
+      - "To block tools, use deny rules in permission settings, not this field."
+    notes_for_skill:
+      - "A subagent-builder skill writing .claude/agents/ files will need Write and possibly Read pre-approved here."
+      - "Example: allowed-tools: Read Write Bash(ls *)"
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Pre-approve tools for a skill"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="model">
+    type: string
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Model to use when this skill is active.
+    caveats:
+      - "Documented in the frontmatter reference table but no additional detail is provided in the source."
+    notes_for_skill:
+      - "Can be used to target a specific Claude model for this skill's execution."
+    unknown_in_official_docs: true
+    unknown_passage: |
+      "Model to use when this skill is active." — No further detail on valid values,
+      format, or interaction with context: fork / agent field is provided in this source.
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="effort">
+    type: enum
+    required: false
+    default: inherits from session
+    values: [low, medium, high, xhigh, max]
+    applicability: cli
+    excerpt: |
+      Effort level when this skill is active. Overrides the session effort level.
+      Default: inherits from session. Options: `low`, `medium`, `high`, `xhigh`, `max`;
+      available levels depend on the model.
+    caveats:
+      - "Available effort levels depend on the active model — not all values apply to all models."
+      - "Overrides the session-level effort setting for the duration of the skill."
+    notes_for_skill:
+      - "A subagent-builder skill may benefit from 'high' or 'xhigh' effort for thorough agent design."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="context">
+    type: enum
+    required: false
+    default: none
+    values: [fork]
+    applicability: cli
+    excerpt: |
+      Set to `fork` to run in a forked subagent context.
+
+      Add `context: fork` to your frontmatter when you want a skill to run in isolation.
+      The skill content becomes the prompt that drives the subagent. It won't have access
+      to your conversation history.
+
+      With `context: fork`, you write the task in your skill and pick an agent type to
+      execute it. [...] The `agent` field determines the execution environment (model,
+      tools, and permissions).
+    caveats:
+      - "context: fork only makes sense for skills with explicit instructions. If your skill contains guidelines like 'use these API conventions' without a task, the subagent receives the guidelines but no actionable prompt, and returns without meaningful output."
+      - "The forked subagent does NOT have access to the main conversation history."
+      - "The skill content becomes the subagent's task/prompt — not a system prompt."
+      - "CLAUDE.md is loaded into the forked subagent context."
+    notes_for_skill:
+      - "Use context: fork when the skill should run independently (e.g. generating a subagent definition file without polluting main context)."
+      - "Pairs with the agent field to control which agent type runs the task."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Run skills in a subagent"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="agent">
+    type: string
+    required: false
+    default: general-purpose
+    applicability: cli
+    excerpt: |
+      Which subagent type to use when `context: fork` is set.
+
+      The `agent` field specifies which subagent configuration to use. Options include
+      built-in agents (`Explore`, `Plan`, `general-purpose`) or any custom subagent
+      from `.claude/agents/`. If omitted, uses `general-purpose`.
+
+      | Approach                   | System prompt                             | Task             | Also loads         |
+      | Skill with `context: fork` | From agent type (`Explore`, `Plan`, etc.) | SKILL.md content | CLAUDE.md          |
+    caveats:
+      - "Only meaningful when context: fork is also set. Has no effect without it."
+      - "Built-in values: Explore, Plan, general-purpose."
+      - "Also accepts any custom subagent name from .claude/agents/."
+      - "If omitted, defaults to general-purpose."
+      - "The agent type determines the system prompt, available tools, and permissions for the forked subagent."
+    notes_for_skill:
+      - "A subagent-builder skill running context: fork should specify agent: general-purpose (or a custom capable agent) since it needs Write tool access to create agent files."
+      - "Explore agent is read-only optimized — avoid for skills that write files."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Run skills in a subagent"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="hooks">
+    type: object
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Hooks scoped to this skill's lifecycle. See Hooks in skills and agents for
+      configuration format.
+    caveats:
+      - "Configuration format is documented in the Hooks reference (/en/hooks#hooks-in-skills-and-agents), not in this source."
+    notes_for_skill:
+      - "Could be used to trigger post-processing after a subagent-builder skill creates an agent file (e.g. validate frontmatter)."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="paths">
+    type: list
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Glob patterns that limit when this skill is activated. Accepts a comma-separated
+      string or a YAML list. When set, Claude loads the skill automatically only when
+      working with files matching the patterns. Uses the same format as path-specific rules.
+    caveats:
+      - "Only restricts automatic activation — does not prevent manual /skill-name invocation."
+      - "Accepts comma-separated string or YAML list."
+    notes_for_skill:
+      - "Not relevant for a general-purpose subagent-builder skill; leave unset so it can trigger in any project."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+  <frontmatter_field name="shell">
+    type: enum
+    required: false
+    default: bash
+    values: [bash, powershell]
+    applicability: cli
+    excerpt: |
+      Shell to use for `` !`command` `` and ` ```! ` blocks in this skill. Accepts
+      `bash` (default) or `powershell`. Setting `powershell` runs inline shell commands
+      via PowerShell on Windows. Requires `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`.
+    caveats:
+      - "powershell option requires CLAUDE_CODE_USE_POWERSHELL_TOOL=1 environment variable."
+      - "Only affects inline shell injection (!`command` and ```! blocks), not Bash tool calls."
+    notes_for_skill:
+      - "Leave as default (bash) for a cross-platform subagent-builder skill unless explicitly targeting Windows."
+    source:
+      url: https://code.claude.com/docs/en/skills
+      section: "Frontmatter reference"
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </frontmatter_field>
+
+</schema>

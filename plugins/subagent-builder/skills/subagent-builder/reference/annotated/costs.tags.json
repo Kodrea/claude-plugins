@@ -1,0 +1,196 @@
+{
+  "source_doc": "costs.md",
+  "source_url": "https://code.claude.com/docs/en/costs",
+  "tagged_at": "2026-04-28T12:30:00-04:00",
+  "tagger_version": "1.0",
+  "emergent_tags_introduced": [
+    {
+      "tag": "rate-limits",
+      "reason": "rate limit recommendations section (TPM/RPM table) covers distinct operational topic not captured by seed tags"
+    },
+    {
+      "tag": "context-awareness",
+      "reason": "already listed as emergent in parse plan; paragraphs about managing context size and compaction strategies"
+    },
+    {
+      "tag": "compaction",
+      "reason": "already listed as emergent in parse plan; paragraphs specifically about auto-compaction and /compact behavior"
+    },
+    {
+      "tag": "agent-teams",
+      "reason": "already listed as emergent in parse plan; paragraphs about multi-agent cost behavior"
+    }
+  ],
+  "paragraphs": {
+    "claude-code-charges-by-api-token-consumpti": {
+      "anchor": "claude-code-charges-by-api-token-consumpti",
+      "tags": ["cost"],
+      "notes": ""
+    },
+    "across-enterprise-deployments-the-average": {
+      "anchor": "across-enterprise-deployments-the-average",
+      "tags": ["cost"],
+      "notes": ""
+    },
+    "this-page-covers-how-to-track-your-costs": {
+      "anchor": "this-page-covers-how-to-track-your-costs",
+      "tags": ["cost"],
+      "notes": ""
+    },
+    "cost-command-api-users-note": {
+      "anchor": "cost-command-api-users-note",
+      "tags": ["cost", "caveat"],
+      "notes": "Key caveat for Max/Pro subscribers: /cost is for API billing; use /stats for usage patterns instead"
+    },
+    "the-cost-command-provides-detailed-token": {
+      "anchor": "the-cost-command-provides-detailed-token",
+      "tags": ["cost"],
+      "notes": ""
+    },
+    "when-using-claude-api-you-can-set-workspac": {
+      "anchor": "when-using-claude-api-you-can-set-workspac",
+      "tags": ["cost", "api-only"],
+      "notes": ""
+    },
+    "when-you-first-authenticate-claude-code": {
+      "anchor": "when-you-first-authenticate-claude-code",
+      "tags": ["cost", "api-only"],
+      "notes": ""
+    },
+    "on-bedrock-vertex-and-foundry-claude-code": {
+      "anchor": "on-bedrock-vertex-and-foundry-claude-code",
+      "tags": ["cost", "api-only"],
+      "notes": ""
+    },
+    "when-setting-up-claude-code-for-teams": {
+      "anchor": "when-setting-up-claude-code-for-teams",
+      "tags": ["cost", "rate-limits"],
+      "notes": ""
+    },
+    "rate-limit-table-tpm-rpm": {
+      "anchor": "rate-limit-table-tpm-rpm",
+      "tags": ["cost", "rate-limits"],
+      "notes": "TPM/RPM per-user recommendations table by org size"
+    },
+    "for-example-if-you-have-200-users-you-migh": {
+      "anchor": "for-example-if-you-have-200-users-you-migh",
+      "tags": ["cost", "rate-limits"],
+      "notes": ""
+    },
+    "if-you-anticipate-scenarios-with-unusually": {
+      "anchor": "if-you-anticipate-scenarios-with-unusually",
+      "tags": ["cost", "rate-limits", "caveat"],
+      "notes": ""
+    },
+    "agent-teams-spawn-multiple-claude-code-ins": {
+      "anchor": "agent-teams-spawn-multiple-claude-code-ins",
+      "tags": ["cost", "agent-teams"],
+      "notes": ""
+    },
+    "to-keep-agent-team-costs-manageable": {
+      "anchor": "to-keep-agent-team-costs-manageable",
+      "tags": ["cost", "agent-teams", "model", "decision"],
+      "notes": "Prescriptive list: use Sonnet for teammates, keep teams small, focused spawn prompts, clean up idle teams. Key decision guidance for agent team design."
+    },
+    "token-costs-scale-with-context-size": {
+      "anchor": "token-costs-scale-with-context-size",
+      "tags": ["cost", "compaction", "context-awareness"],
+      "notes": "Explains prompt caching and auto-compaction as the two automatic cost optimizations Claude Code applies"
+    },
+    "use-cost-to-check-your-current-token-usage": {
+      "anchor": "use-cost-to-check-your-current-token-usage",
+      "tags": ["cost", "tools", "context-awareness"],
+      "notes": ""
+    },
+    "clear-between-tasks-use-clear-to-start-fre": {
+      "anchor": "clear-between-tasks-use-clear-to-start-fre",
+      "tags": ["cost", "context-awareness", "compaction", "decision"],
+      "notes": "Covers /clear, /compact with custom instructions, /rename, /resume — the core context management workflow"
+    },
+    "you-can-also-customize-compaction-behavior": {
+      "anchor": "you-can-also-customize-compaction-behavior",
+      "tags": ["cost", "compaction"],
+      "notes": ""
+    },
+    "sonnet-handles-most-coding-tasks-well-and": {
+      "anchor": "sonnet-handles-most-coding-tasks-well-and",
+      "tags": ["cost", "model", "decision"],
+      "notes": "Prescriptive model selection guidance: Sonnet for most tasks, Opus for complex reasoning, Haiku for simple subagent tasks"
+    },
+    "mcp-tool-definitions-are-deferred-by-defau": {
+      "anchor": "mcp-tool-definitions-are-deferred-by-defau",
+      "tags": ["cost", "tools"],
+      "notes": ""
+    },
+    "prefer-cli-tools-when-available-tools-like": {
+      "anchor": "prefer-cli-tools-when-available-tools-like",
+      "tags": ["cost", "tools", "decision"],
+      "notes": ""
+    },
+    "code-intelligence-plugins-give-claude-prec": {
+      "anchor": "code-intelligence-plugins-give-claude-prec",
+      "tags": ["cost", "tools"],
+      "notes": ""
+    },
+    "custom-hooks-can-preprocess-data-before-cl": {
+      "anchor": "custom-hooks-can-preprocess-data-before-cl",
+      "tags": ["cost", "hooks", "decision"],
+      "notes": "Key decision guidance: hooks reduce context by preprocessing (grep errors from logs instead of full file)"
+    },
+    "a-skill-can-give-claude-domain-knowledge-s": {
+      "anchor": "a-skill-can-give-claude-domain-knowledge-s",
+      "tags": ["cost", "skills", "decision"],
+      "notes": "Key decision guidance: skills front-load domain knowledge so Claude doesn't explore to understand structure"
+    },
+    "for-example-this-pretooluse-hook-filters-t": {
+      "anchor": "for-example-this-pretooluse-hook-filters-t",
+      "tags": ["cost", "hooks"],
+      "notes": "Concrete PreToolUse example: filter test output to failures only before Bash"
+    },
+    "your-claudemd-file-is-loaded-into-context": {
+      "anchor": "your-claudemd-file-is-loaded-into-context",
+      "tags": ["cost", "skills", "decision"],
+      "notes": "Decision: move workflow-specific instructions from CLAUDE.md to skills; keep CLAUDE.md under 200 lines"
+    },
+    "extended-thinking-is-enabled-by-default-be": {
+      "anchor": "extended-thinking-is-enabled-by-default-be",
+      "tags": ["cost", "thinking", "decision"],
+      "notes": "Key paragraph for thinking-budget cost trade-offs: /effort, /config, MAX_THINKING_TOKENS=8000 as levers"
+    },
+    "running-tests-fetching-documentation-or-pr": {
+      "anchor": "running-tests-fetching-documentation-or-pr",
+      "tags": ["cost", "decision"],
+      "notes": "Subagent delegation as cost strategy: verbose output stays in subagent context"
+    },
+    "agent-teams-use-approximately-7x-more-toke": {
+      "anchor": "agent-teams-use-approximately-7x-more-toke",
+      "tags": ["cost", "agent-teams", "caveat"],
+      "notes": "Quantified caveat: 7x token multiplier for agent teams in plan mode"
+    },
+    "vague-requests-like-improve-this-codebase": {
+      "anchor": "vague-requests-like-improve-this-codebase",
+      "tags": ["cost", "decision"],
+      "notes": ""
+    },
+    "for-longer-or-more-complex-work-these-habit": {
+      "anchor": "for-longer-or-more-complex-work-these-habit",
+      "tags": ["cost"],
+      "notes": ""
+    },
+    "use-plan-mode-for-complex-tasks-press-shift": {
+      "anchor": "use-plan-mode-for-complex-tasks-press-shift",
+      "tags": ["cost", "decision", "permissions"],
+      "notes": "Plan mode, /rewind, verification targets, incremental testing — all cost-reduction habits for complex tasks"
+    },
+    "claude-code-uses-tokens-for-some-backgroun": {
+      "anchor": "claude-code-uses-tokens-for-some-backgroun",
+      "tags": ["cost", "caveat"],
+      "notes": "Background usage is small (under $0.04/session) but exists even when idle"
+    },
+    "claude-code-regularly-receives-updates-tha": {
+      "anchor": "claude-code-regularly-receives-updates-tha",
+      "tags": ["cost"],
+      "notes": ""
+    }
+  }
+}

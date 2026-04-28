@@ -1,0 +1,193 @@
+{
+  "source_doc": "memory.md",
+  "source_url": "https://code.claude.com/docs/en/memory",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "how-claude-remembers-your-project": {
+      "anchor": "how-claude-remembers-your-project",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "Page title and intro: two memory mechanisms — CLAUDE.md (user-written) and auto memory (Claude-written)."
+    },
+    "each-claude-code-session-begins": {
+      "anchor": "each-claude-code-session-begins",
+      "tags": ["memory", "persistent-memory", "context-window"],
+      "notes": "States fresh context window per session; two carry-across mechanisms introduced."
+    },
+    "claude-md-vs-auto-memory": {
+      "anchor": "claude-md-vs-auto-memory",
+      "tags": ["memory", "memory-scope", "persistent-memory", "project-memory", "user-memory"],
+      "notes": "Comparison table: CLAUDE.md (user-written, instructions/rules, project/user/org scope, loaded every session in full) vs auto memory (Claude-written, learnings/patterns, per working tree, first 200 lines or 25KB). Key scope distinction."
+    },
+    "subagents-can-also-maintain": {
+      "anchor": "subagents-can-also-maintain",
+      "tags": ["memory", "persistent-memory", "memory-scope"],
+      "notes": "Subagents can maintain their own auto memory; links to subagent configuration."
+    },
+    "claude-md-files-intro": {
+      "anchor": "claude-md-files-intro",
+      "tags": ["memory", "persistent-memory", "project-memory"],
+      "notes": "CLAUDE.md files are plain-text markdown; read at session start."
+    },
+    "when-to-add-to-claude-md": {
+      "anchor": "when-to-add-to-claude-md",
+      "tags": ["memory", "persistent-memory", "decision"],
+      "notes": "Trigger conditions for adding to CLAUDE.md: repeated mistakes, code review catches, repeated corrections, onboarding-level context. Keep to facts needed every session; multi-step or scoped content goes to skills or rules."
+    },
+    "choose-where-to-put-claude-md-files": {
+      "anchor": "choose-where-to-put-claude-md-files",
+      "tags": ["memory", "memory-scope", "project-memory", "user-memory", "scope"],
+      "notes": "Four scopes: managed policy (org-wide, not excludable), project instructions (./CLAUDE.md or ./.claude/CLAUDE.md), user instructions (~/.claude/CLAUDE.md), local instructions (CLAUDE.local.md). More specific takes precedence. Files above CWD loaded at launch; subdirectory files load on demand."
+    },
+    "set-up-a-project-claude-md": {
+      "anchor": "set-up-a-project-claude-md",
+      "tags": ["memory", "project-memory"],
+      "notes": "Project CLAUDE.md stored at ./CLAUDE.md or ./.claude/CLAUDE.md. /init auto-generates from codebase analysis. CLAUDE_CODE_NEW_INIT=1 enables interactive multi-phase setup."
+    },
+    "write-effective-instructions": {
+      "anchor": "write-effective-instructions",
+      "tags": ["memory", "persistent-memory", "cost", "caveat"],
+      "notes": "Size: target under 200 lines; longer reduces adherence. Structure: markdown headers/bullets. Specificity: concrete, verifiable rules. Consistency: conflicting rules cause arbitrary picks. CLAUDE.md is context not enforced config — compliance not guaranteed."
+    },
+    "import-additional-files": {
+      "anchor": "import-additional-files",
+      "tags": ["memory", "project-memory"],
+      "notes": "@path/to/import syntax expands at launch. Relative paths resolve from the importing file. Max 5 hops recursion. External imports trigger approval dialog on first encounter."
+    },
+    "worktrees-import-workaround": {
+      "anchor": "worktrees-import-workaround",
+      "tags": ["memory", "isolation", "project-memory"],
+      "notes": "CLAUDE.local.md is worktree-local (gitignored). To share personal instructions across worktrees, import from home directory."
+    },
+    "agents-md": {
+      "anchor": "agents-md",
+      "tags": ["memory", "project-memory"],
+      "notes": "Claude Code reads CLAUDE.md, not AGENTS.md. Interop: create CLAUDE.md that @imports AGENTS.md, then appends Claude-specific instructions."
+    },
+    "how-claude-md-files-load": {
+      "anchor": "how-claude-md-files-load",
+      "tags": ["memory", "memory-scope", "project-memory"],
+      "notes": "Load order: walks up directory tree from CWD, concatenates (not overrides). CLAUDE.local.md appended after CLAUDE.md at each level (personal notes last = higher priority). Subdirectory files load on-demand when Claude reads files there."
+    },
+    "html-comments-stripped": {
+      "anchor": "html-comments-stripped",
+      "tags": ["memory", "cost"],
+      "notes": "Block-level HTML comments stripped before injection into context — free maintainer notes. Comments inside code blocks preserved. Read tool shows raw content including comments."
+    },
+    "load-from-additional-directories": {
+      "anchor": "load-from-additional-directories",
+      "tags": ["memory", "memory-scope"],
+      "notes": "--add-dir flag by default does NOT load CLAUDE.md from those dirs. Set CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1 to enable. Loads CLAUDE.md, .claude/CLAUDE.md, .claude/rules/*.md, CLAUDE.local.md from additional dir."
+    },
+    "organize-rules-with-claude-rules": {
+      "anchor": "organize-rules-with-claude-rules",
+      "tags": ["memory", "project-memory", "memory-scope", "scope"],
+      "notes": "Rules in .claude/rules/ keep instructions modular. Path-scoped rules reduce noise and context usage by only loading when matching files are read. Note distinguishes rules (always-loaded or trigger-loaded) from skills (only when invoked)."
+    },
+    "set-up-rules": {
+      "anchor": "set-up-rules",
+      "tags": ["memory", "project-memory"],
+      "notes": "Place .md files in .claude/rules/. One topic per file, descriptive filename. Discovered recursively. Rules without paths: frontmatter load at launch alongside .claude/CLAUDE.md."
+    },
+    "path-specific-rules": {
+      "anchor": "path-specific-rules",
+      "tags": ["memory", "memory-scope", "scope", "frontmatter"],
+      "notes": "YAML frontmatter with paths: field scopes rule to matching files. Trigger: when Claude reads a matching file, not on every tool use. Glob patterns supported; brace expansion available. Rules without paths: field are unconditional."
+    },
+    "share-rules-across-projects-with-symlinks": {
+      "anchor": "share-rules-across-projects-with-symlinks",
+      "tags": ["memory", "project-memory"],
+      "notes": ".claude/rules/ supports symlinks. Circular symlinks detected and handled gracefully."
+    },
+    "user-level-rules": {
+      "anchor": "user-level-rules",
+      "tags": ["memory", "user-memory", "memory-scope", "scope"],
+      "notes": "~/.claude/rules/ applies to every project. User-level rules loaded before project rules, so project rules have higher priority."
+    },
+    "manage-claude-md-for-large-teams": {
+      "anchor": "manage-claude-md-for-large-teams",
+      "tags": ["memory", "memory-scope", "permissions"],
+      "notes": "Section intro for org-wide management features."
+    },
+    "deploy-organization-wide-claude-md": {
+      "anchor": "deploy-organization-wide-claude-md",
+      "tags": ["memory", "memory-scope", "permissions"],
+      "notes": "Managed policy CLAUDE.md locations: macOS /Library/Application Support/ClaudeCode/CLAUDE.md, Linux /etc/claude-code/CLAUDE.md, Windows C:\\Program Files\\ClaudeCode\\CLAUDE.md. Cannot be excluded by individual settings. Deployed via MDM/Group Policy/Ansible."
+    },
+    "managed-vs-settings-table": {
+      "anchor": "managed-vs-settings-table",
+      "tags": ["memory", "permissions", "decision"],
+      "notes": "Clarifies managed CLAUDE.md vs managed settings. Settings = technical enforcement (deny lists, sandbox, env vars, auth). CLAUDE.md = behavioral guidance (code style, compliance reminders). Settings enforced by client; CLAUDE.md is context, not hard enforcement."
+    },
+    "exclude-specific-claude-md-files": {
+      "anchor": "exclude-specific-claude-md-files",
+      "tags": ["memory", "memory-scope", "scope"],
+      "notes": "claudeMdExcludes setting skips files by glob against absolute path. Configurable at user/project/local/managed-policy layers; arrays merge. Managed policy CLAUDE.md cannot be excluded."
+    },
+    "auto-memory-section": {
+      "anchor": "auto-memory-section",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "Auto memory intro: Claude saves notes without user intervention. Build commands, debugging insights, architecture, style, workflow habits. Claude decides what's worth saving — not every session. Requires v2.1.59+."
+    },
+    "enable-or-disable-auto-memory": {
+      "anchor": "enable-or-disable-auto-memory",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "On by default. Toggle via /memory UI or autoMemoryEnabled setting. Disable via CLAUDE_CODE_DISABLE_AUTO_MEMORY=1 env var."
+    },
+    "storage-location": {
+      "anchor": "storage-location",
+      "tags": ["memory", "persistent-memory", "memory-scope", "isolation"],
+      "notes": "~/.claude/projects/<project>/memory/ per-repo (git-derived path). All worktrees + subdirs of same repo share one directory. Outside git repo: project root used. autoMemoryDirectory setting overrides location (accepted from policy/local/user, NOT project settings to prevent redirect attacks). Machine-local; not shared across machines."
+    },
+    "memory-directory-structure": {
+      "anchor": "memory-directory-structure",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "MEMORY.md is the index entrypoint. Topic files (debugging.md, api-conventions.md) hold details. Claude maintains MEMORY.md to track what's where."
+    },
+    "how-it-works": {
+      "anchor": "how-it-works",
+      "tags": ["memory", "persistent-memory", "cost", "context-window"],
+      "notes": "First 200 lines or 25KB of MEMORY.md loaded at session start. Beyond threshold: not loaded. Topic files not loaded at startup — read on demand. CLAUDE.md loaded in full regardless of length. Claude shows 'Writing memory' / 'Recalled memory' notifications."
+    },
+    "audit-and-edit-your-memory": {
+      "anchor": "audit-and-edit-your-memory",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "Auto memory is plain markdown; edit or delete at any time. /memory command to browse."
+    },
+    "view-and-edit-with-memory": {
+      "anchor": "view-and-edit-with-memory",
+      "tags": ["memory", "persistent-memory", "user-memory", "project-memory"],
+      "notes": "/memory command lists CLAUDE.md, CLAUDE.local.md, and rules files in current session. Toggle auto memory. Open auto memory folder. 'Remember X' → auto memory; 'add to CLAUDE.md' → CLAUDE.md."
+    },
+    "troubleshoot-memory-issues": {
+      "anchor": "troubleshoot-memory-issues",
+      "tags": ["memory", "persistent-memory", "caveat"],
+      "notes": "Section intro for common issues."
+    },
+    "claude-isnt-following-my-claude-md": {
+      "anchor": "claude-isnt-following-my-claude-md",
+      "tags": ["memory", "persistent-memory", "caveat"],
+      "notes": "CLAUDE.md delivered as user message after system prompt — not enforced config. No guarantee of strict compliance, especially for vague/conflicting instructions. Debug steps: /memory to verify loading, check location, make instructions specific, check for conflicts. For system-prompt-level instructions: --append-system-prompt (automation only). InstructionsLoaded hook for debugging."
+    },
+    "i-dont-know-what-auto-memory-saved": {
+      "anchor": "i-dont-know-what-auto-memory-saved",
+      "tags": ["memory", "persistent-memory"],
+      "notes": "/memory + auto memory folder to inspect. All plain markdown."
+    },
+    "my-claude-md-is-too-large": {
+      "anchor": "my-claude-md-is-too-large",
+      "tags": ["memory", "persistent-memory", "cost", "caveat"],
+      "notes": "Files over 200 lines consume more context and may reduce adherence. Solution: @path imports or .claude/rules/ split."
+    },
+    "instructions-seem-lost-after-compact": {
+      "anchor": "instructions-seem-lost-after-compact",
+      "tags": ["memory", "persistent-memory", "compaction", "caveat"],
+      "notes": "Project-root CLAUDE.md survives /compact (re-read from disk). Nested CLAUDE.md does not auto-reload — reloads next time matching file is read. Conversation-only instructions lost unless added to CLAUDE.md."
+    },
+    "related-resources-memory": {
+      "anchor": "related-resources-memory",
+      "tags": ["memory"],
+      "notes": "Links to skills, settings, subagent memory pages."
+    }
+  }
+}

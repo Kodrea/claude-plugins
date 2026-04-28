@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema source_doc="official-plugins-reference.md" extracted_at="2026-04-28T12:00:00-04:00">
+
+  <!-- ═══════════════════════════════════════════════════════
+       MANIFEST FIELDS  (plugin.json)
+  ════════════════════════════════════════════════════════ -->
+
+  <manifest_field name="name">
+    type: string
+    required: true
+    default: (none — only required field if manifest is present)
+    applicability: cli
+    excerpt: |
+      Unique identifier (kebab-case, no spaces). This name is used for namespacing
+      components. For example, in the UI, the agent `agent-creator` for the plugin
+      with name `plugin-dev` will appear as `plugin-dev:agent-creator`.
+    caveats:
+      - "The manifest itself is optional. If omitted, Claude Code auto-discovers
+        components in default locations and derives the plugin name from the
+        directory name."
+      - "If you include a manifest, `name` is the only required field."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Required fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="version">
+    type: string
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Semantic version. If also set in the marketplace entry, `plugin.json` takes
+      priority. You only need to set it in one place.
+    caveats:
+      - "Claude Code uses the version to determine whether to update your plugin.
+        If you change your plugin's code but don't bump the version in `plugin.json`,
+        your plugin's existing users won't see your changes due to caching."
+      - "If your plugin is within a marketplace directory, you can manage the version
+        through `marketplace.json` instead and omit the `version` field from
+        `plugin.json`."
+      - "Version format: MAJOR.MINOR.PATCH (semantic versioning)."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="description">
+    type: string
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Brief explanation of plugin purpose.
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="author">
+    type: object
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Author information. Example: `{"name": "Dev Team", "email": "dev@company.com"}`
+    caveats:
+      - "Sub-fields: name (string), email (string), url (string)."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="homepage">
+    type: string
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Documentation URL.
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="repository">
+    type: string
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Source code URL.
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="license">
+    type: string
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      License identifier. Examples: `"MIT"`, `"Apache-2.0"`.
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="keywords">
+    type: array
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Discovery tags. Example: `["deployment", "ci-cd"]`
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Metadata fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="skills">
+    type: string|array
+    required: false
+    default: "skills/"
+    applicability: cli
+    excerpt: |
+      Custom skill directories containing `&lt;name&gt;/SKILL.md` (replaces default `skills/`).
+    caveats:
+      - "A custom path replaces the default. If the manifest specifies `skills`, the
+        default `skills/` directory is not scanned."
+      - "To keep the default directory and add more paths, include the default in your
+        array: `\"skills\": [\"./skills/\", \"./extras/\"]`"
+      - "When a skill path points to a directory that contains a `SKILL.md` directly,
+        the frontmatter `name` field in `SKILL.md` determines the skill's invocation
+        name. If `name` is not set in the frontmatter, the directory basename is used
+        as a fallback."
+      - "All paths must be relative to the plugin root and start with `./`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="commands">
+    type: string|array
+    required: false
+    default: "commands/"
+    applicability: cli
+    excerpt: |
+      Custom flat `.md` skill files or directories (replaces default `commands/`).
+      Example: `"./custom/cmd.md"` or `["./cmd1.md"]`
+    caveats:
+      - "A custom path replaces the default."
+      - "To keep the default directory and add more paths, include the default in your array."
+      - "All paths must be relative to the plugin root and start with `./`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="agents">
+    type: string|array
+    required: false
+    default: "agents/"
+    applicability: cli
+    excerpt: |
+      Custom agent files (replaces default `agents/`). Example: `"./custom/agents/reviewer.md"`
+    caveats:
+      - "A custom path replaces the default."
+      - "To keep the default directory and add more paths, include the default in your array."
+      - "All paths must be relative to the plugin root and start with `./`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="hooks">
+    type: string|array|object
+    required: false
+    default: "hooks/hooks.json"
+    applicability: cli
+    excerpt: |
+      Hook config paths or inline config. Example: `"./my-extra-hooks.json"`
+    caveats:
+      - "Hooks, MCP servers, and LSP servers have different semantics for handling
+        multiple sources — specifying a custom path does NOT replace the default for
+        hooks (unlike skills/commands/agents)."
+      - "Can be inline object: `{ \"PostToolUse\": [...] }`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="mcpServers">
+    type: string|array|object
+    required: false
+    default: ".mcp.json"
+    applicability: cli
+    excerpt: |
+      MCP config paths or inline config. Example: `"./my-extra-mcp-config.json"`
+    caveats:
+      - "MCP servers have different semantics for handling multiple sources — specifying
+        a custom path does NOT replace the default for MCP servers."
+      - "Can be inline object mapping server names to their configs."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="outputStyles">
+    type: string|array
+    required: false
+    default: "output-styles/"
+    applicability: cli
+    excerpt: |
+      Custom output style files/directories (replaces default `output-styles/`).
+    caveats:
+      - "A custom path replaces the default."
+      - "To keep the default directory and add more paths, include the default in your array."
+      - "All paths must be relative to the plugin root and start with `./`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="lspServers">
+    type: string|array|object
+    required: false
+    default: ".lsp.json"
+    applicability: cli
+    excerpt: |
+      Language Server Protocol configs for code intelligence (go to definition,
+      find references, etc.). Example: `"./.lsp.json"`
+    caveats:
+      - "LSP servers have different semantics for handling multiple sources — specifying
+        a custom path does NOT replace the default for LSP servers."
+      - "Can be inline object mapping language server names to their configs."
+      - "The LSP binary must be installed separately; the plugin only configures
+        how Claude Code connects to it."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="monitors">
+    type: string|array|object
+    required: false
+    default: "monitors/monitors.json"
+    applicability: cli
+    excerpt: |
+      Background Monitor configurations that auto-arm when the plugin is enabled at
+      session start or when a skill in this plugin is invoked. Example: `"./monitors.json"`
+    caveats:
+      - "A custom path replaces the default. If the manifest specifies `monitors`,
+        the default `monitors/monitors.json` is not loaded."
+      - "All paths must be relative to the plugin root and start with `./`"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="userConfig">
+    type: object
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      User-configurable values prompted at enable time. Use this instead of requiring
+      users to hand-edit `settings.json`.
+
+      Keys must be valid identifiers. Each value is available for substitution as
+      `${user_config.KEY}` in MCP and LSP server configs, hook commands, and (for
+      non-sensitive values only) skill and agent content. Values are also exported to
+      plugin subprocesses as `CLAUDE_PLUGIN_OPTION_&lt;KEY&gt;` environment variables.
+
+      Non-sensitive values are stored in `settings.json` under
+      `pluginConfigs[&lt;plugin-id&gt;].options`. Sensitive values go to the system keychain
+      (or `~/.claude/.credentials.json` where the keychain is unavailable). Keychain
+      storage is shared with OAuth tokens and has an approximately 2 KB total limit,
+      so keep sensitive values small.
+    caveats:
+      - "Each key maps to an object with `description` (string) and `sensitive` (boolean)."
+      - "Sensitive values are NOT available in skill/agent content — only in MCP/LSP
+        configs and hook commands."
+      - "Keychain has ~2 KB total limit; keep sensitive values small."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / User configuration"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="channels">
+    type: array
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Channel declarations for message injection (Telegram, Slack, Discord style).
+      Each channel binds to an MCP server that the plugin provides.
+
+      The `server` field is required and must match a key in the plugin's `mcpServers`.
+      The optional per-channel `userConfig` uses the same schema as the top-level field,
+      letting the plugin prompt for bot tokens or owner IDs when the plugin is enabled.
+    caveats:
+      - "Each channel object requires a `server` field matching a key in `mcpServers`."
+      - "Per-channel `userConfig` is optional and uses the same schema as top-level `userConfig`."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Channels"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <manifest_field name="dependencies">
+    type: array
+    required: false
+    default: (none)
+    applicability: cli
+    excerpt: |
+      Other plugins this plugin requires, optionally with semver version constraints.
+      Example: `[{ "name": "secrets-vault", "version": "~2.1.0" }]`
+    caveats:
+      - "Each entry is either a string (plugin name) or an object with `name` and
+        optional `version` (semver constraint)."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Component path fields"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </manifest_field>
+
+  <!-- ═══════════════════════════════════════════════════════
+       COMPONENT TYPES
+  ════════════════════════════════════════════════════════ -->
+
+  <component_type name="skills">
+    default_location: "skills/"
+    alternate_location: "commands/"
+    file_format: |
+      Skills are directories with `SKILL.md`. Commands are simple flat markdown files.
+      Skill structure:
+        skills/
+        ├── pdf-processor/
+        │   ├── SKILL.md
+        │   ├── reference.md (optional)
+        │   └── scripts/ (optional)
+        └── code-reviewer/
+            └── SKILL.md
+    integration_behavior: |
+      * Skills and commands are automatically discovered when the plugin is installed
+      * Claude can invoke them automatically based on task context
+      * Skills can include supporting files alongside SKILL.md
+    caveats:
+      - "Use `skills/` for new plugins; `commands/` is a legacy flat-file format."
+      - "The `commands/` directory contains flat `.md` files; `skills/` uses
+        subdirectory-per-skill with `SKILL.md`."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin components reference / Skills"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </component_type>
+
+  <component_type name="agents">
+    default_location: "agents/"
+    file_format: "Markdown files with YAML frontmatter describing agent capabilities."
+    frontmatter_fields_supported: "name, description, model, effort, maxTurns, tools, disallowedTools, skills, memory, background, isolation"
+    frontmatter_fields_excluded: "hooks, mcpServers, permissionMode (not supported for plugin-shipped agents for security reasons)"
+    isolation_valid_values: '"worktree" (only valid value)'
+    frontmatter_example: |
+      ---
+      name: agent-name
+      description: What this agent specializes in and when Claude should invoke it
+      model: sonnet
+      effort: medium
+      maxTurns: 20
+      disallowedTools: Write, Edit
+      ---
+
+      Detailed system prompt for the agent describing its role, expertise, and behavior.
+    integration_behavior: |
+      * Agents appear in the `/agents` interface
+      * Claude can invoke agents automatically based on task context
+      * Agents can be invoked manually by users
+      * Plugin agents work alongside built-in Claude agents
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin components reference / Agents"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </component_type>
+
+  <component_type name="hooks">
+    default_location: "hooks/hooks.json"
+    alternate_locations: "inline in plugin.json under `hooks` key"
+    file_format: "JSON configuration with event matchers and actions."
+    hook_types:
+      - name: "command"
+        description: "execute shell commands or scripts"
+      - name: "http"
+        description: "send the event JSON as a POST request to a URL"
+      - name: "prompt"
+        description: "evaluate a prompt with an LLM (uses `$ARGUMENTS` placeholder for context)"
+      - name: "agent"
+        description: "run an agentic verifier with tools for complex verification tasks"
+    supported_events: |
+      SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PermissionDenied,
+      PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop,
+      TaskCreated, TaskCompleted, Stop, StopFailure, TeammateIdle, InstructionsLoaded,
+      ConfigChange, CwdChanged, FileChanged, WorktreeCreate, WorktreeRemove,
+      PreCompact, PostCompact, Elicitation, ElicitationResult, SessionEnd
+    event_details:
+      - event: "PermissionDenied"
+        note: "Return `{retry: true}` to tell the model it may retry the denied tool call."
+      - event: "FileChanged"
+        note: "The `matcher` field specifies which filenames to watch."
+      - event: "WorktreeCreate"
+        note: "Replaces default git behavior."
+    hook_config_example: |
+      {
+        "hooks": {
+          "PostToolUse": [
+            {
+              "matcher": "Write|Edit",
+              "hooks": [
+                {
+                  "type": "command",
+                  "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format-code.sh"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    caveats:
+      - "Hooks respond to the same lifecycle events as user-defined hooks."
+      - "Event names are case-sensitive: `PostToolUse` not `postToolUse`."
+      - "Hook scripts must be executable (`chmod +x`)."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin components reference / Hooks"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </component_type>
+
+  <component_type name="mcp_servers">
+    manifest_key: "mcpServers"
+    default_location: ".mcp.json"
+    alternate_locations: "inline in plugin.json under `mcpServers` key"
+    file_format: "Standard MCP server configuration (JSON)."
+    config_fields:
+      - name: "command"
+        description: "The MCP server binary or executable to run."
+        required: true
+      - name: "args"
+        description: "Command-line arguments for the server."
+        required: false
+      - name: "env"
+        description: "Environment variables to set when starting the server."
+        required: false
+      - name: "cwd"
+        description: "Working directory for the server process."
+        required: false
+    config_example: |
+      {
+        "mcpServers": {
+          "plugin-database": {
+            "command": "${CLAUDE_PLUGIN_ROOT}/servers/db-server",
+            "args": ["--config", "${CLAUDE_PLUGIN_ROOT}/config.json"],
+            "env": {
+              "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data"
+            }
+          }
+        }
+      }
+    integration_behavior: |
+      * Plugin MCP servers start automatically when the plugin is enabled
+      * Servers appear as standard MCP tools in Claude's toolkit
+      * Server capabilities integrate seamlessly with Claude's existing tools
+      * Plugin servers can be configured independently of user MCP servers
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin components reference / MCP servers"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </component_type>
+
+  <component_type name="lsp_servers">
+    manifest_key: "lspServers"
+    default_location: ".lsp.json"
+    alternate_locations: "inline in plugin.json under `lspServers` key"
+    file_format: "JSON configuration mapping language server names to their configs."
+    required_fields:
+      - name: "command"
+        description: "The LSP binary to execute (must be in PATH)"
+      - name: "extensionToLanguage"
+        description: "Maps file extensions to language identifiers"
+    optional_fields:
+      - name: "args"
+        description: "Command-line arguments for the LSP server"
+      - name: "transport"
+        description: "Communication transport: `stdio` (default) or `socket`"
+        default: "stdio"
+      - name: "env"
+        description: "Environment variables to set when starting the server"
+      - name: "initializationOptions"
+        description: "Options passed to the server during initialization"
+      - name: "settings"
+        description: "Settings passed via `workspace/didChangeConfiguration`"
+      - name: "workspaceFolder"
+        description: "Workspace folder path for the server"
+      - name: "startupTimeout"
+        description: "Max time to wait for server startup (milliseconds)"
+      - name: "shutdownTimeout"
+        description: "Max time to wait for graceful shutdown (milliseconds)"
+      - name: "restartOnCrash"
+        description: "Whether to automatically restart the server if it crashes"
+      - name: "maxRestarts"
+        description: "Maximum number of restart attempts before giving up"
+    lsp_capabilities: |
+      * Instant diagnostics: Claude sees errors and warnings immediately after each edit
+      * Code navigation: go to definition, find references, and hover information
+      * Language awareness: type information and documentation for code symbols
+    config_example: |
+      {
+        "go": {
+          "command": "gopls",
+          "args": ["serve"],
+          "extensionToLanguage": {
+            ".go": "go"
+          }
+        }
+      }
+    caveats:
+      - "You must install the language server binary separately. LSP plugins configure
+        how Claude Code connects to a language server, but they don't include the server
+        itself."
+      - "If you see `Executable not found in $PATH`, install the required binary."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin components reference / LSP servers"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </component_type>
+
+  <!-- ═══════════════════════════════════════════════════════
+       INSTALLATION SCOPES
+  ════════════════════════════════════════════════════════ -->
+
+  <scope_spec>
+    description: |
+      When you install a plugin, you choose a scope that determines where the plugin
+      is available and who else can use it. Plugins use the same scope system as other
+      Claude Code configurations.
+
+      Resolution priority (higher overrides lower): enterprise/managed > user > project > local
+    scopes:
+      - name: "user"
+        settings_file: "~/.claude/settings.json"
+        use_case: "Personal plugins available across all projects (default)"
+        default: true
+      - name: "project"
+        settings_file: ".claude/settings.json"
+        use_case: "Team plugins shared via version control"
+      - name: "local"
+        settings_file: ".claude/settings.local.json"
+        use_case: "Project-specific plugins, gitignored"
+      - name: "managed"
+        settings_file: "(Managed settings — read-only, update only)"
+        use_case: "Managed plugins pushed by administrators; read-only"
+    caveats:
+      - "The `managed` scope is read-only; plugins there can be updated but not
+        disabled by the user."
+      - "`--scope project` writes to `enabledPlugins` in .claude/settings.json,
+        making the plugin available to everyone who clones the repository."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin installation scopes"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </scope_spec>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PATH BEHAVIOR RULES
+  ════════════════════════════════════════════════════════ -->
+
+  <path_rules>
+    general_rules: |
+      * All paths must be relative to the plugin root and start with `./`
+      * Components from custom paths use the same naming and namespacing rules
+      * Multiple paths can be specified as arrays
+
+    replace_vs_additive: |
+      For `skills`, `commands`, `agents`, `outputStyles`, and `monitors`, a custom path
+      REPLACES the default. If the manifest specifies `skills`, the default `skills/`
+      directory is not scanned; if it specifies `monitors`, the default
+      `monitors/monitors.json` is not loaded.
+
+      `hooks`, `mcpServers`, and `lspServers` have DIFFERENT semantics — their handling
+      of multiple sources does not simply replace the default.
+
+    keep_default_pattern: |
+      To keep the default directory and add more paths for skills, commands, agents, or
+      output styles, include the default in your array:
+        `"skills": ["./skills/", "./extras/"]`
+
+    skill_name_resolution: |
+      When a skill path points to a directory that contains a `SKILL.md` directly, for
+      example `"skills": ["./"]` pointing to the plugin root, the frontmatter `name`
+      field in `SKILL.md` determines the skill's invocation name. This gives a stable
+      name regardless of the install directory. If `name` is not set in the frontmatter,
+      the directory basename is used as a fallback.
+
+    environment_variables:
+      - name: "${CLAUDE_PLUGIN_ROOT}"
+        description: |
+          The absolute path to your plugin's installation directory. Use this to reference
+          scripts, binaries, and config files bundled with the plugin. This path changes
+          when the plugin updates, so files you write here do not survive an update.
+        available_in: "skill content, agent content, hook commands, MCP/LSP server configs, hook process env, MCP/LSP subprocess env"
+      - name: "${CLAUDE_PLUGIN_DATA}"
+        description: |
+          A persistent directory for plugin state that survives updates. Use this for
+          installed dependencies such as `node_modules` or Python virtual environments,
+          generated code, caches, and any other files that should persist across plugin
+          versions. The directory is created automatically the first time this variable
+          is referenced.
+        resolves_to: "~/.claude/plugins/data/{id}/ where characters outside a-z, A-Z, 0-9, _, - are replaced by -"
+        available_in: "skill content, agent content, hook commands, MCP/LSP server configs, hook process env, MCP/LSP subprocess env"
+        caveats:
+          - "Deleted automatically when you uninstall the plugin from the last scope."
+          - "Pass `--keep-data` to `plugin uninstall` to preserve it."
+          - "Directory existence alone cannot detect when an update changes the plugin's
+            dependency manifest — compare the bundled manifest against the copy in the
+            data directory and reinstall when they differ."
+
+    path_traversal_limitations: |
+      Installed plugins cannot reference files outside their directory. Paths that
+      traverse outside the plugin root (such as `../shared-utils`) will not work after
+      installation because those external files are not copied to the cache.
+
+    symlink_workaround: |
+      If your plugin needs to access files outside its directory, you can create symbolic
+      links to external files within your plugin directory. Symlinks are preserved in the
+      cache rather than dereferenced, and they resolve to their target at runtime.
+
+    caching_behavior: |
+      For security and verification purposes, Claude Code copies marketplace plugins to
+      the user's local plugin cache (`~/.claude/plugins/cache`) rather than using them
+      in-place. Each installed version is a separate directory in the cache. When you
+      update or uninstall a plugin, the previous version directory is marked as orphaned
+      and removed automatically 7 days later.
+
+      Plugins specified via `claude --plugin-dir` are NOT cached — they are used in-place
+      for the duration of that session only.
+
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "Plugin manifest schema / Path behavior rules"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </path_rules>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CLI COMMANDS
+  ════════════════════════════════════════════════════════ -->
+
+  <cli_command name="plugin install">
+    synopsis: "claude plugin install &lt;plugin&gt; [options]"
+    description: "Install a plugin from available marketplaces."
+    arguments:
+      - name: "&lt;plugin&gt;"
+        description: "Plugin name or `plugin-name@marketplace-name` for a specific marketplace"
+        required: true
+    options:
+      - flags: "-s, --scope &lt;scope&gt;"
+        description: "Installation scope: `user`, `project`, or `local`"
+        default: "user"
+        valid_values: "user, project, local"
+      - flags: "-h, --help"
+        description: "Display help for command"
+    behavior: |
+      Scope determines which settings file the installed plugin is added to. For example,
+      `--scope project` writes to `enabledPlugins` in .claude/settings.json, making the
+      plugin available to everyone who clones the project repository.
+    examples: |
+      # Install to user scope (default)
+      claude plugin install formatter@my-marketplace
+
+      # Install to project scope (shared with team)
+      claude plugin install formatter@my-marketplace --scope project
+
+      # Install to local scope (gitignored)
+      claude plugin install formatter@my-marketplace --scope local
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "CLI commands reference / plugin install"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </cli_command>
+
+  <cli_command name="plugin uninstall">
+    synopsis: "claude plugin uninstall &lt;plugin&gt; [options]"
+    aliases: "remove, rm"
+    description: "Remove an installed plugin."
+    arguments:
+      - name: "&lt;plugin&gt;"
+        description: "Plugin name or `plugin-name@marketplace-name`"
+        required: true
+    options:
+      - flags: "-s, --scope &lt;scope&gt;"
+        description: "Uninstall from scope: `user`, `project`, or `local`"
+        default: "user"
+        valid_values: "user, project, local"
+      - flags: "--keep-data"
+        description: "Preserve the plugin's persistent data directory"
+        default: "(off — data is deleted by default on last-scope uninstall)"
+      - flags: "-h, --help"
+        description: "Display help for command"
+    behavior: |
+      By default, uninstalling from the last remaining scope also deletes the plugin's
+      `${CLAUDE_PLUGIN_DATA}` directory. Use `--keep-data` to preserve it, for example
+      when reinstalling after testing a new version.
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "CLI commands reference / plugin uninstall"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </cli_command>
+
+  <cli_command name="plugin enable">
+    synopsis: "claude plugin enable &lt;plugin&gt; [options]"
+    description: "Enable a disabled plugin."
+    arguments:
+      - name: "&lt;plugin&gt;"
+        description: "Plugin name or `plugin-name@marketplace-name`"
+        required: true
+    options:
+      - flags: "-s, --scope &lt;scope&gt;"
+        description: "Scope to enable: `user`, `project`, or `local`"
+        default: "user"
+        valid_values: "user, project, local"
+      - flags: "-h, --help"
+        description: "Display help for command"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "CLI commands reference / plugin enable"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </cli_command>
+
+  <cli_command name="plugin disable">
+    synopsis: "claude plugin disable &lt;plugin&gt; [options]"
+    description: "Disable a plugin without uninstalling it."
+    arguments:
+      - name: "&lt;plugin&gt;"
+        description: "Plugin name or `plugin-name@marketplace-name`"
+        required: true
+    options:
+      - flags: "-s, --scope &lt;scope&gt;"
+        description: "Scope to disable: `user`, `project`, or `local`"
+        default: "user"
+        valid_values: "user, project, local"
+      - flags: "-h, --help"
+        description: "Display help for command"
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "CLI commands reference / plugin disable"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </cli_command>
+
+  <cli_command name="plugin update">
+    synopsis: "claude plugin update &lt;plugin&gt; [options]"
+    description: "Update a plugin to the latest version."
+    arguments:
+      - name: "&lt;plugin&gt;"
+        description: "Plugin name or `plugin-name@marketplace-name`"
+        required: true
+    options:
+      - flags: "-s, --scope &lt;scope&gt;"
+        description: "Scope to update: `user`, `project`, `local`, or `managed`"
+        default: "user"
+        valid_values: "user, project, local, managed"
+      - flags: "-h, --help"
+        description: "Display help for command"
+    caveats:
+      - "The `managed` scope is valid only for `update`, not for `install`/`enable`/`disable`."
+    source:
+      url: https://code.claude.com/docs/en/plugins-reference
+      section: "CLI commands reference / plugin update"
+      fetched_at: 2026-04-16T10:20:00-04:00
+  </cli_command>
+
+</schema>

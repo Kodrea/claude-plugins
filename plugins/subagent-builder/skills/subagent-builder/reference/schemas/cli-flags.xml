@@ -1,0 +1,1048 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema source_doc="official-cli-reference.md" extracted_at="2026-04-28T12:00:00-04:00" subject="cli-flags-and-options">
+
+  <cli_flag name="--add-dir">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Add additional working directories for Claude to read and edit files. Grants file access; most `.claude/` configuration is not discovered from these directories. Validates each path exists as a directory
+    values: []
+    caveats:
+      - "Most .claude/ configuration is not discovered from these directories"
+      - "Validates each path exists as a directory"
+      - "Accepts multiple space-separated paths"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--agent">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Specify an agent for the current session (overrides the `agent` setting)
+    values: []
+    caveats:
+      - "Overrides the `agent` setting from settings files"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--agents">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Define custom subagents dynamically via JSON. Uses the same field names as subagent frontmatter, plus a `prompt` field for the agent's instructions
+    values: []
+    caveats:
+      - "Uses same field names as subagent frontmatter plus a `prompt` field"
+      - "Accepts JSON string"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--allow-dangerously-skip-permissions">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Add `bypassPermissions` to the `Shift+Tab` mode cycle without starting in it. Lets you begin in a different mode like `plan` and switch to `bypassPermissions` later. See permission modes
+    values: []
+    caveats:
+      - "Adds bypassPermissions to Shift+Tab cycle without starting in it"
+      - "Use --permission-mode bypassPermissions to start in bypass mode directly"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--allowedTools">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Tools that execute without prompting for permission. See permission rule syntax for pattern matching. To restrict which tools are available, use `--tools` instead
+    values: []
+    caveats:
+      - "Controls auto-approval, not availability — use --tools to restrict which tools are available"
+      - "Accepts permission rule syntax patterns"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--append-system-prompt">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Append custom text to the end of the default system prompt
+    values: []
+    caveats:
+      - "Works in both interactive and non-interactive modes"
+      - "Can be combined with --system-prompt or --system-prompt-file"
+      - "Ignored when used alongside --system-prompt or --system-prompt-file (append still applies)"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--append-system-prompt-file">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Load additional system prompt text from a file and append to the default prompt
+    values: []
+    caveats:
+      - "Works in both interactive and non-interactive modes"
+      - "Can be combined with --system-prompt or --system-prompt-file"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--bare">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Minimal mode: skip auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md so scripted calls start faster. Claude has access to Bash, file read, and file edit tools. Sets `CLAUDE_CODE_SIMPLE`. See bare mode
+    values: []
+    caveats:
+      - "Skips auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md"
+      - "Sets CLAUDE_CODE_SIMPLE environment variable"
+      - "Claude retains access to Bash, file read, and file edit tools"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--betas">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Beta headers to include in API requests (API key users only)
+    values: []
+    caveats:
+      - "API key users only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--channels">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      (Research preview) MCP servers whose channel notifications Claude should listen for in this session. Space-separated list of `plugin:<name>@<marketplace>` entries. Requires Claude.ai authentication
+    values: []
+    caveats:
+      - "Research preview"
+      - "Requires Claude.ai authentication"
+      - "Space-separated list of plugin:<name>@<marketplace> entries"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--chrome">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Enable Chrome browser integration for web automation and testing
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--continue">
+    short_form: "-c"
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Load the most recent conversation in the current directory
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--dangerously-load-development-channels">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Enable channels that are not on the approved allowlist, for local development. Accepts `plugin:<name>@<marketplace>` and `server:<name>` entries. Prompts for confirmation
+    values: []
+    caveats:
+      - "For local development only"
+      - "Prompts for confirmation before enabling"
+      - "Accepts plugin:<name>@<marketplace> and server:<name> entries"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--dangerously-skip-permissions">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Skip permission prompts. Equivalent to `--permission-mode bypassPermissions`. See permission modes for what this does and does not skip
+    values: []
+    caveats:
+      - "Equivalent to --permission-mode bypassPermissions"
+      - "Does not skip all checks — see permission modes docs for details"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--debug">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Enable debug mode with optional category filtering (for example, `"api,hooks"` or `"!statsig,!file"`)
+    values: []
+    caveats:
+      - "Optional category filtering with comma-separated categories"
+      - "Prefix category with ! to exclude it"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--debug-file">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Write debug logs to a specific file path. Implicitly enables debug mode. Takes precedence over `CLAUDE_CODE_DEBUG_LOGS_DIR`
+    values: []
+    caveats:
+      - "Implicitly enables debug mode"
+      - "Takes precedence over CLAUDE_CODE_DEBUG_LOGS_DIR"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--disable-slash-commands">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Disable all skills and commands for this session
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--disallowedTools">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Tools that are removed from the model's context and cannot be used
+    values: []
+    caveats:
+      - "Removes tools from model context entirely, not just requires permission"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--effort">
+    short_form: ""
+    type: enum
+    default: ""
+    applicability: cli
+    excerpt: |
+      Set the effort level for the current session. Options: `low`, `medium`, `high`, `xhigh`, `max`; available levels depend on the model. Session-scoped and does not persist to settings
+    values:
+      - "low"
+      - "medium"
+      - "high"
+      - "xhigh"
+      - "max"
+    caveats:
+      - "Available levels depend on the model"
+      - "Session-scoped — does not persist to settings"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--enable-auto-mode">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Removed in v2.1.111. Auto mode is now in the `Shift+Tab` cycle by default; use `--permission-mode auto` to start in it
+    values: []
+    caveats:
+      - "REMOVED in v2.1.111 — use --permission-mode auto instead"
+      - "Auto mode is now in the Shift+Tab cycle by default"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--exclude-dynamic-system-prompt-sections">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Move per-machine sections from the system prompt (working directory, environment info, memory paths, git status) into the first user message. Improves prompt-cache reuse across different users and machines running the same task. Only applies with the default system prompt; ignored when `--system-prompt` or `--system-prompt-file` is set. Use with `-p` for scripted, multi-user workloads
+    values: []
+    caveats:
+      - "Only applies with the default system prompt"
+      - "Ignored when --system-prompt or --system-prompt-file is set"
+      - "Recommended for use with -p for scripted, multi-user workloads"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--fallback-model">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Enable automatic fallback to specified model when default model is overloaded (print mode only)
+    values: []
+    caveats:
+      - "Print mode only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--fork-session">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      When resuming, create a new session ID instead of reusing the original (use with `--resume` or `--continue`)
+    values: []
+    caveats:
+      - "Use with --resume or --continue"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--from-pr">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Resume sessions linked to a specific GitHub PR. Accepts a PR number or URL. Sessions are automatically linked when created via `gh pr create`
+    values: []
+    caveats:
+      - "Sessions are automatically linked when created via gh pr create"
+      - "Accepts a PR number or URL"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--ide">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Automatically connect to IDE on startup if exactly one valid IDE is available
+    values: []
+    caveats:
+      - "Only connects if exactly one valid IDE is available"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--init">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Run initialization hooks and start interactive mode
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--init-only">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Run initialization hooks and exit (no interactive session)
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--include-hook-events">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Include all hook lifecycle events in the output stream. Requires `--output-format stream-json`
+    values: []
+    caveats:
+      - "Requires --output-format stream-json"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--include-partial-messages">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Include partial streaming events in output. Requires `--print` and `--output-format stream-json`
+    values: []
+    caveats:
+      - "Requires --print and --output-format stream-json"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--input-format">
+    short_form: ""
+    type: enum
+    default: "text"
+    applicability: cli
+    excerpt: |
+      Specify input format for print mode (options: `text`, `stream-json`)
+    values:
+      - "text"
+      - "stream-json"
+    caveats:
+      - "Print mode only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--json-schema">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Get validated JSON output matching a JSON Schema after agent completes its workflow (print mode only, see structured outputs)
+    values: []
+    caveats:
+      - "Print mode only"
+      - "Output is validated against the provided JSON Schema after agent completes"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--maintenance">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Run maintenance hooks and start interactive mode
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--max-budget-usd">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Maximum dollar amount to spend on API calls before stopping (print mode only)
+    values: []
+    caveats:
+      - "Print mode only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--max-turns">
+    short_form: ""
+    type: integer
+    default: ""
+    applicability: cli
+    excerpt: |
+      Limit the number of agentic turns (print mode only). Exits with an error when the limit is reached. No limit by default
+    values: []
+    caveats:
+      - "Print mode only"
+      - "Exits with an error when the limit is reached"
+      - "No limit by default"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--mcp-config">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Load MCP servers from JSON files or strings (space-separated)
+    values: []
+    caveats:
+      - "Accepts JSON files or JSON strings"
+      - "Space-separated for multiple entries"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--model">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Sets the model for the current session with an alias for the latest model (`sonnet` or `opus`) or a model's full name
+    values: []
+    caveats:
+      - "Accepts aliases (sonnet, opus) or full model names"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--name">
+    short_form: "-n"
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Set a display name for the session, shown in `/resume` and the terminal title. You can resume a named session with `claude --resume <name>`. `/rename` changes the name mid-session and also shows it on the prompt bar
+    values: []
+    caveats:
+      - "Named sessions can be resumed with claude --resume <name>"
+      - "/rename command changes name mid-session"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--no-chrome">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Disable Chrome browser integration for this session
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--no-session-persistence">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Disable session persistence so sessions are not saved to disk and cannot be resumed (print mode only)
+    values: []
+    caveats:
+      - "Print mode only"
+      - "Sessions are not saved to disk and cannot be resumed"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--output-format">
+    short_form: ""
+    type: enum
+    default: "text"
+    applicability: cli
+    excerpt: |
+      Specify output format for print mode (options: `text`, `json`, `stream-json`)
+    values:
+      - "text"
+      - "json"
+      - "stream-json"
+    caveats:
+      - "Print mode only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--permission-mode">
+    short_form: ""
+    type: enum
+    default: "default"
+    applicability: cli
+    excerpt: |
+      Begin in a specified permission mode. Accepts `default`, `acceptEdits`, `plan`, `auto`, `dontAsk`, or `bypassPermissions`. Overrides `defaultMode` from settings files
+    values:
+      - "default"
+      - "acceptEdits"
+      - "plan"
+      - "auto"
+      - "dontAsk"
+      - "bypassPermissions"
+    caveats:
+      - "Overrides defaultMode from settings files"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--permission-prompt-tool">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Specify an MCP tool to handle permission prompts in non-interactive mode
+    values: []
+    caveats:
+      - "Non-interactive mode only"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--plugin-dir">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Load plugins from a directory for this session only. Each flag takes one path. Repeat the flag for multiple directories: `--plugin-dir A --plugin-dir B`
+    values: []
+    caveats:
+      - "Session-scoped only"
+      - "Repeat the flag for multiple directories"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--print">
+    short_form: "-p"
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Print response without interactive mode (see Agent SDK documentation for programmatic usage details)
+    values: []
+    caveats:
+      - "Enables SDK/non-interactive mode"
+      - "See Agent SDK documentation for programmatic usage details"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--remote">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Create a new web session on claude.ai with the provided task description
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--remote-control">
+    short_form: "--rc"
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Start an interactive session with Remote Control enabled so you can also control it from claude.ai or the Claude app. Optionally pass a name for the session
+    values: []
+    caveats:
+      - "Accepts optional session name"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--remote-control-session-name-prefix">
+    short_form: ""
+    type: string
+    default: "machine hostname"
+    applicability: cli
+    excerpt: |
+      Prefix for auto-generated Remote Control session names when no explicit name is set. Defaults to your machine's hostname, producing names like `myhost-graceful-unicorn`. Set `CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX` for the same effect
+    values: []
+    caveats:
+      - "Defaults to machine hostname"
+      - "CLAUDE_REMOTE_CONTROL_SESSION_NAME_PREFIX env var has the same effect"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--replay-user-messages">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Re-emit user messages from stdin back on stdout for acknowledgment. Requires `--input-format stream-json` and `--output-format stream-json`
+    values: []
+    caveats:
+      - "Requires --input-format stream-json and --output-format stream-json"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--resume">
+    short_form: "-r"
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Resume a specific session by ID or name, or show an interactive picker to choose a session
+    values: []
+    caveats:
+      - "Accepts session ID or name"
+      - "Shows interactive picker when called without argument"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--session-id">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Use a specific session ID for the conversation (must be a valid UUID)
+    values: []
+    caveats:
+      - "Must be a valid UUID"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--setting-sources">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Comma-separated list of setting sources to load (`user`, `project`, `local`)
+    values:
+      - "user"
+      - "project"
+      - "local"
+    caveats:
+      - "Comma-separated list"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--settings">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Path to a settings JSON file or a JSON string to load additional settings from
+    values: []
+    caveats:
+      - "Accepts a file path or a JSON string"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--strict-mcp-config">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Only use MCP servers from `--mcp-config`, ignoring all other MCP configurations
+    values: []
+    caveats:
+      - "Ignores all MCP configurations not specified in --mcp-config"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--system-prompt">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Replace the entire system prompt with custom text
+    values: []
+    caveats:
+      - "Works in both interactive and non-interactive modes"
+      - "Mutually exclusive with --system-prompt-file"
+      - "Ignores --exclude-dynamic-system-prompt-sections when set"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--system-prompt-file">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Load system prompt from a file, replacing the default prompt
+    values: []
+    caveats:
+      - "Works in both interactive and non-interactive modes"
+      - "Mutually exclusive with --system-prompt"
+      - "Ignores --exclude-dynamic-system-prompt-sections when set"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--teleport">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Resume a web session in your local terminal
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--teammate-mode">
+    short_form: ""
+    type: enum
+    default: "auto"
+    applicability: cli
+    excerpt: |
+      Set how agent team teammates display: `auto` (default), `in-process`, or `tmux`. See Choose a display mode
+    values:
+      - "auto"
+      - "in-process"
+      - "tmux"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--tmux">
+    short_form: ""
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Create a tmux session for the worktree. Requires `--worktree`. Uses iTerm2 native panes when available; pass `--tmux=classic` for traditional tmux
+    values:
+      - "classic"
+    caveats:
+      - "Requires --worktree"
+      - "Uses iTerm2 native panes when available"
+      - "Pass --tmux=classic for traditional tmux behavior"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--tools">
+    short_form: ""
+    type: string
+    default: "default"
+    applicability: cli
+    excerpt: |
+      Restrict which built-in tools Claude can use. Use `""` to disable all, `"default"` for all, or tool names like `"Bash,Edit,Read"`
+    values: []
+    caveats:
+      - 'Use "" to disable all tools'
+      - 'Use "default" for all tools'
+      - "Comma-separated tool names to specify individual tools"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--verbose">
+    short_form: ""
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Enable verbose logging, shows full turn-by-turn output
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--version">
+    short_form: "-v"
+    type: boolean
+    default: false
+    applicability: cli
+    excerpt: |
+      Output the version number
+    values: []
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+  <cli_flag name="--worktree">
+    short_form: "-w"
+    type: string
+    default: ""
+    applicability: cli
+    excerpt: |
+      Start Claude in an isolated git worktree at `<repo>/.claude/worktrees/<name>`. If no name is given, one is auto-generated
+    values: []
+    caveats:
+      - "Worktree created at <repo>/.claude/worktrees/<name>"
+      - "Name is auto-generated if not provided"
+    source:
+      url: https://code.claude.com/docs/en/cli-reference
+      section: "CLI flags"
+      fetched_at: 2026-04-16T00:00:07-04:00
+  </cli_flag>
+
+</schema>

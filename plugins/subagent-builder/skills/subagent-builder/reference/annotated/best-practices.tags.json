@@ -1,0 +1,223 @@
+{
+  "source_doc": "best-practices.md",
+  "source_url": "https://code.claude.com/docs/en/best-practices",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "doc-index-callout": {
+      "anchor": "doc-index-callout",
+      "tags": ["navigation"],
+      "notes": "Index discovery callout present at top of every fetched page."
+    },
+    "best-practices-for-claude-code": {
+      "anchor": "best-practices-for-claude-code",
+      "tags": ["overview"],
+      "notes": "Page title and lead blurb describing Claude Code as an agentic coding environment."
+    },
+    "agentic-loop-intro": {
+      "anchor": "agentic-loop-intro",
+      "tags": ["overview", "decision"],
+      "notes": "Describes the shift from review-based to describe-and-delegate workflow. Frames constraints to understand."
+    },
+    "context-window-constraint": {
+      "anchor": "context-window-constraint",
+      "tags": ["cost", "caveat"],
+      "notes": "Core constraint: context fills fast, performance degrades as it fills. Links to cost reduction strategies."
+    },
+    "give-claude-a-way-to-verify-its-work": {
+      "anchor": "give-claude-a-way-to-verify-its-work",
+      "tags": ["decision"],
+      "notes": "Primary recommendation: provide tests, screenshots, or expected outputs. Highest-leverage practice."
+    },
+    "verification-strategies-table": {
+      "anchor": "verification-strategies-table",
+      "tags": ["decision"],
+      "notes": "Before/after table: verification criteria, visual UI checks, root-cause vs symptom framing."
+    },
+    "verification-tools-detail": {
+      "anchor": "verification-tools-detail",
+      "tags": ["tools", "decision"],
+      "notes": "Chrome extension for UI verification; test suites, linters, Bash commands as verification mechanisms."
+    },
+    "explore-first-then-plan-then-code": {
+      "anchor": "explore-first-then-plan-then-code",
+      "tags": ["decision", "permissions"],
+      "notes": "Four-phase workflow: Explore (Plan Mode), Plan, Implement (Normal Mode), Commit."
+    },
+    "plan-mode-overhead-callout": {
+      "anchor": "plan-mode-overhead-callout",
+      "tags": ["decision", "caveat"],
+      "notes": "Plan Mode adds overhead; skip for small, clear-scope tasks. Use when uncertain or multi-file."
+    },
+    "provide-specific-context-in-your-prompts": {
+      "anchor": "provide-specific-context-in-your-prompts",
+      "tags": ["decision"],
+      "notes": "Precision reduces corrections. Scope, source references, pattern references, symptom descriptions."
+    },
+    "context-strategies-table": {
+      "anchor": "context-strategies-table",
+      "tags": ["decision"],
+      "notes": "Before/after table for prompt specificity: scope, sources, patterns, symptoms."
+    },
+    "vague-prompts-caveat": {
+      "anchor": "vague-prompts-caveat",
+      "tags": ["decision", "caveat"],
+      "notes": "Vague prompts are valid for exploratory work where course-correction is cheap."
+    },
+    "provide-rich-content": {
+      "anchor": "provide-rich-content",
+      "tags": ["tools", "permissions"],
+      "notes": "@ file references, image paste, URL input, pipe data, let Claude fetch. /permissions to allowlist domains."
+    },
+    "configure-your-environment": {
+      "anchor": "configure-your-environment",
+      "tags": ["overview"],
+      "notes": "Section intro: environment setup makes Claude Code more effective across sessions."
+    },
+    "write-an-effective-claudemd": {
+      "anchor": "write-an-effective-claudemd",
+      "tags": ["frontmatter", "scope", "caveat"],
+      "notes": "CLAUDE.md loaded every session. /init generates starter. Keep concise or instructions get ignored."
+    },
+    "claudemd-include-exclude-table": {
+      "anchor": "claudemd-include-exclude-table",
+      "tags": ["frontmatter", "decision"],
+      "notes": "What to include vs exclude in CLAUDE.md. Include: Bash commands, style rules, testing, repo etiquette."
+    },
+    "claudemd-maintenance-tips": {
+      "anchor": "claudemd-maintenance-tips",
+      "tags": ["frontmatter", "caveat"],
+      "notes": "Treat CLAUDE.md like code; prune regularly; IMPORTANT/YOU MUST for adherence; check into git."
+    },
+    "claudemd-import-syntax": {
+      "anchor": "claudemd-import-syntax",
+      "tags": ["frontmatter"],
+      "notes": "@path/to/import syntax for importing other files into CLAUDE.md."
+    },
+    "claudemd-locations": {
+      "anchor": "claudemd-locations",
+      "tags": ["frontmatter", "scope"],
+      "notes": "Location hierarchy: ~/.claude/CLAUDE.md (global), ./CLAUDE.md (project), ./CLAUDE.local.md (personal), parent dirs, child dirs."
+    },
+    "configure-permissions": {
+      "anchor": "configure-permissions",
+      "tags": ["permissions", "decision"],
+      "notes": "Three modes: auto mode (classifier), permission allowlists, sandboxing. Each trades off safety vs. interruption frequency."
+    },
+    "use-cli-tools": {
+      "anchor": "use-cli-tools",
+      "tags": ["tools", "cost"],
+      "notes": "CLI tools (gh, aws, gcloud) are most context-efficient for external services. Claude can learn unknown CLIs."
+    },
+    "connect-mcp-servers": {
+      "anchor": "connect-mcp-servers",
+      "tags": ["tools"],
+      "notes": "MCP servers extend Claude to external services: issue trackers, databases, Figma, workflows."
+    },
+    "set-up-hooks": {
+      "anchor": "set-up-hooks",
+      "tags": ["hooks", "decision"],
+      "notes": "Hooks are deterministic guarantees vs CLAUDE.md advisory instructions. Use for zero-exception actions."
+    },
+    "create-skills": {
+      "anchor": "create-skills",
+      "tags": ["skills", "frontmatter"],
+      "notes": "Skills in .claude/skills/ with SKILL.md. Auto-applied or invoked with /skill-name. disable-model-invocation for side-effect workflows."
+    },
+    "create-custom-subagents": {
+      "anchor": "create-custom-subagents",
+      "tags": ["tools", "permissions", "isolation", "frontmatter", "model"],
+      "notes": "Subagents in .claude/agents/ with frontmatter: name, description, tools, model. Run in own context with own allowed tools."
+    },
+    "install-plugins": {
+      "anchor": "install-plugins",
+      "tags": ["tools", "skills"],
+      "notes": "Plugins bundle skills, hooks, subagents, MCP. /plugin to browse. Decision guidance: features-overview#match-features-to-your-goal."
+    },
+    "communicate-effectively": {
+      "anchor": "communicate-effectively",
+      "tags": ["overview"],
+      "notes": "Section intro: communication style impacts output quality."
+    },
+    "ask-codebase-questions": {
+      "anchor": "ask-codebase-questions",
+      "tags": ["decision"],
+      "notes": "Claude Code as onboarding tool; ask same questions as a senior engineer. Reduces ramp-up time."
+    },
+    "let-claude-interview-you": {
+      "anchor": "let-claude-interview-you",
+      "tags": ["tools", "decision"],
+      "notes": "AskUserQuestion tool for requirements gathering before implementation. Fresh session after spec is complete."
+    },
+    "manage-your-session": {
+      "anchor": "manage-your-session",
+      "tags": ["overview"],
+      "notes": "Section intro: conversations are persistent and reversible."
+    },
+    "course-correct-early-and-often": {
+      "anchor": "course-correct-early-and-often",
+      "tags": ["decision", "caveat"],
+      "notes": "Tight feedback loops produce better results. Esc, /rewind, /clear are key session controls."
+    },
+    "manage-context-aggressively": {
+      "anchor": "manage-context-aggressively",
+      "tags": ["cost", "decision"],
+      "notes": "Auto compaction, /clear, /compact, /rewind+Summarize, /btw for side questions. Customize compaction in CLAUDE.md."
+    },
+    "use-subagents-for-investigation": {
+      "anchor": "use-subagents-for-investigation",
+      "tags": ["isolation", "cost", "decision"],
+      "notes": "Subagents run in separate context windows, report summaries. Keeps main context clean. Use for research and verification."
+    },
+    "rewind-with-checkpoints": {
+      "anchor": "rewind-with-checkpoints",
+      "tags": ["caveat"],
+      "notes": "Checkpoints track only Claude-made changes, not external processes. Not a git replacement."
+    },
+    "resume-conversations": {
+      "anchor": "resume-conversations",
+      "tags": ["decision"],
+      "notes": "claude --continue / --resume for multi-session tasks. /rename for descriptive names. Sessions as branches."
+    },
+    "automate-and-scale": {
+      "anchor": "automate-and-scale",
+      "tags": ["overview"],
+      "notes": "Section intro: scale beyond one session with parallel, non-interactive, and fan-out patterns."
+    },
+    "run-non-interactive-mode": {
+      "anchor": "run-non-interactive-mode",
+      "tags": ["tools", "decision"],
+      "notes": "claude -p for CI, hooks, scripts. --output-format text/json/stream-json for programmatic parsing."
+    },
+    "run-multiple-claude-sessions": {
+      "anchor": "run-multiple-claude-sessions",
+      "tags": ["isolation", "decision"],
+      "notes": "Parallel sessions via desktop app, web (isolated VMs), or agent teams. Writer/Reviewer pattern example."
+    },
+    "fan-out-across-files": {
+      "anchor": "fan-out-across-files",
+      "tags": ["tools", "permissions", "decision"],
+      "notes": "Loop claude -p per file for large migrations. --allowedTools to scope permissions for unattended batch runs."
+    },
+    "run-autonomously-with-auto-mode": {
+      "anchor": "run-autonomously-with-auto-mode",
+      "tags": ["permissions", "caveat"],
+      "notes": "Auto mode: classifier blocks risky actions; aborts non-interactive run if repeatedly blocked."
+    },
+    "avoid-common-failure-patterns": {
+      "anchor": "avoid-common-failure-patterns",
+      "tags": ["caveat", "decision"],
+      "notes": "Five anti-patterns: kitchen-sink session, repeated corrections, over-specified CLAUDE.md, trust-verify gap, infinite exploration."
+    },
+    "develop-your-intuition": {
+      "anchor": "develop-your-intuition",
+      "tags": ["decision"],
+      "notes": "Patterns are starting points; context accumulation, planning, and specificity all have valid exceptions."
+    },
+    "related-resources": {
+      "anchor": "related-resources",
+      "tags": ["navigation"],
+      "notes": "Links to How Claude Code works, Extend Claude Code, Common workflows, CLAUDE.md memory docs."
+    }
+  }
+}

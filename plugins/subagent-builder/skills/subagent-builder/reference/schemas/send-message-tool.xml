@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from official-agent-teams.md — documents the SendMessage tool available to agent team members -->
+<!-- Parameter signatures resolved 2026-04-28 via ToolSearch JSONSchema fetch (observed tier) -->
+<schema source_doc="official-agent-teams.md" extracted_at="2026-04-28T12:00:00-04:00" subject="SendMessage-tool">
+
+  <tool_overview>
+    name: SendMessage
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    description: |
+      Sends a message to an agent team teammate, or resumes a subagent by its agent ID.
+      Stopped subagents auto-resume in the background.
+    delivery: automatic
+    delivery_notes: |
+      Messages are delivered automatically to recipients — no polling required.
+      "when teammates send messages, they're delivered automatically to recipients. The lead doesn't need to poll for updates."
+    addressing: |
+      The lead assigns every teammate a name when it spawns them. Any teammate can message
+      any other by that name. Teammates can also be addressed by agent ID.
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Context and communication / Teammate messaging
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </tool_overview>
+
+  <tool_parameter name="to">
+    role: recipient
+    type: string
+    required: true
+    unknown_in_official_docs: false
+    description: |
+      Identifies the target of the message. Can be a teammate name (assigned by the lead
+      at spawn time) or an agent ID.
+    notes: |
+      "The lead assigns every teammate a name when it spawns them, and any teammate can
+      message any other by that name."
+      Agent IDs are also accepted per the tools-reference description:
+      "Sends a message to an agent team teammate, or resumes a subagent by its agent ID."
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Context and communication / Teammate messaging
+      fetched_at: 2026-04-16T10:15:00-04:00
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      schema_excerpt: |
+        "to": { "type": "string", "description": "Recipient: teammate name" }
+  </tool_parameter>
+
+  <tool_parameter name="message">
+    role: message body
+    type: string | structured_object
+    required: true
+    unknown_in_official_docs: false
+    description: |
+      The message to send. For normal communication: a plain text string. For protocol
+      coordination (shutdown and plan-approval flows): a structured object with a `type`
+      discriminator field.
+
+      Structured variants:
+        - shutdown_request:        { type: "shutdown_request", reason?: string }
+        - shutdown_response:       { type: "shutdown_response", request_id: string, approve: boolean, reason?: string }
+        - plan_approval_response:  { type: "plan_approval_response", request_id: string, approve: boolean, feedback?: string }
+    caveats:
+      - "When message is a plain text string, the `summary` param is required (see below)"
+      - "Schema uses anyOf — the type field on structured objects acts as a discriminator"
+      - "additionalProperties: false on each variant — no extra fields accepted"
+    notes: |
+      Exact key name resolved 2026-04-28 via ToolSearch: the parameter is `message`, not
+      `content`, `text`, or `body`. The prior schema had this marked unknown_in_official_docs.
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Context and communication / Teammate messaging
+      fetched_at: 2026-04-16T10:15:00-04:00
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      schema_excerpt: |
+        "message": {
+          "anyOf": [
+            { "type": "string" },
+            { "anyOf": [
+                { "type": "object", "required": ["type"],
+                  "properties": { "type": {"const":"shutdown_request"}, "reason": {"type":"string"} } },
+                { "type": "object", "required": ["type","request_id","approve"],
+                  "properties": { "type": {"const":"shutdown_response"}, "request_id": {"type":"string"},
+                    "approve": {"type":"boolean"}, "reason": {"type":"string"} } },
+                { "type": "object", "required": ["type","request_id","approve"],
+                  "properties": { "type": {"const":"plan_approval_response"}, "request_id": {"type":"string"},
+                    "approve": {"type":"boolean"}, "feedback": {"type":"string"} } }
+            ]}
+          ]
+        }
+  </tool_parameter>
+
+  <tool_parameter name="summary">
+    role: UI preview
+    type: string
+    required: conditional (required when message is a plain text string)
+    unknown_in_official_docs: false
+    description: |
+      A 5-10 word summary shown as a preview in the UI. Not present in official prose docs —
+      discovered via ToolSearch JSONSchema fetch 2026-04-28.
+    caveats:
+      - "Not mentioned in official-agent-teams.md — schema-only discovery"
+      - "Conditionally required: must be provided when message is a plain text string"
+      - "Not required when message is a structured protocol object"
+    notes_for_skill:
+      - "Skill should always emit summary when generating SendMessage calls with plain text content"
+      - "5-10 word guideline: keep it scannable, not a sentence"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      schema_excerpt: |
+        "summary": { "type": "string",
+          "description": "A 5-10 word summary shown as a preview in the UI (required when message is a string)" }
+  </tool_parameter>
+
+  <broadcast_note>
+    status: NOT_A_PARAMETER — OFFICIALLY DOCUMENTED AS MULTI-CALL PATTERN
+    description: |
+      Broadcast (sending to all teammates) is implemented by calling SendMessage once per
+      recipient, not via a parameter. The live official docs (fetched 2026-04-28) now
+      explicitly state this:
+
+        "To reach everyone, send one message per recipient."
+        — https://code.claude.com/docs/en/agent-teams §Context and communication
+
+      The cached source (official-agent-teams.md) mentioned broadcast as a concept
+      ("broadcast: send to all teammates simultaneously") but did NOT include this
+      clarification. The schema's additionalProperties: false with exactly three fields
+      (to, message, summary) corroborates: no broadcast parameter exists.
+    notes_for_skill: |
+      When a skill user wants to broadcast, generate a loop or list of SendMessage calls,
+      one per teammate name. Warn that costs scale with team size.
+    cached_source_quote: |
+      "broadcast: send to all teammates simultaneously. Use sparingly, as costs scale
+      with team size." — official-agent-teams.md §Context and communication (cached)
+    live_source_quote: |
+      "To reach everyone, send one message per recipient."
+      — https://code.claude.com/docs/en/agent-teams §Context and communication (2026-04-28)
+    resolution: official — live docs confirm multi-call pattern
+  </broadcast_note>
+
+  <availability_caveat>
+    flag_required: CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
+    flag_value: "1"
+    description: |
+      SendMessage (along with all agent team functionality) is only available when the
+      experimental flag is set. Without it, agent teams are disabled by default and
+      SendMessage is not injected into the tool context.
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Enable agent teams
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </availability_caveat>
+
+</schema>

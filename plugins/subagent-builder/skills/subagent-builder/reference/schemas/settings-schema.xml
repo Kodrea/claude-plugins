@@ -1,0 +1,1679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema source_doc="official-settings.md" extracted_at="2026-04-28T12:00:00-04:00">
+
+  <!-- ============================================================
+       SCOPE OVERVIEW
+       ============================================================ -->
+  <scope_overview>
+    Claude Code uses a scope system to determine where configurations apply and who they are shared with.
+
+    Scopes (from most to least authoritative):
+
+    | Scope   | Location                                                                           | Who it affects                       | Shared with team?      |
+    |---------|------------------------------------------------------------------------------------|--------------------------------------|------------------------|
+    | Managed | Server-managed settings, plist / registry, or system-level managed-settings.json   | All users on the machine             | Yes (deployed by IT)   |
+    | User    | ~/.claude/ directory                                                               | You, across all projects             | No                     |
+    | Project | .claude/ in repository                                                             | All collaborators on this repository | Yes (committed to git) |
+    | Local   | .claude/settings.local.json                                                        | You, in this repository only         | No (gitignored)        |
+
+    File locations by feature:
+    - Settings:    ~/.claude/settings.json | .claude/settings.json | .claude/settings.local.json
+    - Subagents:   ~/.claude/agents/       | .claude/agents/        | (none for local)
+    - MCP servers: ~/.claude.json          | .mcp.json              | ~/.claude.json (per-project)
+    - Plugins:     ~/.claude/settings.json | .claude/settings.json  | .claude/settings.local.json
+    - CLAUDE.md:   ~/.claude/CLAUDE.md     | CLAUDE.md or .claude/CLAUDE.md | CLAUDE.local.md
+
+    When to use each scope:
+    - Managed: Security policies, compliance requirements, standardized IT/DevOps configurations
+    - User: Personal preferences across all projects, API keys, personal tools/plugins
+    - Project: Team-shared settings (permissions, hooks, MCP servers), standardized tooling
+    - Local: Personal project overrides, testing configurations, machine-specific settings
+  </scope_overview>
+
+  <!-- ============================================================
+       PRECEDENCE
+       ============================================================ -->
+  <precedence_spec>
+    Settings apply in order of precedence. From highest to lowest:
+
+    1. Managed settings (server-managed, MDM/OS-level policies, or managed settings files)
+       - Cannot be overridden by any other level, including command line arguments
+       - Within managed tier: server-managed > MDM/OS-level policies > file-based
+         (managed-settings.d/*.json + managed-settings.json) > HKCU registry (Windows only)
+       - Only one managed source is used; sources do not merge across tiers
+       - Within file-based tier, drop-in files and base file ARE merged
+
+    2. Command line arguments
+       - Temporary overrides for a specific session
+
+    3. Local project settings (.claude/settings.local.json)
+       - Personal project-specific settings
+
+    4. Shared project settings (.claude/settings.json)
+       - Team-shared project settings in source control
+
+    5. User settings (~/.claude/settings.json)
+       - Personal global settings
+
+    Array settings merge across scopes: when the same array-valued setting appears in
+    multiple scopes, arrays are concatenated and deduplicated, not replaced.
+  </precedence_spec>
+
+  <!-- ============================================================
+       PERMISSION SYNTAX
+       ============================================================ -->
+  <permission_syntax>
+    Permission rules follow the format: Tool  or  Tool(specifier)
+
+    Rules are evaluated in order: deny rules first, then ask, then allow.
+    The first matching rule wins.
+
+    Quick examples:
+    - Bash                         matches all Bash commands
+    - Bash(npm run *)              matches commands starting with "npm run"
+    - Read(./.env)                 matches reading the .env file
+    - WebFetch(domain:example.com) matches fetch requests to example.com
+
+    Tool-specific patterns:
+    - Bash(command pattern)        — glob/prefix matching; security limitations apply
+    - Read(path)                   — file path matching; // for absolute, / for project-relative
+    - Edit(path)                   — same as Read path patterns
+    - WebFetch(domain:hostname)    — matches fetch requests to the given domain
+    - mcp__servername__toolname    — matches a specific MCP tool
+    - Agent(subagent-name)         — matches agent invocations
+
+    Wildcards: * matches zero or more characters within a segment.
+
+    For full reference see: /en/permissions#permission-rule-syntax
+  </permission_syntax>
+
+  <!-- ============================================================
+       SETTINGS — main settings.json fields
+       ============================================================ -->
+
+  <setting key="agent">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Run the main thread as a named subagent. Applies that subagent's system prompt, tool restrictions, and model. See Invoke subagents explicitly
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowedChannelPlugins">
+    type: array of objects
+    required: false
+    default: (Anthropic default allowlist)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Allowlist of channel plugins that may push messages. Replaces the default Anthropic allowlist when set. Undefined = fall back to the default, empty array = block all channel plugins. Requires channelsEnabled: true.
+    caveats:
+      - "Managed settings only"
+      - "Requires channelsEnabled: true"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowedHttpHookUrls">
+    type: array of strings
+    required: false
+    default: (no restriction)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Allowlist of URL patterns that HTTP hooks may target. Supports * as a wildcard. When set, hooks with non-matching URLs are blocked. Undefined = no restriction, empty array = block all HTTP hooks. Arrays merge across settings sources.
+    caveats:
+      - "Arrays merge across all settings sources"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowedMcpServers">
+    type: array of objects
+    required: false
+    default: (no restrictions)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      When set in managed-settings.json, allowlist of MCP servers users can configure. Undefined = no restrictions, empty array = lockdown. Applies to all scopes. Denylist takes precedence.
+    caveats:
+      - "Intended for managed-settings.json"
+      - "Denylist (deniedMcpServers) takes precedence"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowManagedHooksOnly">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Only managed hooks, SDK hooks, and hooks from plugins force-enabled in managed settings enabledPlugins are loaded. User, project, and all other plugin hooks are blocked.
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowManagedMcpServersOnly">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Only allowedMcpServers from managed settings are respected. deniedMcpServers still merges from all sources. Users can still add MCP servers, but only the admin-defined allowlist applies.
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="allowManagedPermissionRulesOnly">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Prevent user and project settings from defining allow, ask, or deny permission rules. Only rules in managed settings apply.
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="alwaysThinkingEnabled">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Enable extended thinking by default for all sessions. Typically configured via the /config command rather than editing directly
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="apiKeyHelper">
+    type: string (shell script path)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Custom script, to be executed in /bin/sh, to generate an auth value. This value will be sent as X-Api-Key and Authorization: Bearer headers for model requests
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="attribution">
+    type: object
+    required: false
+    default: (see Attribution settings section)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Customize attribution for git commits and pull requests.
+    caveats:
+      - "Takes precedence over deprecated includeCoAuthoredBy setting"
+      - "Set commit and pr to empty strings to hide all attribution"
+      - "commit key: git trailer format; pr key: plain text"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings / Attribution settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="attribution.commit">
+    type: string
+    required: false
+    default: "🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\n   Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;"
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Attribution for git commits, including any trailers. Empty string hides commit attribution
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Attribution settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="attribution.pr">
+    type: string
+    required: false
+    default: "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Attribution for pull request descriptions. Empty string hides pull request attribution
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Attribution settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="autoMemoryDirectory">
+    type: string (path)
+    required: false
+    default: (default auto memory location)
+    scope: [user|local|managed]
+    applicability: cli
+    excerpt: |
+      Custom directory for auto memory storage. Accepts ~/-expanded paths. Not accepted in project settings (.claude/settings.json) to prevent shared repos from redirecting memory writes to sensitive locations. Accepted from policy, local, and user settings
+    caveats:
+      - "Not accepted in project settings (.claude/settings.json)"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="autoMode">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|local|managed]
+    applicability: cli
+    excerpt: |
+      Customize what the auto mode classifier blocks and allows. Contains environment, allow, and soft_deny arrays of prose rules. Not read from shared project settings
+    caveats:
+      - "Not read from shared project settings"
+      - "Contains environment, allow, and soft_deny arrays"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="autoUpdatesChannel">
+    type: string
+    required: false
+    default: "latest"
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Release channel to follow for updates. Use "stable" for a version that is typically about one week old and skips versions with major regressions, or "latest" (default) for the most recent release
+    caveats:
+      - "Valid values: stable, latest"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="availableModels">
+    type: array of strings
+    required: false
+    default: (no restriction)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Restrict which models users can select via /model, --model, Config tool, or ANTHROPIC_MODEL. Does not affect the Default option.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="awsAuthRefresh">
+    type: string (shell command)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Custom script that modifies the .aws directory (see advanced credential configuration)
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="awsCredentialExport">
+    type: string (script path)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Custom script that outputs JSON with AWS credentials (see advanced credential configuration)
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="blockedMarketplaces">
+    type: array of objects
+    required: false
+    default: (none)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Blocklist of marketplace sources. Blocked sources are checked before downloading, so they never touch the filesystem.
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="channelsEnabled">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Allow channels for Team and Enterprise users. Unset or false blocks channel message delivery regardless of what users pass to --channels
+    caveats:
+      - "Managed settings only"
+      - "Only applies to Team and Enterprise users"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="cleanupPeriodDays">
+    type: integer
+    required: false
+    default: 30
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Session files older than this period are deleted at startup (default: 30 days, minimum 1). Setting to 0 is rejected with a validation error. Also controls the age cutoff for automatic removal of orphaned subagent worktrees at startup.
+    caveats:
+      - "Minimum value: 1; setting to 0 causes a validation error"
+      - "Also controls orphaned subagent worktree cleanup"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="companyAnnouncements">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Announcement to display to users at startup. If multiple announcements are provided, they will be cycled through at random.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="defaultShell">
+    type: string
+    required: false
+    default: "bash"
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Default shell for input-box ! commands. Accepts "bash" (default) or "powershell". Setting "powershell" routes interactive ! commands through PowerShell on Windows. Requires CLAUDE_CODE_USE_POWERSHELL_TOOL=1.
+    caveats:
+      - "Valid values: bash, powershell"
+      - "powershell value requires CLAUDE_CODE_USE_POWERSHELL_TOOL=1"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="deniedMcpServers">
+    type: array of objects
+    required: false
+    default: (none)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      When set in managed-settings.json, denylist of MCP servers that are explicitly blocked. Applies to all scopes including managed servers. Denylist takes precedence over allowlist.
+    caveats:
+      - "Intended for managed-settings.json"
+      - "Takes precedence over allowedMcpServers"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="disableAllHooks">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Disable all hooks and any custom status line
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="disableAutoMode">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Set to "disable" to prevent auto mode from being activated. Removes auto from the Shift+Tab cycle and rejects --permission-mode auto at startup. Most useful in managed settings where users cannot override it
+    caveats:
+      - "Valid value: disable"
+      - "Most useful in managed settings"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="disableDeepLinkRegistration">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Set to "disable" to prevent Claude Code from registering the claude-cli:// protocol handler with the operating system on startup. Deep links let external tools open a Claude Code session with a pre-filled prompt via claude-cli://open?q=.... The q parameter supports multi-line prompts using URL-encoded newlines (%0A).
+    caveats:
+      - "Valid value: disable"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="disabledMcpjsonServers">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      List of specific MCP servers from .mcp.json files to reject
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="disableSkillShellExecution">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Disable inline shell execution for !`...` and ```! blocks in skills and custom commands from user, project, plugin, or additional-directory sources. Commands are replaced with [shell command execution disabled by policy] instead of being run. Bundled and managed skills are not affected. Most useful in managed settings where users cannot override it
+    caveats:
+      - "Does not affect bundled and managed skills"
+      - "Most useful in managed settings"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="effortLevel">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Persist the effort level across sessions. Accepts "low", "medium", "high", or "xhigh". Written automatically when you run /effort with one of those values.
+    caveats:
+      - "Valid values: low, medium, high, xhigh"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="enableAllProjectMcpServers">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Automatically approve all MCP servers defined in project .mcp.json files
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="enabledMcpjsonServers">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      List of specific MCP servers from .mcp.json files to approve
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="env">
+    type: object (string-to-string map)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Environment variables that will be applied to every session
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="fastModePerSessionOptIn">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      When true, fast mode does not persist across sessions. Each session starts with fast mode off, requiring users to enable it with /fast. The user's fast mode preference is still saved.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="feedbackSurveyRate">
+    type: number (0–1)
+    required: false
+    default: (provider-dependent)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Probability (0–1) that the session quality survey appears when eligible. Set to 0 to suppress entirely. Useful when using Bedrock, Vertex, or Foundry where the default sample rate does not apply
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="fileSuggestion">
+    type: object
+    required: false
+    default: (built-in filesystem traversal)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Configure a custom script for @ file autocomplete. The built-in file suggestion uses fast filesystem traversal, but large monorepos may benefit from project-specific indexing such as a pre-built file index or custom tooling.
+    caveats:
+      - "type must be command; command field is path to script"
+      - "Script receives JSON via stdin with query field; outputs newline-separated paths (max 15)"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings / File suggestion settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="forceLoginMethod">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Use "claudeai" to restrict login to Claude.ai accounts, "console" to restrict login to Claude Console (API usage billing) accounts
+    caveats:
+      - "Valid values: claudeai, console"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="forceLoginOrgUUID">
+    type: string or array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Require login to belong to a specific organization. Accepts a single UUID string, which also pre-selects that organization during login, or an array of UUIDs where any listed organization is accepted without pre-selection. When set in managed settings, login fails if the authenticated account does not belong to a listed organization; an empty array fails closed and blocks login with a misconfiguration message
+    caveats:
+      - "Empty array in managed settings fails closed and blocks all login"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="forceRemoteSettingsRefresh">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Block CLI startup until remote managed settings are freshly fetched from the server. If the fetch fails, the CLI exits rather than continuing with cached or no settings. When not set, startup continues without waiting for remote settings.
+    caveats:
+      - "Managed settings only"
+      - "Fail-closed: CLI exits if remote fetch fails"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="hooks">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Configure custom commands to run at lifecycle events. See hooks documentation for format
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="httpHookAllowedEnvVars">
+    type: array of strings
+    required: false
+    default: (no restriction)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Allowlist of environment variable names HTTP hooks may interpolate into headers. When set, each hook's effective allowedEnvVars is the intersection with this list. Undefined = no restriction. Arrays merge across settings sources.
+    caveats:
+      - "Arrays merge across settings sources"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings / Hook configuration"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="includeCoAuthoredBy">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Deprecated: Use attribution instead. Whether to include the co-authored-by Claude byline in git commits and pull requests (default: true)
+    caveats:
+      - "DEPRECATED: use attribution instead"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="includeGitInstructions">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Include built-in commit and PR workflow instructions and the git status snapshot in Claude's system prompt (default: true). Set to false to remove both, for example when using your own git workflow skills. The CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS environment variable takes precedence over this setting when set
+    caveats:
+      - "CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS env var takes precedence"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="language">
+    type: string
+    required: false
+    default: (none — uses system/request language)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Configure Claude's preferred response language (e.g., "japanese", "spanish", "french"). Claude will respond in this language by default. Also sets the voice dictation language
+    caveats:
+      - "Also sets voice dictation language"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="minimumVersion">
+    type: string (semver)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Prevent the auto-updater from downgrading below a specific version. Automatically set when switching to the stable channel and choosing to stay on the current version until stable catches up. Used with autoUpdatesChannel
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="model">
+    type: string
+    required: false
+    default: (Anthropic default)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Override the default model to use for Claude Code
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="modelOverrides">
+    type: object (string-to-string map)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Map Anthropic model IDs to provider-specific model IDs such as Bedrock inference profile ARNs. Each model picker entry uses its mapped value when calling the provider API.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="otelHeadersHelper">
+    type: string (script path)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Script to generate dynamic OpenTelemetry headers. Runs at startup and periodically
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="outputStyle">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Configure an output style to adjust the system prompt. See output styles documentation
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      See table below for structure of permissions.
+    caveats:
+      - "Contains sub-keys: allow, ask, deny, additionalDirectories, defaultMode, disableBypassPermissionsMode, skipDangerousModePermissionPrompt"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings / Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.allow">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Array of permission rules to allow tool use. See Permission rule syntax below for pattern matching details
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.ask">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Array of permission rules to ask for confirmation upon tool use. See Permission rule syntax below
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.deny">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Array of permission rules to deny tool use. Use this to exclude sensitive files from Claude Code access. See Permission rule syntax and Bash permission limitations
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.additionalDirectories">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Additional working directories for file access. Most .claude/ configuration is not discovered from these directories
+    caveats:
+      - "Grants file access only, not configuration discovery"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.defaultMode">
+    type: string
+    required: false
+    default: "default"
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Default permission mode when opening Claude Code. Valid values: default, acceptEdits, plan, auto, dontAsk, bypassPermissions. The --permission-mode CLI flag overrides this setting for a single session
+    caveats:
+      - "Valid values: default, acceptEdits, plan, auto, dontAsk, bypassPermissions"
+      - "--permission-mode CLI flag overrides for a single session"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.disableBypassPermissionsMode">
+    type: string
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Set to "disable" to prevent bypassPermissions mode from being activated. This disables the --dangerously-skip-permissions command-line flag. Typically placed in managed settings to enforce organizational policy, but works from any scope
+    caveats:
+      - "Valid value: disable"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="permissions.skipDangerousModePermissionPrompt">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|local|managed]
+    applicability: cli
+    excerpt: |
+      Skip the confirmation prompt shown before entering bypass permissions mode via --dangerously-skip-permissions or defaultMode: "bypassPermissions". Ignored when set in project settings (.claude/settings.json) to prevent untrusted repositories from auto-bypassing the prompt
+    caveats:
+      - "Ignored when set in project settings (.claude/settings.json)"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Permission settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="plansDirectory">
+    type: string (path)
+    required: false
+    default: "~/.claude/plans"
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Customize where plan files are stored. Path is relative to project root. Default: ~/.claude/plans
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="pluginTrustMessage">
+    type: string
+    required: false
+    default: (none)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Custom message appended to the plugin trust warning shown before installation. Use this to add organization-specific context, for example to confirm that plugins from your internal marketplace are vetted.
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="prefersReducedMotion">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Reduce or disable UI animations (spinners, shimmer, flash effects) for accessibility
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="respectGitignore">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Control whether the @ file picker respects .gitignore patterns. When true (default), files matching .gitignore patterns are excluded from suggestions
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="showClearContextOnPlanAccept">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Show the "clear context" option on the plan accept screen. Defaults to false. Set to true to restore the option
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="showThinkingSummaries">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Show extended thinking summaries in interactive sessions. When unset or false (default in interactive mode), thinking blocks are redacted by the API and shown as a collapsed stub. Redaction only changes what you see, not what the model generates: to reduce thinking spend, lower the budget or disable thinking instead. Non-interactive mode (-p) and SDK callers always receive summaries regardless of this setting
+    caveats:
+      - "Non-interactive mode (-p) and SDK callers always receive summaries regardless of this setting"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="spinnerTipsEnabled">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Show tips in the spinner while Claude is working. Set to false to disable tips (default: true)
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="spinnerTipsOverride">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Override spinner tips with custom strings. tips: array of tip strings. excludeDefault: if true, only show custom tips; if false or absent, custom tips are merged with built-in tips
+    caveats:
+      - "Sub-keys: tips (array of strings), excludeDefault (boolean)"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="spinnerVerbs">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Customize the action verbs shown in the spinner and turn duration messages. Set mode to "replace" to use only your verbs, or "append" to add them to the defaults
+    caveats:
+      - "Sub-keys: mode (replace|append), verbs (array of strings)"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="statusLine">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Configure a custom status line to display context. See statusLine documentation
+    caveats:
+      - "Disabled when disableAllHooks is true"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="strictKnownMarketplaces">
+    type: array of objects
+    required: false
+    default: (no restrictions)
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Allowlist of plugin marketplaces users can add. Undefined = no restrictions, empty array = lockdown. Applies to marketplace additions only.
+    caveats:
+      - "Managed settings only"
+      - "Undefined = no restrictions; empty array = complete lockdown"
+      - "Uses exact matching for all source fields except hostPattern (regex)"
+      - "Checked BEFORE any network/filesystem operations"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings / Plugin configuration / strictKnownMarketplaces"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="useAutoModeDuringPlan">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|local|managed]
+    applicability: cli
+    excerpt: |
+      Whether plan mode uses auto mode semantics when auto mode is available. Default: true. Not read from shared project settings. Appears in /config as "Use auto mode during plan"
+    caveats:
+      - "Not read from shared project settings"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="viewMode">
+    type: string
+    required: false
+    default: (sticky Ctrl+O selection)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Default transcript view mode on startup: "default", "verbose", or "focus". Overrides the sticky Ctrl+O selection when set
+    caveats:
+      - "Valid values: default, verbose, focus"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="voiceEnabled">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Enable push-to-talk voice dictation. Written automatically when you run /voice. Requires a Claude.ai account
+    caveats:
+      - "Requires a Claude.ai account"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Available settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <!-- ============================================================
+       GLOBAL CONFIG SETTINGS (~/.claude.json, NOT settings.json)
+       ============================================================ -->
+
+  <setting key="autoConnectIde">
+    type: boolean
+    required: false
+    default: false
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      Automatically connect to a running IDE when Claude Code starts from an external terminal. Default: false. Appears in /config as Auto-connect to IDE (external terminal) when running outside a VS Code or JetBrains terminal
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json — adding to settings.json triggers schema validation error"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="autoInstallIdeExtension">
+    type: boolean
+    required: false
+    default: true
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      Automatically install the Claude Code IDE extension when running from a VS Code terminal. Default: true. Appears in /config as Auto-install IDE extension when running inside a VS Code or JetBrains terminal. You can also set the CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL environment variable
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json"
+      - "CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL env var also controls this"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="editorMode">
+    type: string
+    required: false
+    default: "normal"
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      Key binding mode for the input prompt: "normal" or "vim". Default: "normal". Appears in /config as Editor mode
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json"
+      - "Valid values: normal, vim"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="showTurnDuration">
+    type: boolean
+    required: false
+    default: true
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      Show turn duration messages after responses, e.g. "Cooked for 1m 6s". Default: true. Appears in /config as Show turn duration
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="terminalProgressBarEnabled">
+    type: boolean
+    required: false
+    default: true
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      Show the terminal progress bar in supported terminals: ConEmu, Ghostty 1.2.0+, and iTerm2 3.6.6+. Default: true. Appears in /config as Terminal progress bar
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json"
+      - "Only applies in supported terminals: ConEmu, Ghostty 1.2.0+, iTerm2 3.6.6+"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="teammateMode">
+    type: string
+    required: false
+    default: "auto"
+    scope: [global-config]
+    applicability: cli
+    excerpt: |
+      How agent team teammates display: auto (picks split panes in tmux or iTerm2, in-process otherwise), in-process, or tmux. See choose a display mode
+    caveats:
+      - "Stored in ~/.claude.json, NOT settings.json"
+      - "Valid values: auto, in-process, tmux"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Global config settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <!-- ============================================================
+       WORKTREE SETTINGS
+       ============================================================ -->
+
+  <setting key="worktree.symlinkDirectories">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Directories to symlink from the main repository into each worktree to avoid duplicating large directories on disk. No directories are symlinked by default
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Worktree settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="worktree.sparsePaths">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Directories to check out in each worktree via git sparse-checkout (cone mode). Only the listed paths are written to disk, which is faster in large monorepos
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Worktree settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <!-- ============================================================
+       SANDBOX SETTINGS (nested under "sandbox" key)
+       ============================================================ -->
+
+  <setting key="sandbox.enabled">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Enable bash sandboxing (macOS, Linux, and WSL2). Default: false
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.failIfUnavailable">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Exit with an error at startup if sandbox.enabled is true but the sandbox cannot start (missing dependencies, unsupported platform, or platform restrictions). When false (default), a warning is shown and commands run unsandboxed. Intended for managed settings deployments that require sandboxing as a hard gate
+    caveats:
+      - "Intended for managed settings deployments"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.autoAllowBashIfSandboxed">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Auto-approve bash commands when sandboxed. Default: true
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.excludedCommands">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Commands that should run outside of the sandbox
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.allowUnsandboxedCommands">
+    type: boolean
+    required: false
+    default: true
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Allow commands to run outside the sandbox via the dangerouslyDisableSandbox parameter. When set to false, the dangerouslyDisableSandbox escape hatch is completely disabled and all commands must run sandboxed (or be in excludedCommands). Useful for enterprise policies that require strict sandboxing. Default: true
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.filesystem.allowWrite">
+    type: array of strings (paths)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Additional paths where sandboxed commands can write. Arrays are merged across all settings scopes: user, project, and managed paths are combined, not replaced. Also merged with paths from Edit(...) allow permission rules.
+    caveats:
+      - "Arrays merge across all settings scopes"
+      - "Also merged with Edit(...) allow permission rules"
+      - "Path prefixes: / = absolute, ~/ = home-relative, ./ or no prefix = project-root or ~/.claude relative"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.filesystem.denyWrite">
+    type: array of strings (paths)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Paths where sandboxed commands cannot write. Arrays are merged across all settings scopes. Also merged with paths from Edit(...) deny permission rules.
+    caveats:
+      - "Arrays merge across all settings scopes"
+      - "Also merged with Edit(...) deny permission rules"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.filesystem.denyRead">
+    type: array of strings (paths)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Paths where sandboxed commands cannot read. Arrays are merged across all settings scopes. Also merged with paths from Read(...) deny permission rules.
+    caveats:
+      - "Arrays merge across all settings scopes"
+      - "Also merged with Read(...) deny permission rules"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.filesystem.allowRead">
+    type: array of strings (paths)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Paths to re-allow reading within denyRead regions. Takes precedence over denyRead. Arrays are merged across all settings scopes. Use this to create workspace-only read access patterns.
+    caveats:
+      - "Takes precedence over denyRead"
+      - "Arrays merge across all settings scopes"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.filesystem.allowManagedReadPathsOnly">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Only filesystem.allowRead paths from managed settings are respected. denyRead still merges from all sources. Default: false
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowUnixSockets">
+    type: array of strings (socket paths)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      (macOS only) Unix socket paths accessible in sandbox. Ignored on Linux and WSL2, where the seccomp filter cannot inspect socket paths; use allowAllUnixSockets instead.
+    caveats:
+      - "macOS only"
+      - "Ignored on Linux and WSL2"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowAllUnixSockets">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Allow all Unix socket connections in sandbox. On Linux and WSL2 this is the only way to permit Unix sockets, since it skips the seccomp filter that otherwise blocks socket(AF_UNIX, ...) calls. Default: false
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowLocalBinding">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Allow binding to localhost ports (macOS only). Default: false
+    caveats:
+      - "macOS only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowMachLookup">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Additional XPC/Mach service names the sandbox may look up (macOS only). Supports a single trailing * for prefix matching. Needed for tools that communicate via XPC such as the iOS Simulator or Playwright.
+    caveats:
+      - "macOS only"
+      - "Supports single trailing * for prefix matching"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowedDomains">
+    type: array of strings
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Array of domains to allow for outbound network traffic. Supports wildcards (e.g., *.example.com).
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.allowManagedDomainsOnly">
+    type: boolean
+    required: false
+    default: false
+    scope: [managed]
+    applicability: cli
+    excerpt: |
+      (Managed settings only) Only allowedDomains and WebFetch(domain:...) allow rules from managed settings are respected. Domains from user, project, and local settings are ignored. Non-allowed domains are blocked automatically without prompting the user. Denied domains are still respected from all sources. Default: false
+    caveats:
+      - "Managed settings only"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.httpProxyPort">
+    type: integer
+    required: false
+    default: (Claude runs its own proxy)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      HTTP proxy port used if you wish to bring your own proxy. If not specified, Claude will run its own proxy.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.network.socksProxyPort">
+    type: integer
+    required: false
+    default: (Claude runs its own proxy)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      SOCKS5 proxy port used if you wish to bring your own proxy. If not specified, Claude will run its own proxy.
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.enableWeakerNestedSandbox">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Enable weaker sandbox for unprivileged Docker environments (Linux and WSL2 only). Reduces security. Default: false
+    caveats:
+      - "Linux and WSL2 only"
+      - "REDUCES SECURITY"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="sandbox.enableWeakerNetworkIsolation">
+    type: boolean
+    required: false
+    default: false
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      (macOS only) Allow access to the system TLS trust service (com.apple.trustd.agent) in the sandbox. Required for Go-based tools like gh, gcloud, and terraform to verify TLS certificates when using httpProxyPort with a MITM proxy and custom CA. Reduces security by opening a potential data exfiltration path. Default: false
+    caveats:
+      - "macOS only"
+      - "REDUCES SECURITY — opens a potential data exfiltration path"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Sandbox settings"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <!-- ============================================================
+       PLUGIN SETTINGS
+       ============================================================ -->
+
+  <setting key="enabledPlugins">
+    type: object (string-to-boolean map)
+    required: false
+    default: (none)
+    scope: [user|project|local|managed]
+    applicability: cli
+    excerpt: |
+      Controls which plugins are enabled. Format: "plugin-name@marketplace-name": true/false
+    caveats:
+      - "In managed settings: overrides block installation at all scopes and hide plugin from marketplace"
+      - "Key format: plugin-name@marketplace-name"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Plugin configuration / enabledPlugins"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+  <setting key="extraKnownMarketplaces">
+    type: object
+    required: false
+    default: (none)
+    scope: [user|project|local]
+    applicability: cli
+    excerpt: |
+      Defines additional marketplaces that should be made available for the repository. Typically used in repository-level settings to ensure team members have access to required plugin sources.
+    caveats:
+      - "Key is marketplace name; value is object with source sub-key"
+      - "Supported source types: github, git, directory, hostPattern, settings"
+      - "Team members are prompted to install when trusting the folder"
+    source:
+      url: https://code.claude.com/docs/en/settings
+      section: "Plugin configuration / extraKnownMarketplaces"
+      fetched_at: 2026-04-16T13:02:32-04:00
+  </setting>
+
+</schema>

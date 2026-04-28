@@ -1,0 +1,218 @@
+{
+  "source_doc": "common-workflows.md",
+  "source_url": "https://code.claude.com/docs/en/common-workflows",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "doc-index-callout": {
+      "anchor": "doc-index-callout",
+      "tags": ["navigation"],
+      "notes": "Index discovery callout present at top of every fetched page."
+    },
+    "common-workflows": {
+      "anchor": "common-workflows",
+      "tags": ["overview"],
+      "notes": "Page title and lead blurb: practical step-by-step guides for everyday development tasks."
+    },
+    "understand-new-codebases": {
+      "anchor": "understand-new-codebases",
+      "tags": ["overview"],
+      "notes": "Section header for codebase exploration workflows."
+    },
+    "get-a-quick-codebase-overview": {
+      "anchor": "get-a-quick-codebase-overview",
+      "tags": ["decision"],
+      "notes": "Step-by-step onboarding: navigate to project, start Claude, ask for overview, dive into components."
+    },
+    "codebase-overview-tips": {
+      "anchor": "codebase-overview-tips",
+      "tags": ["decision"],
+      "notes": "Tips: start broad then narrow, ask about conventions, request glossary."
+    },
+    "find-relevant-code": {
+      "anchor": "find-relevant-code",
+      "tags": ["tools", "decision"],
+      "notes": "Steps to locate feature code: find files, understand interactions, trace execution flow. Code intelligence plugin for go-to-definition."
+    },
+    "fix-bugs-efficiently": {
+      "anchor": "fix-bugs-efficiently",
+      "tags": ["decision"],
+      "notes": "Bug fix workflow: share error, get recommendations, apply fix. Tips: reproduce command, stack trace, intermittent vs consistent."
+    },
+    "refactor-code": {
+      "anchor": "refactor-code",
+      "tags": ["decision"],
+      "notes": "Refactor workflow: identify legacy code, get recommendations, apply safely, verify with tests."
+    },
+    "use-specialized-subagents": {
+      "anchor": "use-specialized-subagents",
+      "tags": ["tools", "isolation", "frontmatter", "decision"],
+      "notes": "Subagent workflow: /agents to view, automatic delegation, explicit requests, create custom subagents via /agents UI."
+    },
+    "subagents-tips": {
+      "anchor": "subagents-tips",
+      "tags": ["tools", "isolation", "permissions"],
+      "notes": "Tips: project-specific agents in .claude/agents/, descriptive description for auto-delegation, limit tool access, check docs."
+    },
+    "use-plan-mode-for-safe-code-analysis": {
+      "anchor": "use-plan-mode-for-safe-code-analysis",
+      "tags": ["permissions", "tools", "decision"],
+      "notes": "Plan Mode: read-only analysis, AskUserQuestion for requirements, safe exploration before changes."
+    },
+    "when-to-use-plan-mode": {
+      "anchor": "when-to-use-plan-mode",
+      "tags": ["decision"],
+      "notes": "Use for multi-step implementation, code exploration, and interactive development."
+    },
+    "how-to-use-plan-mode": {
+      "anchor": "how-to-use-plan-mode",
+      "tags": ["permissions"],
+      "notes": "Shift+Tab to cycle modes during session; --permission-mode plan flag for new sessions; -p for headless."
+    },
+    "example-planning-a-complex-refactor": {
+      "anchor": "example-planning-a-complex-refactor",
+      "tags": ["decision"],
+      "notes": "Concrete example: OAuth2 refactor plan with follow-up refinements. Ctrl+G to edit plan in editor. Session auto-named from plan."
+    },
+    "configure-plan-mode-as-default": {
+      "anchor": "configure-plan-mode-as-default",
+      "tags": ["permissions"],
+      "notes": "Set permissions.defaultMode: plan in .claude/settings.json."
+    },
+    "work-with-tests": {
+      "anchor": "work-with-tests",
+      "tags": ["decision"],
+      "notes": "Test workflow: find untested code, generate scaffolding, add edge cases, run and fix. Claude matches project patterns."
+    },
+    "create-pull-requests": {
+      "anchor": "create-pull-requests",
+      "tags": ["tools", "decision"],
+      "notes": "PR workflow: summarize changes, create pr, refine. gh pr create links session to PR; resume with --from-pr."
+    },
+    "handle-documentation": {
+      "anchor": "handle-documentation",
+      "tags": ["decision"],
+      "notes": "Doc workflow: find undocumented code, generate JSDoc, review and enhance, verify against standards."
+    },
+    "work-with-images": {
+      "anchor": "work-with-images",
+      "tags": ["tools"],
+      "notes": "Image input: drag-drop, ctrl+v paste, path reference. Analyze, use for context, generate code from visuals."
+    },
+    "reference-files-and-directories": {
+      "anchor": "reference-files-and-directories",
+      "tags": ["tools", "scope"],
+      "notes": "@ syntax: single file (includes content), directory (listing only), MCP resources (@server:resource). @ also loads CLAUDE.md hierarchy."
+    },
+    "use-extended-thinking-thinking-mode": {
+      "anchor": "use-extended-thinking-thinking-mode",
+      "tags": ["thinking", "model", "cost"],
+      "notes": "Extended thinking enabled by default. Adaptive reasoning on supported models. Not triggered by 'think'/'think hard' phrases."
+    },
+    "configure-thinking-mode": {
+      "anchor": "configure-thinking-mode",
+      "tags": ["thinking", "model", "cost"],
+      "notes": "Table of config scopes: effort level, ultrathink keyword, Option+T toggle, /config global default, MAX_THINKING_TOKENS env var."
+    },
+    "how-extended-thinking-works": {
+      "anchor": "how-extended-thinking-works",
+      "tags": ["thinking", "model", "cost", "caveat"],
+      "notes": "Adaptive reasoning allocates tokens dynamically by effort level. Older models use fixed budget. MAX_THINKING_TOKENS=0 disables. Opus 4.7 always adaptive. Charged for all thinking tokens even when redacted."
+    },
+    "resume-previous-conversations": {
+      "anchor": "resume-previous-conversations",
+      "tags": ["decision", "isolation"],
+      "notes": "--continue, --resume, --from-pr flags. /resume to switch during session. Sessions per project dir, including worktrees. SDK/headless sessions excluded from picker."
+    },
+    "name-your-sessions": {
+      "anchor": "name-your-sessions",
+      "tags": ["decision"],
+      "notes": "-n flag at startup or /rename during session. Rename from picker with R key. Resume by name later."
+    },
+    "use-the-session-picker": {
+      "anchor": "use-the-session-picker",
+      "tags": ["tools"],
+      "notes": "Picker keyboard shortcuts: navigate, expand/collapse, preview (P), rename (R), search (/), toggle scope (A), branch filter (B). Forked sessions grouped under root."
+    },
+    "run-parallel-claude-code-sessions-with-git-worktrees": {
+      "anchor": "run-parallel-claude-code-sessions-with-git-worktrees",
+      "tags": ["isolation", "decision"],
+      "notes": "Worktrees give each session its own files and branch, sharing repo history. --worktree (-w) flag creates and enters worktree."
+    },
+    "worktree-base-branch": {
+      "anchor": "worktree-base-branch",
+      "tags": ["isolation", "caveat"],
+      "notes": "Base branch fixed to origin/HEAD; not configurable via flag. Re-sync with git remote set-head origin -a. Use WorktreeCreate hook for full control."
+    },
+    "subagent-worktrees": {
+      "anchor": "subagent-worktrees",
+      "tags": ["isolation", "frontmatter"],
+      "notes": "isolation: worktree in subagent frontmatter. Each subagent gets own worktree, auto-cleaned if no changes."
+    },
+    "worktree-cleanup": {
+      "anchor": "worktree-cleanup",
+      "tags": ["isolation", "caveat"],
+      "notes": "No changes: auto-removed. Changes exist: prompted. Orphaned subagent worktrees swept by cleanupPeriodDays if clean. --worktree worktrees never auto-swept."
+    },
+    "copy-gitignored-files-to-worktrees": {
+      "anchor": "copy-gitignored-files-to-worktrees",
+      "tags": ["isolation"],
+      "notes": ".worktreeinclude file (gitignore syntax) copies gitignored files (.env etc.) into new worktrees."
+    },
+    "manage-worktrees-manually": {
+      "anchor": "manage-worktrees-manually",
+      "tags": ["isolation"],
+      "notes": "git worktree add/remove for full control over location and branch. Initialize dev environment in each worktree."
+    },
+    "non-git-version-control": {
+      "anchor": "non-git-version-control",
+      "tags": ["isolation", "hooks"],
+      "notes": "WorktreeCreate/WorktreeRemove hooks replace default git logic for SVN/Perforce/Mercurial worktree support."
+    },
+    "get-notified-when-claude-needs-your-attention": {
+      "anchor": "get-notified-when-claude-needs-your-attention",
+      "tags": ["hooks", "decision"],
+      "notes": "Notification hook event: fires on permission_prompt, idle_prompt, auth_success, elicitation_dialog. Per-platform native notification commands."
+    },
+    "notification-hook-matcher": {
+      "anchor": "notification-hook-matcher",
+      "tags": ["hooks"],
+      "notes": "Matcher field narrows Notification hook to specific event types. Default (empty) fires on all."
+    },
+    "use-claude-as-a-unix-style-utility": {
+      "anchor": "use-claude-as-a-unix-style-utility",
+      "tags": ["tools", "decision"],
+      "notes": "Section: add Claude to build scripts as linter; pipe data in and out; control output format."
+    },
+    "add-claude-to-your-verification-process": {
+      "anchor": "add-claude-to-your-verification-process",
+      "tags": ["tools", "decision"],
+      "notes": "package.json scripts with claude -p for CI/CD linting and review automation."
+    },
+    "pipe-in-pipe-out": {
+      "anchor": "pipe-in-pipe-out",
+      "tags": ["tools"],
+      "notes": "Pipe stdin data to claude -p and redirect stdout. Combine with other Unix tools."
+    },
+    "control-output-format": {
+      "anchor": "control-output-format",
+      "tags": ["tools", "decision"],
+      "notes": "text (default), json (array with metadata), stream-json (real-time objects). Each output is valid JSON; concatenated stream-json is not."
+    },
+    "run-claude-on-a-schedule": {
+      "anchor": "run-claude-on-a-schedule",
+      "tags": ["tools", "decision"],
+      "notes": "Four scheduling options: Routines (Anthropic infra), Desktop scheduled tasks (local), GitHub Actions (CI), /loop (current session). Be explicit about success criteria for autonomous runs."
+    },
+    "ask-claude-about-its-capabilities": {
+      "anchor": "ask-claude-about-its-capabilities",
+      "tags": ["tools"],
+      "notes": "Claude has built-in access to its own documentation. /powerup for interactive lessons."
+    },
+    "next-steps": {
+      "anchor": "next-steps",
+      "tags": ["navigation"],
+      "notes": "Links to Best practices, How Claude Code works, Extend Claude Code, reference implementation."
+    }
+  }
+}

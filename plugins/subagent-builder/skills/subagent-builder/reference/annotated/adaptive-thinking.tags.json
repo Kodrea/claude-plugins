@@ -1,0 +1,218 @@
+{
+  "source_doc": "adaptive-thinking.md",
+  "source_url": "https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "adaptive-thinking": {
+      "anchor": "adaptive-thinking",
+      "tags": ["thinking", "adaptive-thinking", "auto-thinking", "model"],
+      "notes": "Page title and subtitle — positions adaptive thinking as the recommended way to use extended thinking."
+    },
+    "zdr-note": {
+      "anchor": "zdr-note",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Zero Data Retention eligibility note for adaptive thinking feature."
+    },
+    "adaptive-thinking-is-the-recommended-way": {
+      "anchor": "adaptive-thinking-is-the-recommended-way",
+      "tags": ["thinking", "adaptive-thinking", "auto-thinking", "model", "decision", "caveat", "api-only"],
+      "notes": "Core definition paragraph; states Opus 4.7 rejects manual budget_tokens — key caveat and model-selection decision."
+    },
+    "tip-performance-vs-budget-tokens": {
+      "anchor": "tip-performance-vs-budget-tokens",
+      "tags": ["thinking", "adaptive-thinking", "decision", "cost", "api-only"],
+      "notes": "Tip block: adaptive outperforms fixed budget_tokens for bimodal/agentic workloads; deprecated path noted."
+    },
+    "supported-models": {
+      "anchor": "supported-models",
+      "tags": ["model", "thinking", "adaptive-thinking", "caveat", "api-only"],
+      "notes": "Per-model availability table: Mythos (default), Opus 4.7 (only mode, 400 on enabled), Opus 4.6, Sonnet 4.6."
+    },
+    "budget-tokens-deprecation-warning": {
+      "anchor": "budget-tokens-deprecation-warning",
+      "tags": ["thinking", "caveat", "model", "decision", "api-only"],
+      "notes": "Warning: budget_tokens deprecated on Opus/Sonnet 4.6; older models require it."
+    },
+    "how-adaptive-thinking-works": {
+      "anchor": "how-adaptive-thinking-works",
+      "tags": ["thinking", "adaptive-thinking", "auto-thinking", "context-sensitivity", "effort-integration"],
+      "notes": "Explains optional thinking, complexity evaluation, effort-level influence, and automatic interleaved thinking."
+    },
+    "how-adaptive-thinking-works-interleaved": {
+      "anchor": "how-adaptive-thinking-works-interleaved",
+      "tags": ["thinking", "adaptive-thinking", "tools", "api-only"],
+      "notes": "Second sentence of the How it works section: adaptive auto-enables interleaved thinking between tool calls."
+    },
+    "how-to-use-adaptive-thinking": {
+      "anchor": "how-to-use-adaptive-thinking",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Intro sentence: set thinking.type to adaptive in the API request."
+    },
+    "code-group-basic-adaptive": {
+      "anchor": "code-group-basic-adaptive",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Multi-language code examples for basic adaptive thinking request (Shell, CLI, Python, TypeScript, C#, Go, Java, PHP, Ruby)."
+    },
+    "adaptive-thinking-with-the-effort-parameter": {
+      "anchor": "adaptive-thinking-with-the-effort-parameter",
+      "tags": ["thinking", "adaptive-thinking", "effort-integration", "context-sensitivity", "decision", "api-only"],
+      "notes": "Intro + effort-level table: max/xhigh/high/medium/low behavior with thinking allocation."
+    },
+    "code-group-effort-parameter": {
+      "anchor": "code-group-effort-parameter",
+      "tags": ["thinking", "adaptive-thinking", "effort-integration", "api-only"],
+      "notes": "Multi-language code examples for adaptive thinking combined with output_config.effort."
+    },
+    "streaming-with-adaptive-thinking": {
+      "anchor": "streaming-with-adaptive-thinking",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Intro sentence: adaptive thinking works with streaming via thinking_delta events."
+    },
+    "code-group-streaming": {
+      "anchor": "code-group-streaming",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Multi-language streaming code examples for adaptive thinking."
+    },
+    "adaptive-vs-manual-vs-disabled-thinking": {
+      "anchor": "adaptive-vs-manual-vs-disabled-thinking",
+      "tags": ["thinking", "adaptive-thinking", "decision", "model", "caveat", "api-only"],
+      "notes": "Comparison table: adaptive/manual/disabled configs, availability, and when-to-use guidance."
+    },
+    "interleaved-thinking-availability-note": {
+      "anchor": "interleaved-thinking-availability-note",
+      "tags": ["thinking", "adaptive-thinking", "model", "caveat", "api-only"],
+      "notes": "Note block detailing interleaved thinking availability by mode and model, including Opus 4.6 limitation."
+    },
+    "important-considerations": {
+      "anchor": "important-considerations",
+      "tags": ["thinking", "adaptive-thinking"],
+      "notes": "Section heading only."
+    },
+    "validation-changes": {
+      "anchor": "validation-changes",
+      "tags": ["thinking", "adaptive-thinking", "caveat", "api-only"],
+      "notes": "Adaptive mode relaxes API validation: prior assistant turns don't need to start with thinking blocks."
+    },
+    "prompt-caching": {
+      "anchor": "prompt-caching",
+      "tags": ["thinking", "adaptive-thinking", "cost", "caveat", "api-only"],
+      "notes": "Cache breakpoints preserved within adaptive mode; switching modes breaks message cache but not system prompts."
+    },
+    "tuning-thinking-behavior": {
+      "anchor": "tuning-thinking-behavior",
+      "tags": ["thinking", "adaptive-thinking", "context-sensitivity", "decision"],
+      "notes": "Promptable triggering behavior; system prompt guidance can reduce or increase thinking frequency."
+    },
+    "tuning-thinking-warning": {
+      "anchor": "tuning-thinking-warning",
+      "tags": ["thinking", "adaptive-thinking", "caveat", "decision"],
+      "notes": "Warning: steering Claude to think less may reduce quality; measure impact before production deployment."
+    },
+    "cost-control": {
+      "anchor": "cost-control",
+      "tags": ["thinking", "adaptive-thinking", "cost", "effort-integration", "caveat", "api-only"],
+      "notes": "max_tokens is hard limit; effort is soft guidance; max/high effort may exhaust budget triggering stop_reason: max_tokens."
+    },
+    "working-with-thinking-blocks": {
+      "anchor": "working-with-thinking-blocks",
+      "tags": ["thinking", "adaptive-thinking"],
+      "notes": "Section intro: concepts apply to all extended-thinking models regardless of mode."
+    },
+    "summarized-thinking": {
+      "anchor": "summarized-thinking",
+      "tags": ["thinking", "adaptive-thinking", "cost", "model", "caveat", "api-only"],
+      "notes": "Summarized thinking is default for Claude 4; Opus 4.7 and Mythos default to omitted; display must be set explicitly."
+    },
+    "summarized-thinking-considerations": {
+      "anchor": "summarized-thinking-considerations",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Bullet-list caveats: billed for full tokens not summary tokens, verbose preamble behavior, separate summarization model."
+    },
+    "summarized-thinking-sonnet37-note": {
+      "anchor": "summarized-thinking-sonnet37-note",
+      "tags": ["thinking", "model", "caveat", "api-only"],
+      "notes": "Sonnet 3.7 returns full thinking; full output for Claude 4 requires contacting sales."
+    },
+    "controlling-thinking-display": {
+      "anchor": "controlling-thinking-display",
+      "tags": ["thinking", "adaptive-thinking", "caveat", "api-only"],
+      "notes": "display field values: summarized (default older Claude 4) vs omitted (default Opus 4.7/Mythos); omitted improves streaming TTFT."
+    },
+    "display-sdk-note": {
+      "anchor": "display-sdk-note",
+      "tags": ["thinking", "caveat", "api-only"],
+      "notes": "SDK support gap: display not in type definitions; Python works transparently, TS needs assertion, others need raw HTTP."
+    },
+    "omitted-thinking-considerations": {
+      "anchor": "omitted-thinking-considerations",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Omitted thinking reduces latency not cost; signature must be passed back unchanged; display invalid with disabled thinking."
+    },
+    "signature-display-compatibility-note": {
+      "anchor": "signature-display-compatibility-note",
+      "tags": ["thinking", "caveat", "api-only"],
+      "notes": "signature field is identical for summarized/omitted; switching display values between turns is supported."
+    },
+    "opus-47-display-default-note": {
+      "anchor": "opus-47-display-default-note",
+      "tags": ["thinking", "model", "caveat", "api-only"],
+      "notes": "Silent change: Opus 4.7 defaults display to omitted vs Opus 4.6 default of summarized; must set explicitly to restore."
+    },
+    "display-omitted-code-reference": {
+      "anchor": "display-omitted-code-reference",
+      "tags": ["thinking", "adaptive-thinking", "api-only"],
+      "notes": "Cross-reference to extended thinking page for display:omitted examples; adaptive uses type:adaptive not type:enabled."
+    },
+    "thinking-encryption": {
+      "anchor": "thinking-encryption",
+      "tags": ["thinking", "caveat", "api-only"],
+      "notes": "Encrypted signature field verifies thinking blocks generated by Claude when passed back to API."
+    },
+    "thinking-encryption-tools-note": {
+      "anchor": "thinking-encryption-tools-note",
+      "tags": ["thinking", "tools", "caveat", "api-only"],
+      "notes": "Only strictly necessary to send thinking blocks back when using tools; otherwise can omit."
+    },
+    "thinking-encryption-considerations": {
+      "anchor": "thinking-encryption-considerations",
+      "tags": ["thinking", "caveat", "api-only"],
+      "notes": "Signature caveats: streaming delivery via signature_delta, longer in Claude 4, opaque, cross-platform compatible."
+    },
+    "pricing": {
+      "anchor": "pricing",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "What incurs charges: thinking tokens (output), thinking blocks in next request (input), standard text output."
+    },
+    "pricing-system-prompt-note": {
+      "anchor": "pricing-system-prompt-note",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Specialized system prompt automatically included when extended thinking is enabled — implicit token cost."
+    },
+    "pricing-summarized": {
+      "anchor": "pricing-summarized",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Token breakdown for summarized thinking: billed for full thinking tokens, not visible summary tokens; summary generation is free."
+    },
+    "pricing-omitted": {
+      "anchor": "pricing-omitted",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Token breakdown for omitted display: same billed cost as summarized; visible thinking tokens are zero."
+    },
+    "pricing-billing-warning": {
+      "anchor": "pricing-billing-warning",
+      "tags": ["thinking", "cost", "caveat", "api-only"],
+      "notes": "Warning: billed count will not match visible token count — billed for full thinking process."
+    },
+    "additional-topics": {
+      "anchor": "additional-topics",
+      "tags": ["thinking", "adaptive-thinking", "tools", "cost", "api-only"],
+      "notes": "Cross-references to extended thinking page: tool use, prompt caching, context window interactions with thinking."
+    },
+    "next-steps": {
+      "anchor": "next-steps",
+      "tags": ["thinking", "adaptive-thinking", "effort-integration"],
+      "notes": "Navigation cards to extended thinking and effort parameter pages."
+    }
+  }
+}

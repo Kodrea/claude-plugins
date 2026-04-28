@@ -1,0 +1,144 @@
+{
+  "source_doc": "effort.md",
+  "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "emergent_tags_introduced": [
+    {
+      "tag": "effort",
+      "reason": "core topic of the document; paragraphs that define or describe the effort parameter itself"
+    },
+    {
+      "tag": "effort-ladder",
+      "reason": "paragraphs containing the ordered enumeration of effort levels (max/xhigh/high/medium/low) as a decision ladder"
+    },
+    {
+      "tag": "xhigh",
+      "reason": "paragraphs specifically about the xhigh level (Opus 4.7-only, long-horizon agentic use)"
+    },
+    {
+      "tag": "model-gating",
+      "reason": "paragraphs that enumerate which models support which effort levels (availability constraints)"
+    },
+    {
+      "tag": "api-only",
+      "reason": "paragraphs describing API/SDK-level behavior (output_config parameter, code samples) not available from the Claude Code CLI"
+    },
+    {
+      "tag": "budget-tokens-deprecation",
+      "reason": "paragraphs covering the deprecation of budget_tokens in favor of effort on Opus 4.6/Sonnet 4.6"
+    }
+  ],
+  "paragraphs": {
+    "effort-intro-zdr-note": {
+      "anchor": "effort-intro-zdr-note",
+      "tags": ["effort", "caveat"],
+      "notes": "ZDR eligibility note for the effort feature"
+    },
+    "the-effort-parameter-allows-you-to-control": {
+      "anchor": "the-effort-parameter-allows-you-to-control",
+      "tags": ["effort", "cost", "model-gating"],
+      "notes": "Defines effort parameter; states it is GA on all supported models with no beta header"
+    },
+    "effort-supported-models-note": {
+      "anchor": "effort-supported-models-note",
+      "tags": ["effort", "model", "model-gating"],
+      "notes": "Lists models that support effort: Mythos Preview, Opus 4.7, Opus 4.6, Sonnet 4.6, Opus 4.5"
+    },
+    "opus-46-sonnet-46-budget-tokens-tip": {
+      "anchor": "opus-46-sonnet-46-budget-tokens-tip",
+      "tags": ["effort", "thinking", "budget-tokens-deprecation", "caveat", "model-gating"],
+      "notes": "budget_tokens deprecated on Opus 4.6/Sonnet 4.6; effort + adaptive thinking is the new recommended pattern"
+    },
+    "how-effort-works": {
+      "anchor": "how-effort-works",
+      "tags": ["effort", "cost", "thinking"],
+      "notes": "Default is high effort; max raises it; lowering trades quality for speed/cost"
+    },
+    "setting-effort-to-high-tip": {
+      "anchor": "setting-effort-to-high-tip",
+      "tags": ["effort", "caveat"],
+      "notes": "effort=high is identical to omitting the parameter"
+    },
+    "the-effort-parameter-affects-all-tokens": {
+      "anchor": "the-effort-parameter-affects-all-tokens",
+      "tags": ["effort", "cost", "thinking", "tools"],
+      "notes": "Effort affects text, tool calls, AND extended thinking tokens — all three"
+    },
+    "this-approach-has-two-major-advantages": {
+      "anchor": "this-approach-has-two-major-advantages",
+      "tags": ["effort", "thinking", "tools", "decision"],
+      "notes": "Two advantages: works without thinking enabled; controls tool-call volume (fewer calls at lower effort)"
+    },
+    "effort-levels": {
+      "anchor": "effort-levels",
+      "tags": ["effort", "effort-ladder", "xhigh", "model-gating", "cost", "decision"],
+      "notes": "Canonical table of all five effort levels with descriptions and typical use cases"
+    },
+    "effort-behavioral-signal-note": {
+      "anchor": "effort-behavioral-signal-note",
+      "tags": ["effort", "thinking", "caveat"],
+      "notes": "Effort is a behavioral signal not a hard token cap; model may still think at low effort on hard problems"
+    },
+    "recommended-effort-levels-for-sonnet-46": {
+      "anchor": "recommended-effort-levels-for-sonnet-46",
+      "tags": ["effort", "effort-ladder", "model", "model-gating", "decision", "caveat"],
+      "notes": "Sonnet 4.6 defaults to high; set explicitly to avoid unexpected latency"
+    },
+    "sonnet-46-effort-bullets": {
+      "anchor": "sonnet-46-effort-bullets",
+      "tags": ["effort", "effort-ladder", "model", "decision"],
+      "notes": "Prescriptive per-level guidance for Sonnet 4.6: medium recommended default, low for high-volume, max for absolute ceiling"
+    },
+    "recommended-effort-levels-for-claude-opus-47": {
+      "anchor": "recommended-effort-levels-for-claude-opus-47",
+      "tags": ["effort", "effort-ladder", "xhigh", "model", "model-gating", "decision"],
+      "notes": "Start with xhigh for coding/agentic; API default is high; xhigh must be set explicitly"
+    },
+    "opus-47-effort-table": {
+      "anchor": "opus-47-effort-table",
+      "tags": ["effort", "effort-ladder", "xhigh", "model", "decision", "cost"],
+      "notes": "Per-level guidance table for Opus 4.7 including xhigh and max caveats about overthinking"
+    },
+    "claude-opus-47-respects-effort-more-strictly": {
+      "anchor": "claude-opus-47-respects-effort-more-strictly",
+      "tags": ["effort", "model", "model-gating", "caveat", "decision"],
+      "notes": "Opus 4.7 stricter than 4.6 at low/medium; raise effort rather than prompting around shallow reasoning"
+    },
+    "when-running-claude-opus-47-at-xhigh-or-max": {
+      "anchor": "when-running-claude-opus-47-at-xhigh-or-max",
+      "tags": ["effort", "xhigh", "cost", "decision"],
+      "notes": "At xhigh/max set large max_tokens (start at 64k); model needs room for subagents and tool calls"
+    },
+    "basic-usage": {
+      "anchor": "basic-usage",
+      "tags": ["effort", "api-only"],
+      "notes": "Multi-language code samples showing output_config.effort in API calls"
+    },
+    "when-to-adjust-the-effort-parameter": {
+      "anchor": "when-to-adjust-the-effort-parameter",
+      "tags": ["effort", "effort-ladder", "xhigh", "model-gating", "cost", "decision"],
+      "notes": "Decision guide for when to use each level; includes model availability notes for max and xhigh"
+    },
+    "effort-with-tool-use": {
+      "anchor": "effort-with-tool-use",
+      "tags": ["effort", "tools", "cost", "decision"],
+      "notes": "Lower effort: fewer/combined tool calls, no preamble; higher effort: more calls, plans, comments"
+    },
+    "effort-with-extended-thinking": {
+      "anchor": "effort-with-extended-thinking",
+      "tags": ["effort", "thinking", "model", "model-gating", "budget-tokens-deprecation", "caveat"],
+      "notes": "Per-model behavior: Mythos/4.7 use adaptive thinking; 4.6 budget_tokens deprecated; 4.5 still uses manual thinking"
+    },
+    "the-effort-parameter-can-be-used-with-or-wi": {
+      "anchor": "the-effort-parameter-can-be-used-with-or-wi",
+      "tags": ["effort", "thinking", "cost"],
+      "notes": "Effort controls text and tool tokens even when thinking is not enabled"
+    },
+    "best-practices": {
+      "anchor": "best-practices",
+      "tags": ["effort", "cost", "decision"],
+      "notes": "Four best-practice bullets: set explicitly, use low for speed, test per use case, consider dynamic effort"
+    }
+  }
+}

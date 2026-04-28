@@ -1,0 +1,53 @@
+{
+  "source_doc": "context-window.md",
+  "source_url": "https://code.claude.com/docs/en/context-window",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "explore-the-context-window": {
+      "anchor": "explore-the-context-window",
+      "tags": ["context-window", "context-management"],
+      "notes": "Page title and intro blurb. Sets up the interactive simulation concept."
+    },
+    "jsx-component-events-data": {
+      "anchor": "jsx-component-events-data",
+      "tags": ["context-window", "context-management", "cost", "skills", "hooks", "compaction"],
+      "notes": "The bulk of the file is JSX/React source for the ContextWindow simulation component. Contains embedded desc strings documenting: auto memory 200-line/25KB limit, MCP deferred schema loading (ENABLE_TOOL_SEARCH), skill descriptions not surviving /compact, hooks additionalContext mechanism, subagent separate context isolation, PostToolUse hook exit-code-2 behavior, /compact summarization. Not user-facing prose; data embedded in component."
+    },
+    "claude-code-s-context-window-holds": {
+      "anchor": "claude-code-s-context-window-holds",
+      "tags": ["context-window", "context-management"],
+      "notes": "Introductory prose paragraph before the ContextWindow component. Describes what the context window contains."
+    },
+    "what-the-timeline-shows": {
+      "anchor": "what-the-timeline-shows",
+      "tags": ["context-window", "context-management", "skills", "hooks"],
+      "notes": "Section summarizing what the interactive timeline covers: startup loading, file reads, path-scoped rules, PostToolUse hooks, subagent isolation, /compact."
+    },
+    "what-survives-compaction": {
+      "anchor": "what-survives-compaction",
+      "tags": ["compaction", "context-window", "context-management", "skills", "hooks", "caveat"],
+      "notes": "Core compaction survival table: system prompt unchanged, CLAUDE.md re-injected, auto memory re-injected, path-scoped rules lost until trigger file re-read, nested CLAUDE.md lost until re-read, invoked skill bodies re-injected (5K/skill cap, 25K total), hooks not applicable. Critical reference."
+    },
+    "path-scoped-rules-and-nested-claude-md": {
+      "anchor": "path-scoped-rules-and-nested-claude-md",
+      "tags": ["compaction", "context-management", "caveat"],
+      "notes": "Explains why path-scoped rules and nested CLAUDE.md are lost after compaction: they load into message history, not outside it. Workaround: drop paths: frontmatter or move to project-root CLAUDE.md."
+    },
+    "skill-bodies-are-re-injected": {
+      "anchor": "skill-bodies-are-re-injected",
+      "tags": ["compaction", "skills", "truncation", "caveat"],
+      "notes": "Skill bodies re-injected after compaction but truncated to 5K per skill / 25K total. Oldest invoked skills dropped first. Instructions: put critical content near top of SKILL.md."
+    },
+    "check-your-own-session": {
+      "anchor": "check-your-own-session",
+      "tags": ["context-window", "context-management"],
+      "notes": "Points to /context command for live usage breakdown and /memory to verify loaded files."
+    },
+    "related-resources": {
+      "anchor": "related-resources",
+      "tags": ["context-window"],
+      "notes": "Navigation links to features-overview, memory, sub-agents, best-practices, costs pages."
+    }
+  }
+}

@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema source_doc="official-tools-reference.md" extracted_at="2026-04-28T12:00:00-04:00" subject="available-tools-catalog">
+
+  <tool name="Agent">
+    description: |
+      Spawns a subagent with its own context window to handle a task
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required column says No — does not require user permission prompt"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="AskUserQuestion">
+    description: |
+      Asks multiple-choice questions to gather requirements or clarify ambiguity
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Bash">
+    description: |
+      Executes shell commands in your environment. See Bash tool behavior
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+      - "See tool_behavior block for detailed behavioral notes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="CronCreate">
+    description: |
+      Schedules a recurring or one-shot prompt within the current session. See scheduled tasks
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Session-scoped — tasks are restored on --resume or --continue if unexpired (live docs updated 2026-04-28; cached source said 'gone when Claude exits' which is now stale)"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+    source_note: "Cached official-tools-reference.md is stale on this point. Live page (fetched 2026-04-28) says tasks restore on --resume/--continue if unexpired."
+  </tool>
+
+  <tool name="CronDelete">
+    description: |
+      Cancels a scheduled task by ID
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="CronList">
+    description: |
+      Lists all scheduled tasks in the session
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Edit">
+    description: |
+      Makes targeted edits to specific files
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="EnterPlanMode">
+    description: |
+      Switches to plan mode to design an approach before coding
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="EnterWorktree">
+    description: |
+      Creates an isolated git worktree and switches into it. Pass a `path` to switch into an existing worktree of the current repository instead of creating a new one
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="ExitPlanMode">
+    description: |
+      Presents a plan for approval and exits plan mode
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="ExitWorktree">
+    description: |
+      Exits a worktree session and returns to the original directory
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Glob">
+    description: |
+      Finds files based on pattern matching
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Grep">
+    description: |
+      Searches for patterns in file contents
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="ListMcpResourcesTool">
+    description: |
+      Lists resources exposed by connected MCP servers
+    auto_approved: true
+    applicability: cli
+    availability: "requires MCP server(s) connected"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="LSP">
+    description: |
+      Code intelligence via language servers: jump to definitions, find references, report type errors and warnings. See LSP tool behavior
+    auto_approved: true
+    applicability: cli
+    availability: "requires a code intelligence plugin installed for your language"
+    caveats:
+      - "Inactive until a code intelligence plugin is installed"
+      - "Plugin bundles language server configuration; server binary must be installed separately"
+      - "See tool_behavior block for detailed behavioral notes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Monitor">
+    description: |
+      Runs a command in the background and feeds each output line back to Claude, so it can react to log entries, file changes, or polled status mid-conversation. See Monitor tool
+    auto_approved: false
+    applicability: cli
+    availability: "requires Claude Code v2.1.98 or later; not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry; not available when DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set"
+    caveats:
+      - "Permission Required: Yes"
+      - "Requires Claude Code v2.1.98 or later"
+      - "Not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry"
+      - "Not available when DISABLE_TELEMETRY or CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set"
+      - "Uses same permission rules as Bash — allow/deny patterns for Bash apply here too"
+      - "See tool_behavior block for detailed behavioral notes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="NotebookEdit">
+    description: |
+      Modifies Jupyter notebook cells
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="PowerShell">
+    description: |
+      Executes PowerShell commands on Windows. Opt-in preview. See PowerShell tool
+    auto_approved: false
+    applicability: cli
+    availability: "opt-in preview; Windows only (not WSL); requires CLAUDE_CODE_USE_POWERSHELL_TOOL=1 in environment or settings.json"
+    caveats:
+      - "Permission Required: Yes"
+      - "Opt-in preview — not enabled by default"
+      - "Only supported on native Windows, not WSL"
+      - "Git Bash is still required to start Claude Code"
+      - "Auto mode does not work with the PowerShell tool yet"
+      - "PowerShell profiles are not loaded"
+      - "Sandboxing is not supported"
+      - "Auto-detects pwsh.exe (PowerShell 7+) with fallback to powershell.exe (PowerShell 5.1)"
+      - "Bash tool remains registered alongside PowerShell tool"
+      - "See tool_behavior block for detailed behavioral notes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Read">
+    description: |
+      Reads the contents of files
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="ReadMcpResourceTool">
+    description: |
+      Reads a specific MCP resource by URI
+    auto_approved: true
+    applicability: cli
+    availability: "requires MCP server(s) connected"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="SendMessage">
+    description: |
+      Sends a message to an agent team teammate, or resumes a subagent by its agent ID. Stopped subagents auto-resume in the background. Only available when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set
+    auto_approved: true
+    applicability: cli
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 environment variable"
+    caveats:
+      - "Only available when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 is set"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Skill">
+    description: |
+      Executes a skill within the main conversation
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskCreate">
+    description: |
+      Creates a new task in the task list
+    auto_approved: true
+    applicability: cli
+    availability: "interactive sessions only (non-interactive uses TodoWrite instead)"
+    caveats:
+      - "Interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate; non-interactive mode uses TodoWrite instead"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskGet">
+    description: |
+      Retrieves full details for a specific task
+    auto_approved: true
+    applicability: cli
+    availability: "interactive sessions only (non-interactive uses TodoWrite instead)"
+    caveats:
+      - "Interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate; non-interactive mode uses TodoWrite instead"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskList">
+    description: |
+      Lists all tasks with their current status
+    auto_approved: true
+    applicability: cli
+    availability: "interactive sessions only (non-interactive uses TodoWrite instead)"
+    caveats:
+      - "Interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate; non-interactive mode uses TodoWrite instead"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskOutput">
+    description: |
+      (Deprecated) Retrieves output from a background task. Prefer `Read` on the task's output file path
+    auto_approved: true
+    applicability: cli
+    availability: "deprecated"
+    caveats:
+      - "Deprecated — prefer Read on the task's output file path"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskStop">
+    description: |
+      Kills a running background task by ID
+    auto_approved: true
+    applicability: cli
+    availability: "always available"
+    caveats: []
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TaskUpdate">
+    description: |
+      Updates task status, dependencies, details, or deletes tasks
+    auto_approved: true
+    applicability: cli
+    availability: "interactive sessions only (non-interactive uses TodoWrite instead)"
+    caveats:
+      - "Interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate; non-interactive mode uses TodoWrite instead"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TeamCreate">
+    description: |
+      Creates an agent team with multiple teammates. Only available when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set
+    auto_approved: true
+    applicability: cli
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 environment variable"
+    caveats:
+      - "Only available when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 is set"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TeamDelete">
+    description: |
+      Disbands an agent team and cleans up teammate processes. Only available when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set
+    auto_approved: true
+    applicability: cli
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 environment variable"
+    caveats:
+      - "Only available when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 is set"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="TodoWrite">
+    description: |
+      Manages the session task checklist. Available in non-interactive mode and the Agent SDK; interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate instead
+    auto_approved: true
+    applicability: cli
+    availability: "non-interactive mode and Agent SDK only; interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate instead"
+    caveats:
+      - "Available in non-interactive mode and the Agent SDK"
+      - "Interactive sessions use TaskCreate, TaskGet, TaskList, and TaskUpdate instead"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="ToolSearch">
+    description: |
+      Searches for and loads deferred tools when tool search is enabled
+    auto_approved: true
+    applicability: cli
+    availability: "requires tool search to be enabled"
+    caveats:
+      - "Only available when tool search is enabled"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="WebFetch">
+    description: |
+      Fetches content from a specified URL
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="WebSearch">
+    description: |
+      Performs web searches
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <tool name="Write">
+    description: |
+      Creates or overwrites files
+    auto_approved: false
+    applicability: cli
+    availability: "always available"
+    caveats:
+      - "Permission Required: Yes"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Tool listing"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool>
+
+  <!-- ============================================================ -->
+  <!-- BEHAVIORAL NOTES                                             -->
+  <!-- ============================================================ -->
+
+  <tool_behavior tool="Bash" section="Bash tool behavior">
+    description: |
+      The Bash tool runs each command in a separate process with the following persistence behavior:
+
+      * When Claude runs `cd` in the main session, the new working directory carries over to later Bash commands as long as it stays inside the project directory or an additional working directory you added with `--add-dir`, `/add-dir`, or `additionalDirectories` in settings. Subagent sessions never carry over working directory changes.
+        * If `cd` lands outside those directories, Claude Code resets to the project directory and appends `Shell cwd was reset to <dir>` to the tool result.
+        * To disable this carry-over so every Bash command starts in the project directory, set `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`.
+      * Environment variables do not persist. An `export` in one command will not be available in the next.
+
+      Activate your virtualenv or conda environment before launching Claude Code. To make environment variables persist across Bash commands, set `CLAUDE_ENV_FILE` to a shell script before launching Claude Code, or use a SessionStart hook to populate it dynamically.
+    caveats:
+      - "cd carry-over is per main-session only — subagent sessions never carry over working directory changes"
+      - "Environment variables do not persist between Bash commands"
+      - "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1 disables working directory carry-over"
+      - "CLAUDE_ENV_FILE can be set to persist environment variables"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Bash tool behavior"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool_behavior>
+
+  <tool_behavior tool="LSP" section="LSP tool behavior">
+    description: |
+      The LSP tool gives Claude code intelligence from a running language server. After each file edit, it automatically reports type errors and warnings so Claude can fix issues without a separate build step. Claude can also call it directly to navigate code:
+
+      * Jump to a symbol's definition
+      * Find all references to a symbol
+      * Get type information at a position
+      * List symbols in a file or workspace
+      * Find implementations of an interface
+      * Trace call hierarchies
+
+      The tool is inactive until you install a code intelligence plugin for your language. The plugin bundles the language server configuration, and you install the server binary separately.
+    caveats:
+      - "Inactive until a code intelligence plugin is installed"
+      - "Automatically reports type errors and warnings after each file edit"
+      - "Plugin bundles language server configuration; server binary must be installed separately"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "LSP tool behavior"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool_behavior>
+
+  <tool_behavior tool="Monitor" section="Monitor tool">
+    description: |
+      The Monitor tool lets Claude watch something in the background and react when it changes, without pausing the conversation. Ask Claude to:
+
+      * Tail a log file and flag errors as they appear
+      * Poll a PR or CI job and report when its status changes
+      * Watch a directory for file changes
+      * Track output from any long-running script you point it at
+
+      Claude writes a small script for the watch, runs it in the background, and receives each output line as it arrives. You keep working in the same session and Claude interjects when an event lands. Stop a monitor by asking Claude to cancel it or by ending the session.
+
+      Monitor uses the same permission rules as Bash, so `allow` and `deny` patterns you have set for Bash apply here too. It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. It is also not available when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set.
+    caveats:
+      - "Requires Claude Code v2.1.98 or later"
+      - "Uses same permission rules as Bash"
+      - "Not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry"
+      - "Not available when DISABLE_TELEMETRY is set"
+      - "Not available when CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC is set"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "Monitor tool"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool_behavior>
+
+  <tool_behavior tool="PowerShell" section="PowerShell tool">
+    description: |
+      On Windows, Claude Code can run PowerShell commands natively instead of routing through Git Bash. This is an opt-in preview.
+
+      Enable by setting `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` in your environment or in `settings.json`.
+
+      Claude Code auto-detects `pwsh.exe` (PowerShell 7+) with a fallback to `powershell.exe` (PowerShell 5.1). The Bash tool remains registered alongside the PowerShell tool, so you may need to ask Claude to use PowerShell.
+
+      Three additional settings control where PowerShell is used:
+      * `"defaultShell": "powershell"` in settings.json: routes interactive `!` commands through PowerShell. Requires the PowerShell tool to be enabled.
+      * `"shell": "powershell"` on individual command hooks: runs that hook in PowerShell. Hooks spawn PowerShell directly, so this works regardless of CLAUDE_CODE_USE_POWERSHELL_TOOL.
+      * `shell: powershell` in skill frontmatter: runs backtick command blocks in PowerShell. Requires the PowerShell tool to be enabled.
+
+      The same main-session working-directory reset behavior described under the Bash tool section applies to PowerShell commands, including the CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR environment variable.
+
+      Preview limitations:
+      * Auto mode does not work with the PowerShell tool yet
+      * PowerShell profiles are not loaded
+      * Sandboxing is not supported
+      * Only supported on native Windows, not WSL
+      * Git Bash is still required to start Claude Code
+    caveats:
+      - "Opt-in preview — enable with CLAUDE_CODE_USE_POWERSHELL_TOOL=1"
+      - "Windows native only — not WSL"
+      - "Git Bash is still required to start Claude Code"
+      - "Auto mode does not work with PowerShell tool yet"
+      - "PowerShell profiles are not loaded"
+      - "Sandboxing is not supported"
+      - "Same working-directory reset behavior as Bash applies"
+      - "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR applies to PowerShell commands too"
+    source:
+      url: https://code.claude.com/docs/en/tools-reference
+      section: "PowerShell tool"
+      fetched_at: 2026-04-16T12:30:30-04:00
+  </tool_behavior>
+
+</schema>

@@ -1,0 +1,188 @@
+{
+  "source_doc": "features-overview.md",
+  "source_url": "https://code.claude.com/docs/en/features-overview",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "documentation-index": {
+      "anchor": "documentation-index",
+      "tags": [],
+      "notes": "Blockquote directing readers to the documentation index llms.txt. Navigation/meta only."
+    },
+    "extend-claude-code": {
+      "anchor": "extend-claude-code",
+      "tags": ["tools", "skills"],
+      "notes": "H1 + subtitle. Introduces the extension layer concept: CLAUDE.md, Skills, subagents, hooks, MCP, plugins."
+    },
+    "claude-code-combines-a-model": {
+      "anchor": "claude-code-combines-a-model",
+      "tags": ["tools", "skills"],
+      "notes": "Opening paragraph: built-in tools cover most tasks; this guide covers the extension layer for customization, external services, and automation."
+    },
+    "new-to-claude-code": {
+      "anchor": "new-to-claude-code",
+      "tags": ["skills"],
+      "notes": "Tip to start with CLAUDE.md for project conventions before adding other extensions."
+    },
+    "overview": {
+      "anchor": "overview",
+      "tags": ["skills", "hooks", "isolation"],
+      "notes": "H2 section intro. Lists seven extension types and their roles in the agentic loop."
+    },
+    "overview-extension-list": {
+      "anchor": "overview-extension-list",
+      "tags": ["skills", "hooks", "isolation", "scope"],
+      "notes": "Bullet list: CLAUDE.md, Skills, MCP, Subagents, Agent teams, Hooks, Plugins/marketplaces. Each mapped to their function."
+    },
+    "skills-are-the-most-flexible": {
+      "anchor": "skills-are-the-most-flexible",
+      "tags": ["skills", "isolation"],
+      "notes": "Skills described as most flexible extension: markdown file, invocable with slash command or auto-loaded, can run in current conversation or isolated context via subagents."
+    },
+    "match-features-to-your-goal": {
+      "anchor": "match-features-to-your-goal",
+      "tags": ["skills", "hooks", "isolation", "cost"],
+      "notes": "H2 intro: features range from always-on to on-demand to event-driven automation."
+    },
+    "match-features-table": {
+      "anchor": "match-features-table",
+      "tags": ["skills", "hooks", "isolation", "tools"],
+      "notes": "Feature comparison table: CLAUDE.md, Skill, Subagent, Agent teams, MCP, Hook — with what each does, when to use, and example."
+    },
+    "plugins-are-the-packaging-layer": {
+      "anchor": "plugins-are-the-packaging-layer",
+      "tags": ["skills", "scope"],
+      "notes": "Plugins bundle skills, hooks, subagents, MCP servers. Plugin skills are namespaced to avoid conflicts."
+    },
+    "build-your-setup-over-time": {
+      "anchor": "build-your-setup-over-time",
+      "tags": ["skills", "hooks"],
+      "notes": "H3 intro: no need to configure everything upfront; features have recognizable triggers."
+    },
+    "build-your-setup-trigger-table": {
+      "anchor": "build-your-setup-trigger-table",
+      "tags": ["skills", "hooks"],
+      "notes": "Trigger table: maps common pain points to the correct extension type (CLAUDE.md, skill, MCP, subagent, hook, plugin)."
+    },
+    "same-triggers-update": {
+      "anchor": "same-triggers-update",
+      "tags": ["skills"],
+      "notes": "Note that the same triggers apply to updating existing features: repeated mistakes signal CLAUDE.md edits, tweaked workflows signal skill revisions."
+    },
+    "compare-similar-features": {
+      "anchor": "compare-similar-features",
+      "tags": ["skills", "isolation"],
+      "notes": "H3 intro to tabbed comparison section."
+    },
+    "skill-vs-subagent-tab": {
+      "anchor": "skill-vs-subagent-tab",
+      "tags": ["skills", "isolation", "cost", "frontmatter"],
+      "notes": "Tab: Skills are reusable content; subagents are isolated workers. Comparison table covers what it is, key benefit, best for. Notes: subagent can preload skills via `skills:` field; skill can use `context: fork`."
+    },
+    "claude-md-vs-skill-tab": {
+      "anchor": "claude-md-vs-skill-tab",
+      "tags": ["skills", "scope"],
+      "notes": "Tab: Both store instructions but load differently. CLAUDE.md: every session automatically. Skills: on demand. Rule of thumb: keep CLAUDE.md under 200 lines."
+    },
+    "claude-md-vs-rules-vs-skills-tab": {
+      "anchor": "claude-md-vs-rules-vs-skills-tab",
+      "tags": ["skills", "scope"],
+      "notes": "Tab: Three-way comparison. rules/ files can be scoped to file paths with `paths` frontmatter, loading only when matching files are opened."
+    },
+    "subagent-vs-agent-team-tab": {
+      "anchor": "subagent-vs-agent-team-tab",
+      "tags": ["isolation", "cost"],
+      "notes": "Tab: Subagents report to main context only; agent teams communicate peer-to-peer with shared task list. Agent teams cost more (separate Claude instances). Agent teams experimental and disabled by default — caveat."
+    },
+    "agent-teams-experimental-note": {
+      "anchor": "agent-teams-experimental-note",
+      "tags": ["caveat"],
+      "notes": "Note block: Agent teams are experimental and disabled by default."
+    },
+    "mcp-vs-skill-tab": {
+      "anchor": "mcp-vs-skill-tab",
+      "tags": ["tools", "skills"],
+      "notes": "Tab: MCP provides tool/data access to external services; skills provide knowledge and workflows. They complement each other — MCP gives the connection, skill teaches how to use it."
+    },
+    "understand-how-features-layer": {
+      "anchor": "understand-how-features-layer",
+      "tags": ["scope", "skills", "hooks"],
+      "notes": "H3: Features can be defined at multiple levels (user-wide, per-project, plugins, managed policies)."
+    },
+    "layering-bullet-list": {
+      "anchor": "layering-bullet-list",
+      "tags": ["scope", "skills", "hooks", "frontmatter"],
+      "notes": "CLAUDE.md is additive across all levels. Skills/subagents override by name with priority order (managed > user > project for skills; managed > CLI flag > project > user > plugin for subagents). MCP overrides by name (local > project > user). Hooks merge: all fire for matching events."
+    },
+    "combine-features": {
+      "anchor": "combine-features",
+      "tags": ["skills", "hooks", "tools"],
+      "notes": "H3: Each extension solves a different problem; real setups combine them."
+    },
+    "combine-features-table": {
+      "anchor": "combine-features-table",
+      "tags": ["skills", "hooks", "tools", "isolation"],
+      "notes": "Pattern table: Skill+MCP, Skill+Subagent, CLAUDE.md+Skills, Hook+MCP. Shows how features combine in practice."
+    },
+    "understand-context-costs": {
+      "anchor": "understand-context-costs",
+      "tags": ["cost", "skills"],
+      "notes": "H2: Every feature consumes context. Too much can fill the window or degrade effectiveness (skills may not trigger correctly). Links to Explore the context window."
+    },
+    "context-cost-by-feature": {
+      "anchor": "context-cost-by-feature",
+      "tags": ["cost", "skills", "hooks", "isolation"],
+      "notes": "H3 intro: each feature has a different loading strategy and context cost."
+    },
+    "context-cost-table": {
+      "anchor": "context-cost-table",
+      "tags": ["cost", "skills", "hooks", "isolation"],
+      "notes": "Table: CLAUDE.md (full content every request), Skills (descriptions at start + full on use), MCP (tool names at start), Subagents (isolated from main), Hooks (zero unless returns context)."
+    },
+    "disable-model-invocation-footnote": {
+      "anchor": "disable-model-invocation-footnote",
+      "tags": ["cost", "skills", "frontmatter"],
+      "notes": "Footnote: `disable-model-invocation: true` hides skill from Claude until manually invoked, reducing context cost to zero."
+    },
+    "understand-how-features-load": {
+      "anchor": "understand-how-features-load",
+      "tags": ["cost", "skills"],
+      "notes": "H3 intro to tabbed per-feature loading details. Includes context-loading diagram."
+    },
+    "context-loading-diagram": {
+      "anchor": "context-loading-diagram",
+      "tags": ["cost"],
+      "notes": "Diagram showing when each feature loads relative to session lifecycle."
+    },
+    "claude-md-load-tab": {
+      "anchor": "claude-md-load-tab",
+      "tags": ["cost", "scope"],
+      "notes": "Tab: Loads at session start. Full content of all CLAUDE.md files (managed, user, project). Nested files discovered as subdirectories are accessed. Tip: keep under 200 lines."
+    },
+    "skills-load-tab": {
+      "anchor": "skills-load-tab",
+      "tags": ["skills", "cost", "isolation", "frontmatter"],
+      "notes": "Tab: Descriptions load at session start; full content when used. `disable-model-invocation: true` = nothing loads until invoked. In subagents, skills are fully preloaded at launch rather than on-demand; subagents don't inherit skills from main session — must be specified explicitly."
+    },
+    "mcp-servers-load-tab": {
+      "anchor": "mcp-servers-load-tab",
+      "tags": ["tools", "cost", "caveat"],
+      "notes": "Tab: Tool names at session start; schemas deferred. MCP connections can fail silently — tools disappear without warning. Check with `/mcp`. Reliability caveat."
+    },
+    "subagents-load-tab": {
+      "anchor": "subagents-load-tab",
+      "tags": ["isolation", "cost", "skills"],
+      "notes": "Tab: On demand. Fresh isolated context: system prompt (shared with parent for cache efficiency), full content of `skills:` field, CLAUDE.md + git status inherited from parent, context passed by lead agent. Does not inherit conversation history or invoked skills."
+    },
+    "hooks-load-tab": {
+      "anchor": "hooks-load-tab",
+      "tags": ["hooks", "cost"],
+      "notes": "Tab: Fire at lifecycle events (tool execution, session boundaries, prompt submission, permission requests, compaction). Run as external scripts. Zero context cost unless hook returns output."
+    },
+    "learn-more": {
+      "anchor": "learn-more",
+      "tags": [],
+      "notes": "H2: Card group navigation links to individual feature guides. Navigation only."
+    }
+  }
+}

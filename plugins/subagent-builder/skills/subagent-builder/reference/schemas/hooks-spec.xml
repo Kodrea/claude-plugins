@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from official-hooks.md -->
+<schema source_doc="official-hooks.md" extracted_at="2026-04-28T12:00:00-04:00">
+
+  <!-- ============================================================ -->
+  <!-- COMMON FIELDS (apply to all hook handler types)              -->
+  <!-- ============================================================ -->
+
+  <hook_field name="type">
+    applies_to: all
+    type: string (enum)
+    required: true
+    default: none
+    applicability: cli
+    excerpt: |
+      "command", "http", "prompt", or "agent"
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="if">
+    applies_to: all
+    type: string (permission rule syntax)
+    required: false
+    default: none (runs on all matches)
+    applicability: cli
+    excerpt: |
+      Permission rule syntax to filter when this hook runs, such as "Bash(git *)" or
+      "Edit(*.ts)". The hook only spawns if the tool call matches the pattern. Only
+      evaluated on tool events: PreToolUse, PostToolUse, PostToolUseFailure,
+      PermissionRequest, and PermissionDenied. On other events, a hook with `if` set
+      never runs. Uses the same syntax as permission rules.
+    caveats:
+      - "Only evaluated on tool events. On non-tool events, a hook with `if` set never runs."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="timeout">
+    applies_to: all
+    type: number (seconds)
+    required: false
+    default: "600 for command, 30 for prompt, 60 for agent"
+    applicability: cli
+    excerpt: |
+      Seconds before canceling. Defaults: 600 for command, 30 for prompt, 60 for agent
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="statusMessage">
+    applies_to: all
+    type: string
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Custom spinner message displayed while the hook runs
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="once">
+    applies_to: all
+    type: boolean
+    required: false
+    default: false
+    applicability: cli
+    excerpt: |
+      If true, runs only once per session then is removed. Skills only, not agents.
+      See Hooks in skills and agents.
+    caveats:
+      - "Skills only — not available for agent-registered hooks."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <!-- ============================================================ -->
+  <!-- COMMAND HOOK FIELDS                                          -->
+  <!-- ============================================================ -->
+
+  <hook_field name="command">
+    applies_to: command
+    type: string
+    required: true
+    default: none
+    applicability: cli
+    excerpt: |
+      Shell command to execute
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Command hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="async">
+    applies_to: command
+    type: boolean
+    required: false
+    default: false
+    applicability: cli
+    excerpt: |
+      If true, runs in the background without blocking. See Run hooks in the background.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Command hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="asyncRewake">
+    applies_to: command
+    type: boolean
+    required: false
+    default: false
+    applicability: cli
+    excerpt: |
+      If true, runs in the background and wakes Claude on exit code 2. Implies async.
+      The hook's stderr, or stdout if stderr is empty, is shown to Claude as a system
+      reminder so it can react to a long-running background failure.
+    caveats:
+      - "Implies async: true."
+      - "Only exit code 2 triggers the rewake; other non-zero codes do not."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Command hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="shell">
+    applies_to: command
+    type: string (enum)
+    required: false
+    default: "bash"
+    applicability: cli
+    excerpt: |
+      Shell to use for this hook. Accepts "bash" (default) or "powershell". Setting
+      "powershell" runs the command via PowerShell on Windows. Does not require
+      CLAUDE_CODE_USE_POWERSHELL_TOOL since hooks spawn PowerShell directly.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Command hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <!-- ============================================================ -->
+  <!-- HTTP HOOK FIELDS                                             -->
+  <!-- ============================================================ -->
+
+  <hook_field name="url">
+    applies_to: http
+    type: string (URL)
+    required: true
+    default: none
+    applicability: cli
+    excerpt: |
+      URL to send the POST request to
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "HTTP hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="headers">
+    applies_to: http
+    type: object (key-value string pairs)
+    required: false
+    default: none
+    applicability: cli
+    excerpt: |
+      Additional HTTP headers as key-value pairs. Values support environment variable
+      interpolation using $VAR_NAME or ${VAR_NAME} syntax. Only variables listed in
+      allowedEnvVars are resolved.
+    caveats:
+      - "Only variables listed in allowedEnvVars are resolved. Other references are replaced with empty strings."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "HTTP hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="allowedEnvVars">
+    applies_to: http
+    type: array of strings
+    required: false
+    default: none (no interpolation occurs without this field)
+    applicability: cli
+    excerpt: |
+      List of environment variable names that may be interpolated into header values.
+      References to unlisted variables are replaced with empty strings. Required for
+      any env var interpolation to work.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "HTTP hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <!-- ============================================================ -->
+  <!-- PROMPT AND AGENT HOOK FIELDS                                 -->
+  <!-- ============================================================ -->
+
+  <hook_field name="prompt">
+    applies_to: prompt-agent
+    type: string
+    required: true
+    default: none
+    applicability: cli
+    excerpt: |
+      Prompt text to send to the model. Use $ARGUMENTS as a placeholder for the hook
+      input JSON.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Prompt and agent hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <hook_field name="model">
+    applies_to: prompt-agent
+    type: string
+    required: false
+    default: "a fast model (unspecified)"
+    applicability: cli
+    excerpt: |
+      Model to use for evaluation. Defaults to a fast model.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Prompt and agent hook fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_field>
+
+  <!-- ============================================================ -->
+  <!-- HOOK INPUT/OUTPUT                                            -->
+  <!-- ============================================================ -->
+
+  <hook_io subject="common-input">
+    description: |
+      Fields sent as JSON to ALL hook handlers. For command hooks this arrives on stdin.
+      For HTTP hooks it arrives as the POST request body.
+    fields:
+      session_id:
+        description: "Current session identifier"
+      transcript_path:
+        description: "Path to conversation JSON"
+      cwd:
+        description: "Current working directory when the hook is invoked"
+      permission_mode:
+        description: |
+          Current permission mode: "default", "plan", "acceptEdits", "auto", "dontAsk",
+          or "bypassPermissions". Not all events receive this field: see each event's
+          JSON example to check.
+      hook_event_name:
+        description: "Name of the event that fired"
+    subagent_extra_fields:
+      description: |
+        When running with --agent or inside a subagent, two additional fields are included.
+      agent_id:
+        description: |
+          Unique identifier for the subagent. Present only when the hook fires inside a
+          subagent call. Use this to distinguish subagent hook calls from main-thread calls.
+      agent_type:
+        description: |
+          Agent name (for example, "Explore" or "security-reviewer"). Present when the
+          session uses --agent or the hook fires inside a subagent. For subagents, the
+          subagent's type takes precedence over the session's --agent value.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Common input fields"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_io>
+
+  <hook_io subject="exit-codes">
+    description: |
+      The exit code from a command hook tells Claude Code whether the action should
+      proceed, be blocked, or be ignored.
+    exit_0:
+      meaning: "Success. Claude Code parses stdout for JSON output fields. JSON is only processed on exit 0."
+      notes: |
+        For most events, stdout is written to the debug log but not shown in the
+        transcript. Exceptions: UserPromptSubmit and SessionStart, where stdout is
+        added as context Claude can see and act on.
+    exit_2:
+      meaning: "Blocking error. Claude Code ignores stdout/JSON. stderr text is fed back to Claude as an error message."
+      notes: |
+        Effect depends on the event: PreToolUse blocks the tool call, UserPromptSubmit
+        rejects the prompt, etc. See exit-code-2-behavior-per-event table.
+    other_codes:
+      meaning: "Non-blocking error for most events. Shows a hook-name hook error notice with first line of stderr. Execution continues."
+      caveats:
+        - "WorktreeCreate is the exception: any non-zero exit code aborts worktree creation."
+        - "Exit code 1 is treated as non-blocking (not a blocking error), even though it is the conventional Unix failure code."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Exit code output"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_io>
+
+  <hook_io subject="json-output">
+    description: |
+      On exit 0, hooks can print a JSON object to stdout for finer-grained control.
+      For HTTP hooks the JSON is the response body. Must use one approach per hook:
+      exit codes alone OR exit 0 + JSON. JSON is only processed on exit 0.
+    output_cap: "Hook output injected into context is capped at 10,000 characters. Excess is saved to a file and replaced with a preview and file path."
+    universal_fields:
+      continue:
+        type: boolean
+        default: "true"
+        description: |
+          If false, Claude stops processing entirely after the hook runs. Takes
+          precedence over any event-specific decision fields.
+      stopReason:
+        type: string
+        default: none
+        description: "Message shown to the user when continue is false. Not shown to Claude."
+      suppressOutput:
+        type: boolean
+        default: "false"
+        description: "If true, omits stdout from the debug log."
+      systemMessage:
+        type: string
+        default: none
+        description: "Warning message shown to the user."
+    top_level_decision_fields:
+      decision:
+        values: ["block"]
+        description: |
+          Used by UserPromptSubmit, PostToolUse, PostToolUseFailure, Stop, SubagentStop,
+          ConfigChange, PreCompact. "block" is the only value. Omit to allow.
+      reason:
+        description: "Explanation shown to Claude (or user) when decision is block."
+    hook_specific_output:
+      description: |
+        A nested object for events that need richer control. Requires a hookEventName
+        field set to the event name. Used by PreToolUse, PermissionRequest,
+        PermissionDenied, WorktreeCreate, Elicitation, ElicitationResult, and others.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "JSON output"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_io>
+
+  <hook_io subject="http-response-handling">
+    description: "HTTP hooks use HTTP status codes and response bodies instead of exit codes and stdout."
+    responses:
+      2xx_empty_body: "Success, equivalent to exit code 0 with no output."
+      2xx_plain_text: "Success, the text is added as context."
+      2xx_json: "Success, parsed using the same JSON output schema as command hooks."
+      non_2xx: "Non-blocking error, execution continues."
+      connection_failure_or_timeout: "Non-blocking error, execution continues."
+    caveats:
+      - "HTTP hooks cannot signal a blocking error through status codes alone. To block, return 2xx with JSON containing the appropriate decision fields."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "HTTP response handling"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_io>
+
+  <!-- ============================================================ -->
+  <!-- MATCHER SPEC                                                 -->
+  <!-- ============================================================ -->
+
+  <matcher_spec>
+    description: |
+      The matcher field filters when hooks fire. How a matcher is evaluated depends on
+      the characters it contains.
+    evaluation_rules:
+      - pattern: '"*", "", or omitted'
+        evaluated_as: "Match all — fires on every occurrence of the event."
+      - pattern: "Only letters, digits, _, and |"
+        evaluated_as: 'Exact string, or |-separated list of exact strings. Example: "Bash" matches only Bash; "Edit|Write" matches either.'
+      - pattern: "Contains any other character"
+        evaluated_as: "JavaScript regular expression. Example: ^Notebook matches any tool starting with Notebook."
+    per_event_matcher_values:
+      - events: ["PreToolUse", "PostToolUse", "PostToolUseFailure", "PermissionRequest", "PermissionDenied"]
+        filters: "tool name"
+        examples: ["Bash", "Edit|Write", "mcp__.*"]
+      - events: ["SessionStart"]
+        filters: "how the session started"
+        examples: ["startup", "resume", "clear", "compact"]
+      - events: ["SessionEnd"]
+        filters: "why the session ended"
+        examples: ["clear", "resume", "logout", "prompt_input_exit", "bypass_permissions_disabled", "other"]
+      - events: ["Notification"]
+        filters: "notification type"
+        examples: ["permission_prompt", "idle_prompt", "auth_success", "elicitation_dialog"]
+      - events: ["SubagentStart", "SubagentStop"]
+        filters: "agent type"
+        examples: ["Bash", "Explore", "Plan", "custom agent names"]
+      - events: ["PreCompact", "PostCompact"]
+        filters: "what triggered compaction"
+        examples: ["manual", "auto"]
+      - events: ["ConfigChange"]
+        filters: "configuration source"
+        examples: ["user_settings", "project_settings", "local_settings", "policy_settings", "skills"]
+      - events: ["StopFailure"]
+        filters: "error type"
+        examples: ["rate_limit", "authentication_failed", "billing_error", "invalid_request", "server_error", "max_output_tokens", "unknown"]
+      - events: ["InstructionsLoaded"]
+        filters: "load reason"
+        examples: ["session_start", "nested_traversal", "path_glob_match", "include", "compact"]
+      - events: ["Elicitation", "ElicitationResult"]
+        filters: "MCP server name"
+        examples: ["configured MCP server names"]
+      - events: ["FileChanged"]
+        filters: "literal filenames to watch (pipe-separated list — NOT regex)"
+        examples: [".envrc|.env", "package.json"]
+        caveats:
+          - "FileChanged does not follow the standard matcher rules. Matcher is a pipe-separated list of literal filenames to watch in the current working directory. Matcher value is required and must be non-empty."
+      - events: ["CwdChanged"]
+        filters: "no matcher support — always fires on every directory change"
+        examples: []
+      - events: ["UserPromptSubmit", "Stop", "TeammateIdle", "TaskCreated", "TaskCompleted", "WorktreeCreate", "WorktreeRemove"]
+        filters: "no matcher support — always fires on every occurrence"
+        examples: []
+        caveats:
+          - "If a matcher field is added to these events, it is silently ignored."
+    mcp_tool_naming:
+      pattern: "mcp__<server>__<tool>"
+      examples:
+        - "mcp__memory__create_entities"
+        - "mcp__filesystem__read_file"
+        - "mcp__github__search_repositories"
+      wildcard_note: |
+        To match every tool from a server, append .* to the server prefix. The .* is
+        required: a matcher like mcp__memory contains only letters and underscores, so
+        it is compared as an exact string and matches no tool.
+      wildcard_examples:
+        - "mcp__memory__.* — matches all tools from the memory server"
+        - "mcp__.*__write.* — matches any tool whose name starts with write from any server"
+    if_field_note: |
+      For tool events, you can filter more narrowly by setting the if field on individual
+      hook handlers. if uses permission rule syntax to match against the tool name and
+      arguments together, so "Bash(git *)" runs only for git commands and "Edit(*.ts)"
+      runs only for TypeScript files.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Matcher patterns"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </matcher_spec>
+
+  <!-- ============================================================ -->
+  <!-- HOOK EVENTS                                                  -->
+  <!-- ============================================================ -->
+
+  <hook_event name="SessionStart">
+    when: "When Claude Code starts a new session or resumes an existing session."
+    decision_control: false
+    matcher_values: ["startup", "resume", "clear", "compact"]
+    supported_hook_types: ["command only"]
+    input_shape: |
+      Common fields plus:
+        source: string — "startup" | "resume" | "clear" | "compact"
+        model: string — model identifier
+        agent_type: string (optional) — agent name if started with --agent
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only (cannot block session start).
+      Exit 0: stdout added as context Claude can see.
+    output_specific_fields: |
+      hookSpecificOutput.additionalContext: string added to Claude's context.
+      Multiple hooks' values are concatenated.
+    special_env: |
+      CLAUDE_ENV_FILE is available: write export statements to persist environment
+      variables for subsequent Bash commands in this session.
+    caveats:
+      - "Only type: command hooks are supported."
+      - "Runs on every session — keep hooks fast."
+      - "CLAUDE_ENV_FILE available for persisting env vars (use append >> to preserve other hooks' vars)."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "SessionStart"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="InstructionsLoaded">
+    when: |
+      When a CLAUDE.md or .claude/rules/*.md file is loaded into context. Fires at
+      session start for eagerly-loaded files and again later when files are lazily
+      loaded, for example when Claude accesses a subdirectory that contains a nested
+      CLAUDE.md or when conditional rules with paths: frontmatter match.
+    decision_control: false
+    matcher_values: ["session_start", "nested_traversal", "path_glob_match", "include", "compact"]
+    input_shape: |
+      Common fields plus:
+        file_path: string — absolute path to the instruction file that was loaded
+        memory_type: string — "User" | "Project" | "Local" | "Managed"
+        load_reason: string — "session_start" | "nested_traversal" | "path_glob_match" | "include" | "compact"
+        globs: array (optional) — path glob patterns from file's paths: frontmatter; present only for path_glob_match loads
+        trigger_file_path: string (optional) — path to file whose access triggered this load, for lazy loads
+        parent_file_path: string (optional) — path to parent instruction file that included this one, for include loads
+    exit_code_behavior: |
+      Exit code is ignored. The hook runs asynchronously for observability purposes only.
+    caveats:
+      - "No decision control — cannot block or modify instruction loading."
+      - "Runs asynchronously."
+      - "The compact load_reason fires when instruction files are re-loaded after a compaction event."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "InstructionsLoaded"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="UserPromptSubmit">
+    when: "When the user submits a prompt, before Claude processes it."
+    decision_control: true
+    matcher_values: ["no matcher support — always fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        prompt: string — the text the user submitted
+    exit_code_behavior: |
+      Exit 2: blocks prompt processing and erases the prompt. stderr shown to user.
+      Exit 0: plain text stdout added as context Claude can see. JSON output parsed for decision fields.
+    output_specific_fields: |
+      decision: "block" prevents the prompt from being processed and erases it from context.
+      reason: shown to the user when decision is "block". Not added to context.
+      hookSpecificOutput.additionalContext: string added to Claude's context (more discrete than plain stdout).
+      hookSpecificOutput.sessionTitle: sets the session title, same effect as /rename.
+    caveats:
+      - "Plain stdout is shown as hook output in the transcript. additionalContext is added more discretely."
+      - "Matcher field is silently ignored if added."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "UserPromptSubmit"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PreToolUse">
+    when: "After Claude creates tool parameters and before processing the tool call."
+    decision_control: true
+    matcher_values: ["Bash", "Edit", "Write", "Read", "Glob", "Grep", "Agent", "WebFetch", "WebSearch", "AskUserQuestion", "ExitPlanMode", "and any MCP tool names"]
+    input_shape: |
+      Common fields plus:
+        tool_name: string — name of the tool
+        tool_input: object — tool-specific parameters (see per-tool schemas below)
+        tool_use_id: string — unique identifier for the tool call
+      Per-tool input shapes:
+        Bash: { command: string, description?: string, timeout?: number, run_in_background?: boolean }
+        Write: { file_path: string, content: string }
+        Edit: { file_path: string, old_string: string, new_string: string, replace_all?: boolean }
+        Read: { file_path: string, offset?: number, limit?: number }
+        Glob: { pattern: string, path?: string }
+        Grep: { pattern: string, path?: string, glob?: string, output_mode?: string, "-i"?: boolean, multiline?: boolean }
+        WebFetch: { url: string, prompt: string }
+        WebSearch: { query: string, allowed_domains?: array, blocked_domains?: array }
+        Agent: { prompt: string, description?: string, subagent_type?: string, model?: string }
+        AskUserQuestion: { questions: array, answers?: object }
+    exit_code_behavior: |
+      Exit 2: blocks the tool call. stderr fed back to Claude.
+      Exit 0: JSON output parsed for hookSpecificOutput decision fields.
+    output_specific_fields: |
+      hookSpecificOutput.hookEventName: "PreToolUse"
+      hookSpecificOutput.permissionDecision: "allow" | "deny" | "ask" | "defer"
+        allow — skips permission prompt
+        deny — prevents the tool call (reason shown to Claude)
+        ask — prompts the user to confirm (reason shown to user, not Claude)
+        defer — pauses tool call for external process to resume (non-interactive mode only, requires v2.1.89+)
+      hookSpecificOutput.permissionDecisionReason: string
+        For allow and ask: shown to user, not Claude.
+        For deny: shown to Claude.
+        For defer: ignored.
+      hookSpecificOutput.updatedInput: object — replaces entire tool input before execution
+      hookSpecificOutput.additionalContext: string added to Claude's context before tool executes
+      Precedence when multiple hooks return different decisions: deny > defer > ask > allow
+    caveats:
+      - "Top-level decision and reason fields are deprecated for this event. Use hookSpecificOutput.permissionDecision and hookSpecificOutput.permissionDecisionReason."
+      - "Deprecated values approve and block map to allow and deny respectively."
+      - "defer only works in non-interactive mode (-p flag) and when Claude makes a single tool call. Requires v2.1.89+."
+      - "For AskUserQuestion and ExitPlanMode: returning allow alone is not sufficient in non-interactive mode; must also supply updatedInput with answers."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PreToolUse"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PermissionRequest">
+    when: "When the user is shown a permission dialog."
+    decision_control: true
+    matcher_values: ["tool name — same values as PreToolUse"]
+    input_shape: |
+      Common fields plus:
+        tool_name: string
+        tool_input: object — tool-specific parameters (same structure as PreToolUse, without tool_use_id)
+        permission_suggestions: array (optional) — "always allow" options the user would normally see in the permission dialog.
+          Each entry: { type: string, rules?: array, behavior?: string, destination?: string }
+    exit_code_behavior: |
+      Exit 2: denies the permission. stderr shown as blocking error.
+      Exit 0: JSON output parsed for hookSpecificOutput decision.
+    output_specific_fields: |
+      hookSpecificOutput.hookEventName: "PermissionRequest"
+      hookSpecificOutput.decision.behavior: "allow" | "deny"
+      hookSpecificOutput.decision.updatedInput: object (for allow only) — modifies tool input before execution
+      hookSpecificOutput.decision.updatedPermissions: array (for allow only) — permission update entries to apply
+        Entry types: addRules, replaceRules, removeRules, setMode, addDirectories, removeDirectories
+        Each entry has a destination: session | localSettings | projectSettings | userSettings
+      hookSpecificOutput.decision.message: string (for deny only) — tells Claude why permission was denied
+      hookSpecificOutput.decision.interrupt: boolean (for deny only) — if true, stops Claude
+    caveats:
+      - "Fires when a permission dialog is about to be shown to the user. PreToolUse fires before tool execution regardless of permission status."
+      - "tool_use_id is not present (unlike PreToolUse)."
+      - "A hook can echo one of the permission_suggestions it received as its own updatedPermissions output."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PermissionRequest"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PostToolUse">
+    when: "Immediately after a tool completes successfully."
+    decision_control: true
+    matcher_values: ["tool name — same values as PreToolUse"]
+    input_shape: |
+      Common fields plus:
+        tool_name: string
+        tool_input: object — arguments sent to the tool
+        tool_response: object — result the tool returned (schema depends on tool)
+        tool_use_id: string
+    exit_code_behavior: |
+      Exit 2: shows stderr to Claude (tool already ran — cannot block retroactively).
+      Exit 0: JSON output parsed for decision fields.
+    output_specific_fields: |
+      decision: "block" prompts Claude with the reason. Omit to allow.
+      reason: explanation shown to Claude when decision is "block".
+      hookSpecificOutput.additionalContext: additional context for Claude to consider.
+      hookSpecificOutput.updatedMCPToolOutput: for MCP tools only — replaces the tool's output with the provided value.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PostToolUse"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PostToolUseFailure">
+    when: "When a tool execution fails — for tool calls that throw errors or return failure results."
+    decision_control: false
+    matcher_values: ["tool name — same values as PreToolUse"]
+    input_shape: |
+      Common fields plus:
+        tool_name: string
+        tool_input: object — arguments sent to the tool
+        tool_use_id: string
+        error: string — describes what went wrong
+        is_interrupt: boolean (optional) — whether the failure was caused by user interruption
+    exit_code_behavior: |
+      Exit 2: shows stderr to Claude (tool already failed).
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      hookSpecificOutput.additionalContext: additional context for Claude to consider alongside the error.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PostToolUseFailure"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PermissionDenied">
+    when: |
+      When the auto mode classifier denies a tool call. Only fires in auto mode. Does
+      not run when the user manually denies a permission dialog, when a PreToolUse hook
+      blocks a call, or when a deny rule matches.
+    decision_control: true
+    matcher_values: ["tool name — same values as PreToolUse"]
+    input_shape: |
+      Common fields plus:
+        tool_name: string
+        tool_input: object
+        tool_use_id: string
+        reason: string — the classifier's explanation for why the tool call was denied
+    exit_code_behavior: |
+      Exit code and stderr are ignored (denial already occurred).
+      Use JSON hookSpecificOutput.retry: true to tell the model it may retry.
+    output_specific_fields: |
+      hookSpecificOutput.hookEventName: "PermissionDenied"
+      hookSpecificOutput.retry: boolean — if true, Claude Code adds a message telling the model it may retry the tool call.
+        The denial itself is not reversed.
+    caveats:
+      - "Only fires in auto mode."
+      - "Exit code and stderr are ignored."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PermissionDenied"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="Notification">
+    when: "When Claude Code sends notifications."
+    decision_control: false
+    matcher_values: ["permission_prompt", "idle_prompt", "auth_success", "elicitation_dialog"]
+    input_shape: |
+      Common fields plus:
+        message: string — notification text
+        title: string (optional)
+        notification_type: string — which type fired
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only. Cannot block or modify notifications.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      hookSpecificOutput.additionalContext: string added to Claude's context.
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Notification"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="SubagentStart">
+    when: "When a Claude Code subagent is spawned via the Agent tool."
+    decision_control: false
+    matcher_values: ["agent type name: built-in agents like Bash, Explore, Plan, or custom agent names from .claude/agents/"]
+    input_shape: |
+      Common fields plus:
+        agent_id: string — unique identifier for the subagent
+        agent_type: string — agent name (built-in like "Bash", "Explore", "Plan", or custom)
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only (cannot block subagent creation).
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      hookSpecificOutput.additionalContext: string added to the subagent's context.
+    caveats:
+      - "Cannot block subagent creation, only inject context."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "SubagentStart"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="SubagentStop">
+    when: "When a Claude Code subagent has finished responding."
+    decision_control: true
+    matcher_values: ["agent type — same values as SubagentStart"]
+    input_shape: |
+      Common fields plus:
+        stop_hook_active: boolean
+        agent_id: string
+        agent_type: string — value used for matcher filtering
+        agent_transcript_path: string — subagent's own transcript (stored in subagents/ folder)
+        last_assistant_message: string — text content of the subagent's final response
+      Note: transcript_path is the main session's transcript; agent_transcript_path is the subagent's.
+    exit_code_behavior: |
+      Exit 2: prevents the subagent from stopping. Same decision control format as Stop hooks.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      Same decision control format as Stop hooks:
+        decision: "block" prevents the subagent from stopping.
+        reason: explanation shown to Claude when decision is "block".
+    caveats:
+      - "In settings files, Stop hooks are automatically converted to SubagentStop when running in a subagent context."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "SubagentStop"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="TaskCreated">
+    when: "When a task is being created via the TaskCreate tool."
+    decision_control: true
+    matcher_values: ["no matcher support — fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        task_id: string — identifier of the task being created
+        task_subject: string — title of the task
+        task_description: string (optional) — detailed description
+        teammate_name: string (optional) — name of the teammate creating the task
+        team_name: string (optional) — name of the team
+    exit_code_behavior: |
+      Exit 2: task is not created; stderr message is fed back to the model as feedback.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      JSON {"continue": false, "stopReason": "..."}: stops the teammate entirely.
+        The stopReason is shown to the user.
+    caveats:
+      - "Matcher field silently ignored."
+      - "Two distinct block patterns: exit 2 (re-runs model with feedback) vs continue:false (stops teammate entirely)."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "TaskCreated"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="TaskCompleted">
+    when: "When a task is being marked as completed via TaskComplete."
+    decision_control: true
+    matcher_values: ["no matcher support — fires on every occurrence"]
+    input_shape: |
+      Common fields plus (identical to TaskCreated input):
+        task_id: string
+        task_subject: string
+        task_description: string (optional)
+        teammate_name: string (optional)
+        team_name: string (optional)
+    exit_code_behavior: |
+      Exit 2: task is not marked as completed; stderr message is fed back to the model.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      JSON {"continue": false, "stopReason": "..."}: stops the teammate entirely.
+        The stopReason is shown to the user.
+    caveats:
+      - "Matcher field silently ignored."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "TaskCompleted"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="Stop">
+    when: "When Claude is about to finish responding."
+    decision_control: true
+    matcher_values: ["no matcher support — always fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        last_assistant_message: string — text of Claude's final response
+    exit_code_behavior: |
+      Exit 2: prevents Claude from stopping, continues the conversation.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      decision: "block" prevents Claude from stopping.
+      reason: explanation shown to Claude when decision is "block". Drives Claude to address the blocker.
+      hookSpecificOutput.additionalContext: additional context.
+    caveats:
+      - "Matcher field silently ignored."
+      - "SubagentStop uses the same decision control format."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Stop"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="StopFailure">
+    when: "When the turn ends due to an API error, such as a rate limit or authentication failure."
+    decision_control: false
+    matcher_values: ["rate_limit", "authentication_failed", "billing_error", "invalid_request", "server_error", "max_output_tokens", "unknown"]
+    input_shape: |
+      Common fields plus:
+        error_type: string — type of error
+        error_details: string — human-readable description of the error
+    exit_code_behavior: |
+      Output and exit code are ignored entirely. Use for logging, alerting, or cleanup.
+    caveats:
+      - "No decision control. Exit code and stdout are always ignored."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "StopFailure"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="TeammateIdle">
+    when: "When an agent team teammate is about to go idle. Fires after the teammate's Stop hooks."
+    decision_control: true
+    matcher_values: ["no matcher support — fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        teammate_name: string — name of the teammate about to go idle
+    exit_code_behavior: |
+      Exit 2: teammate remains active (continues working). stderr feedback shown to user.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      JSON {"continue": false, "stopReason": "..."}: stops the entire team.
+        The stopReason is shown to the user.
+    caveats:
+      - "Matcher field silently ignored."
+      - "exit 2 keeps the teammate active; continue:false stops the entire team."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "TeammateIdle"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="ConfigChange">
+    when: "When a configuration file changes during a session (project, local, user, or managed settings)."
+    decision_control: true
+    matcher_values: ["user_settings", "project_settings", "local_settings", "policy_settings", "skills"]
+    input_shape: |
+      Common fields plus:
+        config_source: string — which configuration file changed
+    exit_code_behavior: |
+      Exit 2: blocks the configuration change from taking effect (except policy_settings).
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      decision: "block" prevents the configuration change from taking effect.
+      reason: explanation shown to Claude when decision is "block". Not shown for policy_settings sources.
+    caveats:
+      - "Blocks on policy_settings changes are ignored. Managed policy settings cannot be blocked by user, project, or local hooks."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "ConfigChange"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="CwdChanged">
+    when: "When the working directory changes, for example when Claude executes a cd command."
+    decision_control: false
+    matcher_values: ["no matcher support — always fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        old_cwd: string — previous working directory
+        new_cwd: string — new working directory
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only. No decision control.
+      Exit 0: JSON output parsed.
+    special_env: |
+      CLAUDE_ENV_FILE is available (same as SessionStart) to persist environment
+      variable changes across directory changes.
+    caveats:
+      - "No decision control — for side effects like loading env vars, updating IDE state, or logging."
+      - "Matcher field silently ignored."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "CwdChanged"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="FileChanged">
+    when: "When a watched file changes on disk."
+    decision_control: false
+    matcher_values: ["literal filenames to watch specified in the matcher field — pipe-separated list"]
+    input_shape: |
+      Common fields plus:
+        file_path: string — absolute path to the file that changed
+        change_type: string — "created" | "modified" | "deleted"
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only. No decision control.
+      Exit 0: JSON output parsed.
+    special_env: |
+      CLAUDE_ENV_FILE is available (same as SessionStart and CwdChanged).
+    caveats:
+      - "Matcher field is required and must be non-empty."
+      - "Matcher does not follow standard rules — it is always a pipe-separated list of literal filenames watched in the current working directory. No regex or glob support."
+      - "No decision control."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "FileChanged"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="WorktreeCreate">
+    when: |
+      When a worktree is being created via --worktree or isolation: "worktree".
+      This hook replaces the default git behavior.
+    decision_control: true
+    supported_hook_types: ["command only"]
+    matcher_values: ["no matcher support — fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        worktree_name: string — name of the worktree to be created
+    exit_code_behavior: |
+      Any non-zero exit code causes worktree creation to fail (unique behavior — not just exit 2).
+      Exit 0: command hook must print the worktree path on stdout.
+    output_specific_fields: |
+      Command hook: print worktree path on stdout (exit 0).
+      HTTP hook: return {"hookSpecificOutput": {"worktreePath": "..."}}
+      If hook fails or does not return a path, worktree creation fails.
+    caveats:
+      - "Only type: command hooks are supported."
+      - "Matcher field silently ignored."
+      - "Any non-zero exit code (not just 2) aborts worktree creation — exception to the standard exit code rules."
+      - "Hook replaces default git behavior entirely."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "WorktreeCreate"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="WorktreeRemove">
+    when: "When a worktree is being removed, either at session exit or when a subagent finishes."
+    decision_control: false
+    matcher_values: ["no matcher support — fires on every occurrence"]
+    input_shape: |
+      Common fields plus:
+        worktree_path: string — path to the worktree being removed
+    exit_code_behavior: |
+      Failures are logged in debug mode only. No decision control.
+    caveats:
+      - "No decision control."
+      - "Matcher field silently ignored."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "WorktreeRemove"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PreCompact">
+    when: "Before context compaction."
+    decision_control: true
+    matcher_values: ["manual", "auto"]
+    input_shape: |
+      Common fields plus:
+        compaction_source: string — "manual" | "auto"
+    exit_code_behavior: |
+      Exit 2: blocks compaction.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      decision: "block" prevents compaction.
+      reason: explanation shown to Claude when decision is "block".
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PreCompact"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="PostCompact">
+    when: "After context compaction completes."
+    decision_control: false
+    matcher_values: ["manual", "auto"]
+    input_shape: |
+      Common fields plus:
+        compaction_source: string — "manual" | "auto" (identical to PreCompact input)
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only. No decision control.
+      Exit 0: JSON output parsed.
+    caveats:
+      - "No decision control. For logging and cleanup only."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "PostCompact"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="Elicitation">
+    when: "When an MCP server requests user input during a tool call."
+    decision_control: true
+    matcher_values: ["MCP server name"]
+    input_shape: |
+      Common fields plus:
+        mcp_server: string — name of the MCP server requesting input
+        form_items: array — form field descriptors
+          Each item: { name: string, type: string, required: boolean, label: string }
+    exit_code_behavior: |
+      Exit 2: denies the elicitation.
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      hookSpecificOutput.hookEventName: "Elicitation"
+      hookSpecificOutput.action: "accept" | "decline" | "cancel"
+        accept — supply input
+        decline — deny the request
+        cancel — abort the tool call entirely
+      hookSpecificOutput.content: object (for accept only) — maps field names to values
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "Elicitation"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="ElicitationResult">
+    when: "After a user responds to an MCP elicitation, before the response is sent back to the server."
+    decision_control: true
+    matcher_values: ["MCP server name — same values as Elicitation"]
+    input_shape: |
+      Common fields plus:
+        mcp_server: string — name of the MCP server
+        form_items: array — form field descriptors (same structure as Elicitation)
+        user_response: object
+          action: string — user's chosen action
+          content: object (optional) — maps field names to values
+    exit_code_behavior: |
+      Exit 2: blocks the response (action becomes decline).
+      Exit 0: JSON output parsed.
+    output_specific_fields: |
+      hookSpecificOutput.hookEventName: "ElicitationResult"
+      hookSpecificOutput.action: "accept" | "decline" | "cancel"
+      hookSpecificOutput.content: object (for accept only) — override user response with different values
+    caveats:
+      - "Can modify the user's response before it is sent back to the MCP server."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "ElicitationResult"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+  <hook_event name="SessionEnd">
+    when: "When a session terminates."
+    decision_control: false
+    matcher_values: ["clear", "resume", "logout", "prompt_input_exit", "bypass_permissions_disabled", "other"]
+    input_shape: |
+      Common fields plus:
+        session_end_reason: string — why the session ended (see matcher values)
+    exit_code_behavior: |
+      Exit 2: shows stderr to user only. No decision control.
+      Exit 0: JSON output parsed.
+    caveats:
+      - "No decision control. For cleanup and logging only."
+    source:
+      url: https://code.claude.com/docs/en/hooks
+      section: "SessionEnd"
+      fetched_at: 2026-04-16T12:32:03-04:00
+  </hook_event>
+
+</schema>

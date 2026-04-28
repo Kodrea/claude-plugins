@@ -1,0 +1,38 @@
+{
+  "source_doc": "prompt-engineering-overview.md",
+  "source_url": "https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/overview",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "prompt-engineering-overview": {
+      "anchor": "prompt-engineering-overview",
+      "tags": ["prompt-engineering"],
+      "notes": "Page title."
+    },
+    "before-prompt-engineering": {
+      "anchor": "before-prompt-engineering",
+      "tags": ["prompt-engineering", "decision"],
+      "notes": "Prerequisites: success criteria, empirical tests, first draft prompt. Gate before engaging in PE work."
+    },
+    "before-prompt-engineering-cards": {
+      "anchor": "before-prompt-engineering-cards",
+      "tags": ["prompt-engineering"],
+      "notes": "CardGroup linking to Claude Console prompt generator and prompting best practices page."
+    },
+    "when-to-prompt-engineer": {
+      "anchor": "when-to-prompt-engineer",
+      "tags": ["prompt-engineering", "cost", "model", "decision"],
+      "notes": "Scope clarification: PE addresses success criteria controllable via prompting. Latency/cost may be better served by model selection instead."
+    },
+    "how-to-prompt-engineer": {
+      "anchor": "how-to-prompt-engineer",
+      "tags": ["prompt-engineering", "xml-tags", "chain-of-thought", "thinking"],
+      "notes": "Overview of techniques: clarity, examples, XML structuring, role prompting, thinking, prompt chaining. References Prompting best practices as living reference. Also mentions Console prompting tools."
+    },
+    "prompt-engineering-tutorial": {
+      "anchor": "prompt-engineering-tutorial",
+      "tags": ["prompt-engineering"],
+      "notes": "Links to GitHub interactive tutorial and Google Sheets lighter-weight tutorial."
+    }
+  }
+}

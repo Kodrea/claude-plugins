@@ -1,0 +1,228 @@
+{
+  "source_doc": "how-claude-code-works.md",
+  "source_url": "https://code.claude.com/docs/en/how-claude-code-works",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "documentation-index": {
+      "anchor": "documentation-index",
+      "tags": [],
+      "notes": "Blockquote directing readers to the documentation index llms.txt. Navigation/meta only."
+    },
+    "how-claude-code-works": {
+      "anchor": "how-claude-code-works",
+      "tags": [],
+      "notes": "H1 + subtitle. Scope: agentic loop, built-in tools, how Claude Code interacts with a project."
+    },
+    "claude-code-is-an-agentic-assistant": {
+      "anchor": "claude-code-is-an-agentic-assistant",
+      "tags": ["tools"],
+      "notes": "Opening paragraph: Claude Code runs in terminal; handles coding and anything doable from the command line. Pointers to Common workflows and Extend Claude Code."
+    },
+    "the-agentic-loop": {
+      "anchor": "the-agentic-loop",
+      "tags": [],
+      "notes": "H2: Three phases — gather context, take action, verify results."
+    },
+    "agentic-loop-diagram": {
+      "anchor": "agentic-loop-diagram",
+      "tags": [],
+      "notes": "Diagram of the agentic loop: prompt -> gather -> act -> verify -> repeat, with user interrupt available at any point."
+    },
+    "the-loop-adapts": {
+      "anchor": "the-loop-adapts",
+      "tags": [],
+      "notes": "The loop scales to task complexity. Claude chains dozens of actions and course-corrects. User can interrupt at any point."
+    },
+    "agentic-loop-powered-by": {
+      "anchor": "agentic-loop-powered-by",
+      "tags": ["model", "tools"],
+      "notes": "Loop powered by models (reason) and tools (act). Claude Code is the agentic harness: provides tools, context management, execution environment around the language model."
+    },
+    "models": {
+      "anchor": "models",
+      "tags": ["model"],
+      "notes": "H3: Claude models reason about code and tasks. Multiple models available with different tradeoffs. Sonnet for most tasks; Opus for complex architectural decisions. Switch with `/model` or `claude --model <name>`."
+    },
+    "tools": {
+      "anchor": "tools",
+      "tags": ["tools"],
+      "notes": "H3: Tools make Claude Code agentic — without tools, only text output. Each tool use returns information feeding back into the loop."
+    },
+    "built-in-tools-table": {
+      "anchor": "built-in-tools-table",
+      "tags": ["tools"],
+      "notes": "Five built-in tool categories: file operations, search, execution, web, code intelligence. Code intelligence requires code intelligence plugins."
+    },
+    "tools-also-subagents": {
+      "anchor": "tools-also-subagents",
+      "tags": ["tools", "isolation"],
+      "notes": "Claude also has tools for spawning subagents, asking questions, and other orchestration tasks. Links to Tools reference for complete list."
+    },
+    "tool-use-example": {
+      "anchor": "tool-use-example",
+      "tags": ["tools"],
+      "notes": "Example sequence for 'fix the failing tests': run suite, read error, search source, read files, edit, run again. Demonstrates agentic loop in action."
+    },
+    "extending-base-capabilities": {
+      "anchor": "extending-base-capabilities",
+      "tags": ["tools", "skills", "hooks", "isolation"],
+      "notes": "Built-in tools are foundation; extend with skills, MCP, hooks, subagents. These form a layer on top of core agentic loop."
+    },
+    "what-claude-can-access": {
+      "anchor": "what-claude-can-access",
+      "tags": ["tools", "scope"],
+      "notes": "H2: Focuses on terminal. Claude Code also runs in VS Code, JetBrains, other environments."
+    },
+    "what-claude-can-access-list": {
+      "anchor": "what-claude-can-access-list",
+      "tags": ["tools", "scope", "skills"],
+      "notes": "Access list: project files, terminal (any CLI command), git state, CLAUDE.md, auto memory (first 200 lines or 25KB of MEMORY.md), configured extensions (MCP, skills, subagents, Claude in Chrome)."
+    },
+    "because-claude-sees-your-whole-project": {
+      "anchor": "because-claude-sees-your-whole-project",
+      "tags": ["tools"],
+      "notes": "Full-project access enables cross-file coordination: search, multi-file edit, test, commit. Contrasted with inline code assistants that only see the current file."
+    },
+    "environments-and-interfaces": {
+      "anchor": "environments-and-interfaces",
+      "tags": [],
+      "notes": "H2: Agentic loop is the same everywhere; what changes is where code executes and how you interact."
+    },
+    "execution-environments": {
+      "anchor": "execution-environments",
+      "tags": ["isolation"],
+      "notes": "H3: Three execution environments — Local (default, full access), Cloud (Anthropic-managed VMs), Remote Control (local machine controlled from browser)."
+    },
+    "execution-environments-table": {
+      "anchor": "execution-environments-table",
+      "tags": ["isolation"],
+      "notes": "Table: Local, Cloud, Remote Control — where code runs and use case for each."
+    },
+    "interfaces": {
+      "anchor": "interfaces",
+      "tags": [],
+      "notes": "H3: Terminal, desktop app, IDE extensions, claude.ai/code, Remote Control, Slack, CI/CD pipelines. Interface changes interaction but not the underlying agentic loop."
+    },
+    "work-with-sessions": {
+      "anchor": "work-with-sessions",
+      "tags": ["isolation"],
+      "notes": "H2: Conversations saved locally as JSONL under ~/.claude/projects/. Enables rewind, resume, fork. Files snapshotted before edits. Sessions are independent — fresh context window each time."
+    },
+    "sessions-are-independent": {
+      "anchor": "sessions-are-independent",
+      "tags": ["isolation"],
+      "notes": "Each new session = fresh context window. Auto memory and CLAUDE.md persist learnings across sessions."
+    },
+    "work-across-branches": {
+      "anchor": "work-across-branches",
+      "tags": ["isolation"],
+      "notes": "H3: Sessions tied to current directory. Branch switch = Claude sees new files, conversation history unchanged. Parallel sessions via git worktrees (separate directories)."
+    },
+    "resume-or-fork-sessions": {
+      "anchor": "resume-or-fork-sessions",
+      "tags": ["permissions", "isolation"],
+      "notes": "H3: `--continue` / `--resume` uses same session ID, appends messages, restores conversation history but NOT session-scoped permissions (must re-approve). `--fork-session` creates new session ID preserving history — original unchanged. Forked sessions also don't inherit session-scoped permissions."
+    },
+    "fork-session-code": {
+      "anchor": "fork-session-code",
+      "tags": [],
+      "notes": "Code block showing `claude --continue --fork-session` command."
+    },
+    "same-session-multiple-terminals": {
+      "anchor": "same-session-multiple-terminals",
+      "tags": ["caveat", "isolation"],
+      "notes": "Caveat: resuming the same session in multiple terminals interleaves writes to the same file. Nothing corrupts but conversation becomes jumbled. Use `--fork-session` for parallel work from same starting point."
+    },
+    "the-context-window": {
+      "anchor": "the-context-window",
+      "tags": ["cost", "skills"],
+      "notes": "H3: Context holds conversation history, file contents, command outputs, CLAUDE.md, auto memory, loaded skills, system instructions. Claude compacts automatically; early instructions can get lost. Use CLAUDE.md for persistent rules, `/context` to inspect usage."
+    },
+    "when-context-fills-up": {
+      "anchor": "when-context-fills-up",
+      "tags": ["cost", "caveat"],
+      "notes": "H4: Auto compaction order: clears older tool outputs first, then summarizes. Requests and key code preserved; early detailed instructions may be lost. `/compact` accepts a focus argument. Thrashing error if single file/output refills context immediately — stops auto-compacting after a few attempts."
+    },
+    "mcp-deferred-context": {
+      "anchor": "mcp-deferred-context",
+      "tags": ["cost", "tools"],
+      "notes": "MCP tool definitions deferred by default (tool search). Only tool names consume context until a specific tool is used. `/mcp` checks per-server costs."
+    },
+    "manage-context-with-skills-and-subagents": {
+      "anchor": "manage-context-with-skills-and-subagents",
+      "tags": ["cost", "skills", "isolation"],
+      "notes": "H4: Skills load on demand (descriptions at start, full content when used). `disable-model-invocation: true` keeps descriptions out until invoked. Subagents get own fresh context — work doesn't bloat main session, returns summary. Isolation is why subagents help with long sessions."
+    },
+    "stay-safe-with-checkpoints-and-permissions": {
+      "anchor": "stay-safe-with-checkpoints-and-permissions",
+      "tags": ["permissions"],
+      "notes": "H2: Two safety mechanisms — checkpoints (undo file changes) and permissions (control what Claude can do without asking)."
+    },
+    "undo-changes-with-checkpoints": {
+      "anchor": "undo-changes-with-checkpoints",
+      "tags": ["permissions", "caveat"],
+      "notes": "H3: Every file edit reversible — Claude snapshots file before editing. Esc twice to rewind. Checkpoints are local to session, separate from git, cover file changes only. Caveat: remote actions (databases, APIs, deployments) can't be checkpointed."
+    },
+    "control-what-claude-can-do": {
+      "anchor": "control-what-claude-can-do",
+      "tags": ["permissions"],
+      "notes": "H3: Shift+Tab cycles permission modes — Default (asks for edits and commands), Auto-accept edits, Plan mode (read-only, generates plan), Auto mode (background safety checks, research preview). Specific commands allowable in `.claude/settings.json`. Settings can be scoped organization-wide to personal."
+    },
+    "work-effectively-with-claude-code": {
+      "anchor": "work-effectively-with-claude-code",
+      "tags": [],
+      "notes": "H2 section: Tips for better results. Divider separates core mechanics from usage guidance."
+    },
+    "ask-claude-code-for-help": {
+      "anchor": "ask-claude-code-for-help",
+      "tags": [],
+      "notes": "H3: Claude Code can explain itself. Built-in commands: /init (create CLAUDE.md), /agents (configure subagents), /doctor (diagnose issues)."
+    },
+    "its-a-conversation": {
+      "anchor": "its-a-conversation",
+      "tags": [],
+      "notes": "H3: No need for perfect prompts. Start with intent, refine through iteration."
+    },
+    "conversation-example": {
+      "anchor": "conversation-example",
+      "tags": [],
+      "notes": "Example exchange: initial prompt -> Claude tries -> user correction -> Claude adjusts. No need to start over."
+    },
+    "interrupt-and-steer": {
+      "anchor": "interrupt-and-steer",
+      "tags": [],
+      "notes": "H4: Can interrupt Claude at any point by typing a correction and pressing Enter. Claude stops and adjusts immediately."
+    },
+    "be-specific-upfront": {
+      "anchor": "be-specific-upfront",
+      "tags": [],
+      "notes": "H3: Precise prompts with file references, constraints, patterns succeed on first attempt. Vague prompts require more steering."
+    },
+    "be-specific-example": {
+      "anchor": "be-specific-example",
+      "tags": [],
+      "notes": "Example specific prompt: references src/payments/, mentions token refresh, specifies test-first approach."
+    },
+    "give-claude-something-to-verify-against": {
+      "anchor": "give-claude-something-to-verify-against",
+      "tags": [],
+      "notes": "H3: Claude performs better with verifiable success criteria — test cases, screenshots, expected output. Run tests after. For visual work, paste a screenshot."
+    },
+    "explore-before-implementing": {
+      "anchor": "explore-before-implementing",
+      "tags": ["permissions"],
+      "notes": "H3: Separate research from coding. Plan mode (Shift+Tab twice) for read-only analysis. Two-phase approach: plan first, implement second."
+    },
+    "delegate-dont-dictate": {
+      "anchor": "delegate-dont-dictate",
+      "tags": [],
+      "notes": "H3: Give context and direction; let Claude determine the steps. Don't need to specify which files to read or commands to run."
+    },
+    "whats-next": {
+      "anchor": "whats-next",
+      "tags": [],
+      "notes": "H2: Card group navigation — Extend with features, Common workflows. Navigation only."
+    }
+  }
+}

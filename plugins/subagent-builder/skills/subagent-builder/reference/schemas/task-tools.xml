@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from official-agent-teams.md — documents the 5 task management tools available in agent teams -->
+<!-- Parameter signatures resolved 2026-04-28 via ToolSearch JSONSchema fetch (observed tier) -->
+<schema source_doc="official-agent-teams.md" extracted_at="2026-04-28T12:00:00-04:00" subject="agent-team-task-tools" tool_count="5">
+
+  <task_system_overview>
+    task_states:
+      - pending
+      - in_progress
+      - completed
+    task_deletion: |
+      Setting status to "deleted" via TaskUpdate permanently removes the task.
+      There is no separate delete operation.
+    dependencies: |
+      Tasks can depend on other tasks. A pending task with unresolved dependencies cannot
+      be claimed until those dependencies are completed. The system manages task dependencies
+      automatically: when a teammate completes a task that other tasks depend on, blocked
+      tasks unblock without manual intervention.
+      Dependencies are set via TaskUpdate's addBlocks and addBlockedBy fields.
+    race_condition_protection: |
+      "Task claiming uses file locking to prevent race conditions when multiple teammates
+      try to claim the same task simultaneously."
+    storage:
+      task_list: "~/.claude/tasks/{team-name}/"
+    hook_payload_fields: |
+      When TaskCreated and TaskCompleted hooks fire, the payload uses prefixed snake_case
+      field names distinct from the tool's input param names:
+        task_id        — auto-assigned identifier (not a caller-supplied param)
+        task_subject   — corresponds to `subject` in TaskCreate
+        task_description — corresponds to `description` in TaskCreate
+        teammate_name  — the teammate that created/completed the task
+        team_name      — team name
+    naming_caveat: |
+      IMPORTANT: TaskStop uses `task_id` (snake_case) while TaskGet and TaskUpdate use
+      `taskId` (camelCase). This is an observed inconsistency in the schema — do not
+      assume consistent casing across task tools.
+    relationship_to_todo_write: |
+      "TodoWrite is for non-interactive/SDK mode; interactive sessions use
+      TaskCreate/Get/List/Update instead"
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Assign and claim tasks / Architecture
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_system_overview>
+
+  <!-- ============================================================ -->
+  <!-- TaskCreate                                                   -->
+  <!-- ============================================================ -->
+  <task_tool name="TaskCreate">
+    description: |
+      Creates a new task in the task list.
+    parameters:
+      - name: subject
+        type: string
+        required: true
+        description: "A brief imperative title for the task"
+      - name: description
+        type: string
+        required: true
+        description: "Full description of what needs to be done"
+      - name: activeForm
+        type: string
+        required: false
+        description: "Present continuous form shown in spinner when task is in_progress (e.g. \"Running tests\")"
+      - name: metadata
+        type: object
+        required: false
+        description: "Arbitrary key-value metadata attached to the task. Keys must be strings; values are open."
+    unknown_parameters: false
+    behavioral_notes: |
+      The lead creates tasks which teammates then claim and work through. Tasks can have
+      dependencies specified at creation (via TaskUpdate after creation). The lead can assign
+      tasks explicitly to a specific teammate (via owner), or leave them unassigned for
+      self-claiming.
+      A TeammateIdle hook can fire when a teammate goes idle, and a TaskCreated hook runs
+      when a task is being created (exit code 2 prevents creation and sends feedback).
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      raw_schema: |
+        { "additionalProperties": false, "required": ["subject","description"],
+          "properties": {
+            "subject": {"type":"string","description":"A brief title for the task"},
+            "description": {"type":"string","description":"What needs to be done"},
+            "activeForm": {"type":"string","description":"Present continuous form shown in spinner when in_progress"},
+            "metadata": {"type":"object","additionalProperties":{},"propertyNames":{"type":"string"},
+              "description":"Arbitrary metadata to attach to the task"} } }
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Assign and claim tasks / Enforce quality gates with hooks
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_tool>
+
+  <!-- ============================================================ -->
+  <!-- TaskGet                                                      -->
+  <!-- ============================================================ -->
+  <task_tool name="TaskGet">
+    description: |
+      Retrieves full details for a specific task.
+    parameters:
+      - name: taskId
+        type: string
+        required: true
+        description: "The ID of the task to retrieve"
+    unknown_parameters: false
+    behavioral_notes: |
+      Allows any team member to inspect the full details of a specific task by ID.
+      Complements TaskList, which provides status summaries for all tasks.
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      raw_schema: |
+        { "additionalProperties": false, "required": ["taskId"],
+          "properties": { "taskId": {"type":"string","description":"The ID of the task to retrieve"} } }
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Architecture
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_tool>
+
+  <!-- ============================================================ -->
+  <!-- TaskList                                                     -->
+  <!-- ============================================================ -->
+  <task_tool name="TaskList">
+    description: |
+      Lists all tasks with their current status. Takes no parameters.
+    parameters: []
+    unknown_parameters: false
+    behavioral_notes: |
+      Provides visibility into the shared task list. All agents can see task status and
+      claim available work. Used by teammates for self-claiming: after finishing a task,
+      a teammate picks up the next unassigned, unblocked task on its own.
+      No filter parameters are exposed — the tool returns all tasks.
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      raw_schema: |
+        { "additionalProperties": false, "properties": {}, "type": "object" }
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Assign and claim tasks
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_tool>
+
+  <!-- ============================================================ -->
+  <!-- TaskUpdate                                                   -->
+  <!-- ============================================================ -->
+  <task_tool name="TaskUpdate">
+    description: |
+      Updates task status, subject, description, ownership, dependencies, metadata, or
+      deletes a task. Only taskId is required; all other fields are optional patches.
+    parameters:
+      - name: taskId
+        type: string
+        required: true
+        description: "The ID of the task to update"
+      - name: status
+        type: enum
+        required: false
+        values: [pending, in_progress, completed, deleted]
+        description: "New status. Setting 'deleted' permanently removes the task."
+      - name: subject
+        type: string
+        required: false
+        description: "New title for the task"
+      - name: description
+        type: string
+        required: false
+        description: "New description for the task"
+      - name: activeForm
+        type: string
+        required: false
+        description: "Spinner text while task is in_progress"
+      - name: owner
+        type: string
+        required: false
+        description: "Agent name to assign as task owner"
+      - name: metadata
+        type: object
+        required: false
+        description: "Keys to merge into existing metadata. Set a key to null to delete it."
+      - name: addBlocks
+        type: string[]
+        required: false
+        description: "Task IDs that this task now blocks (adds to dependency graph)"
+      - name: addBlockedBy
+        type: string[]
+        required: false
+        description: "Task IDs that must complete before this one can start"
+    caveats:
+      - "'deleted' status permanently removes the task — not just a soft state change"
+      - "metadata is merged, not replaced: existing keys not in the update are preserved; set to null to remove a key"
+      - "addBlocks and addBlockedBy are additive — no corresponding removeBlocks/removeBlockedBy"
+    unknown_parameters: false
+    behavioral_notes: |
+      Used to change task state (e.g. marking a task completed, updating dependencies).
+      A TaskCompleted hook runs when a task is being marked complete — exit code 2 prevents
+      completion and sends feedback. If a task appears stuck (teammate failed to mark it
+      complete), the task status can be updated manually via this tool or by instructing
+      the lead to nudge the teammate.
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      raw_schema: |
+        { "additionalProperties": false, "required": ["taskId"],
+          "properties": {
+            "taskId": {"type":"string"},
+            "status": {"anyOf":[{"enum":["pending","in_progress","completed"]},{"const":"deleted"}]},
+            "subject": {"type":"string"}, "description": {"type":"string"},
+            "activeForm": {"type":"string"}, "owner": {"type":"string"},
+            "metadata": {"type":"object","additionalProperties":{},"propertyNames":{"type":"string"}},
+            "addBlocks": {"type":"array","items":{"type":"string"}},
+            "addBlockedBy": {"type":"array","items":{"type":"string"}} } }
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Assign and claim tasks / Enforce quality gates with hooks / Limitations
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_tool>
+
+  <!-- ============================================================ -->
+  <!-- TaskStop                                                     -->
+  <!-- ============================================================ -->
+  <task_tool name="TaskStop">
+    description: |
+      Kills a running background task by ID.
+    parameters:
+      - name: task_id
+        type: string
+        required: true
+        description: "The ID of the background task to stop"
+        naming_caveat: "Uses snake_case unlike TaskGet/TaskUpdate which use taskId (camelCase)"
+      - name: shell_id
+        type: string
+        required: false
+        description: "Deprecated: use task_id instead"
+        deprecated: true
+    caveats:
+      - "NAMING INCONSISTENCY: parameter is task_id (snake_case), not taskId — unlike TaskGet and TaskUpdate"
+      - "shell_id is deprecated; always use task_id"
+      - "Forcibly terminates the task — distinct from graceful shutdown via SendMessage"
+    unknown_parameters: false
+    behavioral_notes: |
+      Terminates a running task. Distinct from the graceful teammate shutdown flow
+      (which uses a shutdown_request message the teammate can reject). TaskStop forcibly
+      kills the task.
+    availability: "requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1"
+    schema_source:
+      method: ToolSearch JSONSchema fetch
+      observed_at: 2026-04-28
+      raw_schema: |
+        { "additionalProperties": false,
+          "properties": {
+            "task_id": {"type":"string","description":"The ID of the background task to stop"},
+            "shell_id": {"type":"string","description":"Deprecated: use task_id instead"} } }
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Architecture
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </task_tool>
+
+</schema>

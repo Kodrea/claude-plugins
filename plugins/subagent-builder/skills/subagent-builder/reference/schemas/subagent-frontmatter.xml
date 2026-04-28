@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from research/sources/official-sub-agents.md (fetched 2026-04-16).
+     Parse plan expected 17 fields; source table has 16. The 17th field (`prompt`)
+     appears at line 199 in the --agents JSON spec, not in the formal frontmatter
+     table — it is included below with context: cli-flag-json-only. -->
+<schema source_doc="official-sub-agents.md" extracted_at="2026-04-28T12:00:00-04:00" field_count="17">
+
+<frontmatter_field name="name">
+  type: string
+  required: true
+  default: none
+  applicability: cli
+  excerpt: |
+    Unique identifier using lowercase letters and hyphens
+  notes_for_skill:
+    - "must be unique within scope; used in Agent(name) syntax for allowlisting and in permissions.deny"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="description">
+  type: string
+  required: true
+  default: none
+  applicability: cli
+  excerpt: |
+    When Claude should delegate to this subagent
+  caveats:
+    - "Claude automatically delegates tasks based on the task description in your request, the `description` field in subagent configurations, and current context"
+    - "To encourage proactive delegation, include phrases like 'use proactively' in your subagent's description field"
+  notes_for_skill:
+    - "primary delegation signal — the most important field for influencing when Claude uses this subagent"
+    - "should describe circumstances for use, not just what the subagent does"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="tools">
+  type: list
+  required: false
+  default: "inherits all tools from main conversation"
+  applicability: cli
+  excerpt: |
+    [Tools] the subagent can use. Inherits all tools if omitted
+
+    To restrict tools, use either the `tools` field (allowlist) or the `disallowedTools`
+    field (denylist). This example uses `tools` to exclusively allow Read, Grep, Glob, and
+    Bash. The subagent can't edit files, write files, or use any MCP tools:
+
+      tools: Read, Grep, Glob, Bash
+
+    If both are set, `disallowedTools` is applied first, then `tools` is resolved against
+    the remaining pool. A tool listed in both is removed.
+
+    When an agent runs as the main thread with `claude --agent`, it can spawn subagents
+    using the Agent tool. To restrict which subagent types it can spawn, use
+    `Agent(agent_type)` syntax in the `tools` field.
+
+    This is an allowlist: only the `worker` and `researcher` subagents can be spawned. If
+    the agent tries to spawn any other type, the request fails and the agent sees only the
+    allowed types in its prompt. To block specific agents while allowing all others, use
+    `permissions.deny` instead.
+
+    To allow spawning any subagent without restrictions, use `Agent` without parentheses.
+
+    If `Agent` is omitted from the `tools` list entirely, the agent cannot spawn any
+    subagents. This restriction only applies to agents running as the main thread with
+    `claude --agent`. Subagents cannot spawn other subagents, so `Agent(agent_type)` has
+    no effect in subagent definitions.
+  caveats:
+    - "allowlist: only listed tools are available; all others (including MCP) are blocked"
+    - "`Agent(name)` syntax in tools restricts which subagent types can be spawned — applies only when running as main thread via --agent, has no effect in subagent definitions"
+    - "if both tools and disallowedTools are set, disallowedTools is applied first"
+    - "In version 2.1.63, the Task tool was renamed to Agent. Existing `Task(...)` references still work as aliases"
+  notes_for_skill:
+    - "prefer listing specific tools (allowlist) for security-sensitive subagents; use disallowedTools when you want to inherit most tools but block a few"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Available tools; Restrict which subagents can be spawned"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="disallowedTools">
+  type: list
+  required: false
+  default: none
+  applicability: cli
+  excerpt: |
+    Tools to deny, removed from inherited or specified list
+
+    This example uses `disallowedTools` to inherit every tool from the main conversation
+    except Write and Edit. The subagent keeps Bash, MCP tools, and everything else:
+
+      disallowedTools: Write, Edit
+
+    If both are set, `disallowedTools` is applied first, then `tools` is resolved against
+    the remaining pool. A tool listed in both is removed.
+  caveats:
+    - "denylist: subagent inherits all tools except those listed"
+    - "if both tools and disallowedTools are set, disallowedTools is applied first"
+  notes_for_skill:
+    - "use when you want to remove a few dangerous tools (e.g. Write, Bash) but keep the rest"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Available tools"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="model">
+  type: string
+  required: false
+  default: inherit
+  values: [sonnet, opus, haiku, "<full-model-id>", inherit]
+  applicability: cli
+  excerpt: |
+    [Model] to use: `sonnet`, `opus`, `haiku`, a full model ID (for example,
+    `claude-opus-4-7`), or `inherit`. Defaults to `inherit`
+
+    The `model` field controls which AI model the subagent uses:
+    - Model alias: Use one of the available aliases: `sonnet`, `opus`, or `haiku`
+    - Full model ID: Use a full model ID such as `claude-opus-4-7` or `claude-sonnet-4-6`.
+      Accepts the same values as the `--model` flag
+    - inherit: Use the same model as the main conversation
+    - Omitted: If not specified, defaults to `inherit` (uses the same model as the main
+      conversation)
+
+    When Claude invokes a subagent, it can also pass a `model` parameter for that specific
+    invocation. Claude Code resolves the subagent's model in this order:
+    1. The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable, if set
+    2. The per-invocation `model` parameter
+    3. The subagent definition's `model` frontmatter
+    4. The main conversation's model
+  caveats:
+    - "4-level resolution hierarchy: env var > per-invocation param > frontmatter > parent model"
+    - "aliases (sonnet, opus, haiku) resolve to the current latest model for that family — may change over time"
+    - "full model IDs pin a specific version and are stable across releases"
+  notes_for_skill:
+    - "use full model ID when you need a specific capability (e.g. claude-opus-4-7 for xhigh effort)"
+    - "use alias when you want the subagent to track the latest model in that family"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Choose a model"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="permissionMode">
+  type: enum
+  required: false
+  default: inherits from main conversation
+  values: [default, acceptEdits, auto, dontAsk, bypassPermissions, plan]
+  applicability: cli
+  excerpt: |
+    [Permission mode]: `default`, `acceptEdits`, `auto`, `dontAsk`,
+    `bypassPermissions`, or `plan`
+
+    The `permissionMode` field controls how the subagent handles permission prompts.
+    Subagents inherit the permission context from the main conversation and can override
+    the mode, except when the parent mode takes precedence as described below.
+
+    Mode behaviors:
+    - default: Standard permission checking with prompts
+    - acceptEdits: Auto-accept file edits and common filesystem commands for paths in the
+      working directory or `additionalDirectories`
+    - auto: Auto mode: a background classifier reviews commands and protected-directory writes
+    - dontAsk: Auto-deny permission prompts (explicitly allowed tools still work)
+    - bypassPermissions: Skip permission prompts
+    - plan: Plan mode (read-only exploration)
+
+    Use `bypassPermissions` with caution. It skips permission prompts, allowing the
+    subagent to execute operations without approval. Writes to `.git`, `.claude`,
+    `.vscode`, `.idea`, and `.husky` directories still prompt for confirmation, except
+    for `.claude/commands`, `.claude/agents`, and `.claude/skills`.
+
+    If the parent uses `bypassPermissions`, this takes precedence and cannot be
+    overridden. If the parent uses auto mode, the subagent inherits auto mode and any
+    `permissionMode` in its frontmatter is ignored: the classifier evaluates the
+    subagent's tool calls with the same block and allow rules as the parent session.
+  caveats:
+    - "parent bypassPermissions cannot be overridden by subagent"
+    - "parent auto mode cannot be overridden by subagent — frontmatter permissionMode is ignored"
+    - "bypassPermissions still prompts for writes to .git, .claude, .vscode, .idea, .husky (except .claude/commands, .claude/agents, .claude/skills)"
+    - "plugin subagents do not support this field — it is silently ignored"
+  notes_for_skill:
+    - "use acceptEdits for write-capable subagents that should not prompt; use plan for read-only analysis agents"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Permission modes"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="maxTurns">
+  type: integer
+  required: false
+  default: none
+  applicability: cli
+  excerpt: |
+    Maximum number of agentic turns before the subagent stops
+  notes_for_skill:
+    - "useful for bounded research or verification tasks where open-ended looping is undesirable"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="skills">
+  type: list
+  required: false
+  default: none
+  applicability: cli
+  excerpt: |
+    [Skills] to load into the subagent's context at startup. The full skill content is
+    injected, not just made available for invocation. Subagents don't inherit skills from
+    the parent conversation
+
+    Use the `skills` field to inject skill content into a subagent's context at startup.
+    This gives the subagent domain knowledge without requiring it to discover and load
+    skills during execution.
+
+    The full content of each skill is injected into the subagent's context, not just made
+    available for invocation. Subagents don't inherit skills from the parent conversation;
+    you must list them explicitly.
+
+    This is the inverse of running a skill in a subagent. With `skills` in a subagent,
+    the subagent controls the system prompt and loads skill content. With `context: fork`
+    in a skill, the skill content is injected into the agent you specify. Both use the
+    same underlying system.
+  caveats:
+    - "skills are NOT inherited from the parent conversation — must be listed explicitly"
+    - "full skill content is injected at startup (increases context); not lazy-loaded"
+    - "plugin subagents do not support this field — it is silently ignored"
+  notes_for_skill:
+    - "primary injection point for the subagent-builder skill itself: list the skill here to give subagents the skill's guidance at runtime"
+    - "injecting a large skill inflates context from turn 1; only inject skills the subagent will actively use"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Preload skills into subagents"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="mcpServers">
+  type: list
+  required: false
+  default: inherits MCP servers from main conversation
+  applicability: cli
+  excerpt: |
+    [MCP servers] available to this subagent. Each entry is either a server name
+    referencing an already-configured server (e.g., `"slack"`) or an inline definition
+    with the server name as key and a full [MCP server config] as value
+
+    Use the `mcpServers` field to give a subagent access to MCP servers that aren't
+    available in the main conversation. Inline servers defined here are connected when
+    the subagent starts and disconnected when it finishes. String references share the
+    parent session's connection.
+
+    Each entry in the list is either an inline server definition or a string referencing
+    an MCP server already configured in your session.
+
+    Inline definitions use the same schema as `.mcp.json` server entries (`stdio`, `http`,
+    `sse`, `ws`), keyed by the server name.
+
+    To keep an MCP server out of the main conversation entirely and avoid its tool
+    descriptions consuming context there, define it inline here rather than in `.mcp.json`.
+    The subagent gets the tools; the parent conversation does not.
+  caveats:
+    - "inline definitions: connected at subagent start, disconnected at finish"
+    - "string references: reuse parent session's already-open connection"
+    - "plugin subagents do not support this field — it is silently ignored"
+    - "inline servers keep MCP tool descriptions out of the parent conversation context"
+  notes_for_skill:
+    - "use inline definitions when the MCP server is only relevant to this subagent (keeps parent context clean)"
+    - "use string reference when the server is already configured and shared connections are acceptable"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Scope MCP servers to a subagent"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="hooks">
+  type: object
+  required: false
+  default: none
+  applicability: cli
+  excerpt: |
+    [Lifecycle hooks] scoped to this subagent
+
+    Define hooks directly in the subagent's markdown file. These hooks only run while
+    that specific subagent is active and are cleaned up when it finishes.
+
+    Frontmatter hooks fire when the agent is spawned as a subagent through the Agent tool
+    or an @-mention. They do not fire when the agent runs as the main session via
+    `--agent` or the `agent` setting. For session-wide hooks, configure them in
+    `settings.json`.
+
+    All hook events are supported. The most common events for subagents are:
+    - PreToolUse (matcher: Tool name): Before the subagent uses a tool
+    - PostToolUse (matcher: Tool name): After the subagent uses a tool
+    - Stop (none): When the subagent finishes (converted to SubagentStop at runtime)
+
+    `Stop` hooks in frontmatter are automatically converted to `SubagentStop` events.
+  caveats:
+    - "hooks fire only when spawned via Agent tool or @-mention — NOT when running as main session via --agent"
+    - "Stop hooks in frontmatter are converted to SubagentStop at runtime"
+    - "plugin subagents do not support this field — it is silently ignored"
+  notes_for_skill:
+    - "use PreToolUse hooks to validate or constrain tool calls (e.g., block SQL writes)"
+    - "session-level subagent lifecycle hooks (SubagentStart, SubagentStop) go in settings.json, not here"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Define hooks for subagents; Hooks in subagent frontmatter"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="memory">
+  type: enum
+  required: false
+  default: none
+  values: [user, project, local]
+  applicability: cli
+  excerpt: |
+    [Persistent memory scope]: `user`, `project`, or `local`. Enables cross-session
+    learning
+
+    The `memory` field gives the subagent a persistent directory that survives across
+    conversations. The subagent uses this directory to build up knowledge over time,
+    such as codebase patterns, debugging insights, and architectural decisions.
+
+    Scope options:
+    - user: ~/.claude/agent-memory/<name-of-agent>/ — subagent should remember learnings
+      across all projects
+    - project: .claude/agent-memory/<name-of-agent>/ — subagent's knowledge is
+      project-specific and shareable via version control
+    - local: .claude/agent-memory-local/<name-of-agent>/ — subagent's knowledge is
+      project-specific but should not be checked into version control
+
+    When memory is enabled:
+    - The subagent's system prompt includes instructions for reading and writing to the
+      memory directory.
+    - The subagent's system prompt also includes the first 200 lines or 25KB of MEMORY.md
+      in the memory directory, whichever comes first, with instructions to curate MEMORY.md
+      if it exceeds that limit.
+    - Read, Write, and Edit tools are automatically enabled so the subagent can manage its
+      memory files.
+  caveats:
+    - "Read, Write, and Edit tools are automatically enabled when memory is set (even if not listed in tools)"
+    - "MEMORY.md is injected into system prompt on every run — keep it curated to avoid context bloat"
+    - "`project` is the recommended default scope (shareable via version control)"
+  notes_for_skill:
+    - "use for subagents that learn and improve over time (code reviewers, domain experts)"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Enable persistent memory"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="background">
+  type: boolean
+  required: false
+  default: false
+  values: [true, false]
+  applicability: cli
+  excerpt: |
+    Set to `true` to always run this subagent as a [background task]. Default: `false`
+
+    Background subagents run concurrently while you continue working. Before launching,
+    Claude Code prompts for any tool permissions the subagent will need, ensuring it has
+    the necessary approvals upfront. Once running, the subagent inherits these permissions
+    and auto-denies anything not pre-approved. If a background subagent needs to ask
+    clarifying questions, that tool call fails but the subagent continues.
+  caveats:
+    - "tool permission prompts are shown upfront (before launch), not during execution"
+    - "background subagents auto-deny any tool call not pre-approved at launch time"
+    - "clarifying question tool calls fail silently — background subagents cannot pause for input"
+  notes_for_skill:
+    - "use for fire-and-forget tasks (linting, test runs, research) where you don't need to interact mid-run"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields; Run subagents in foreground or background"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="effort">
+  type: enum
+  required: false
+  default: "inherits from session"
+  values: [low, medium, high, xhigh, max]
+  applicability: cli
+  caveats:
+    - "xhigh is available on Claude Opus 4.7 only (per official-effort.md)"
+    - "max is available on Claude Mythos Preview, Opus 4.7, Opus 4.6, and Sonnet 4.6 (per official-effort.md)"
+    - "effort is NOT supported on Haiku — supported models are Mythos Preview, Opus 4.7, Opus 4.6, Sonnet 4.6, Opus 4.5 (per official-effort.md)"
+    - "for Opus 4.7: xhigh is the recommended starting point for coding and agentic work; high is the minimum; max reserved for cases where evals show measurable headroom over xhigh (per official-effort.md)"
+    - "overrides session-level effort for the duration of subagent execution"
+  excerpt: |
+    Effort level when this subagent is active. Overrides the session effort level.
+    Default: inherits from session. Options: `low`, `medium`, `high`, `xhigh`, `max`;
+    available levels depend on the model
+  notes_for_skill:
+    - "primary thinking-depth lever; most important field for roles that need deep reasoning"
+    - "if model is set to claude-opus-4-7 or opus alias, xhigh is recommended as the starting point for agentic work"
+    - "skill's effort_ladder must document all five rungs with model-gating per the caveats above"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="isolation">
+  type: enum
+  required: false
+  default: none
+  values: [worktree]
+  applicability: cli
+  excerpt: |
+    Set to `worktree` to run the subagent in a temporary [git worktree], giving it an
+    isolated copy of the repository. The worktree is automatically cleaned up if the
+    subagent makes no changes
+  caveats:
+    - "only valid value is `worktree`; other values are not documented"
+    - "worktree is cleaned up automatically only if the subagent makes no changes — preserved for review if changes were made"
+  notes_for_skill:
+    - "use for subagents doing speculative or exploratory edits that should not affect the main working tree"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="color">
+  type: enum
+  required: false
+  default: none
+  values: [red, blue, green, yellow, purple, orange, pink, cyan]
+  applicability: cli
+  excerpt: |
+    Display color for the subagent in the task list and transcript. Accepts `red`,
+    `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, or `cyan`
+  notes_for_skill:
+    - "cosmetic only; useful for visually distinguishing roles in multi-agent sessions"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="initialPrompt">
+  type: string
+  required: false
+  default: none
+  applicability: cli
+  excerpt: |
+    Auto-submitted as the first user turn when this agent runs as the main session agent
+    (via `--agent` or the `agent` setting). [Commands] and [skills] are processed.
+    Prepended to any user-provided prompt
+  caveats:
+    - "fires only when running as main session agent (--agent / agent setting) — NOT when spawned as a subagent"
+    - "commands and skills in the initialPrompt string are processed (not treated as raw text)"
+    - "prepended to the user's prompt, not appended"
+  notes_for_skill:
+    - "use for session-bootstrap instructions that should run before user input (e.g., /read-context, skill invocations)"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Supported frontmatter fields"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+<frontmatter_field name="prompt">
+  type: string
+  required: false
+  default: none
+  applicability: cli
+  context: cli-flag-json-only
+  excerpt: |
+    The `--agents` CLI flag accepts JSON with the same [frontmatter] fields as
+    file-based subagents: `description`, `prompt`, `tools`, `disallowedTools`, `model`,
+    `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`,
+    `memory`, `effort`, `background`, `isolation`, and `color`. Use `prompt` for the
+    system prompt, equivalent to the markdown body in file-based subagents.
+  caveats:
+    - "NOT a file frontmatter field — only valid in --agents JSON flag invocations"
+    - "equivalent to the markdown body of a .md subagent file; provides the system prompt text"
+    - "this field does not appear in the formal frontmatter fields table — it is the CLI-flag JSON analog of the file body"
+  notes_for_skill:
+    - "skill can answer 'why isn't prompt in the table?' by citing this entry"
+    - "for file-based subagents, the system prompt is the markdown body after the frontmatter block, not a frontmatter key"
+  source:
+    url: https://code.claude.com/docs/en/sub-agents
+    section: "Configure subagents — --agents CLI flag (line 199)"
+    fetched_at: 2026-04-16T10:15:00-04:00
+</frontmatter_field>
+
+</schema>

@@ -1,0 +1,318 @@
+{
+  "source_doc": "extended-thinking.md",
+  "source_url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+  "tagged_at": "2026-04-28T12:00:00-04:00",
+  "tagger_version": "1.0",
+  "paragraphs": {
+    "zdr-note": {
+      "anchor": "zdr-note",
+      "tags": ["api-only", "caveat"],
+      "notes": "ZDR eligibility note — data not stored after API response when ZDR is active."
+    },
+    "intro-paragraph": {
+      "anchor": "intro-paragraph",
+      "tags": ["thinking"],
+      "notes": "Overview: extended thinking gives enhanced reasoning and transparency into step-by-step thought."
+    },
+    "opus-4-7-deprecation-note": {
+      "anchor": "opus-4-7-deprecation-note",
+      "tags": ["thinking", "model", "caveat", "api-only"],
+      "notes": "Opus 4.7+ must use adaptive thinking; manual budget_tokens returns 400 error. Opus 4.6/Sonnet 4.6 deprecated but still functional."
+    },
+    "supported-models": {
+      "anchor": "supported-models",
+      "tags": ["thinking", "model", "api-only"],
+      "notes": "Section heading + first sentence: manual extended thinking unsupported on Opus 4.7+."
+    },
+    "supported-models-list": {
+      "anchor": "supported-models-list",
+      "tags": ["thinking", "model", "api-only", "caveat"],
+      "notes": "Per-model behavior list: Opus 4.7, Mythos Preview, Opus 4.6, Sonnet 4.6 — mode support and deprecation status."
+    },
+    "api-shapes-note": {
+      "anchor": "api-shapes-note",
+      "tags": ["thinking", "model", "api-only"],
+      "notes": "API shapes remain the same across Sonnet 3.7 and Claude 4 models despite behavior differences."
+    },
+    "how-extended-thinking-works": {
+      "anchor": "how-extended-thinking-works",
+      "tags": ["thinking", "api-only"],
+      "notes": "Mechanism: thinking content blocks produced, insights incorporated before final response."
+    },
+    "response-format-example": {
+      "anchor": "response-format-example",
+      "tags": ["thinking", "api-only"],
+      "notes": "JSON example showing thinking block (with signature) followed by text block in API response."
+    },
+    "response-format-ref": {
+      "anchor": "response-format-ref",
+      "tags": ["thinking", "api-only"],
+      "notes": "Pointer to Messages API Reference for full response format docs."
+    },
+    "how-to-use-intro": {
+      "anchor": "how-to-use-intro",
+      "tags": ["thinking", "api-only"],
+      "notes": "Section intro — using extended thinking in Messages API."
+    },
+    "code-examples-codegroup": {
+      "anchor": "code-examples-codegroup",
+      "tags": ["thinking", "api-only"],
+      "notes": "Multi-language code examples (Shell/CLI/Python/TypeScript/C#/Go/Java/PHP/Ruby) showing budget_tokens=10000 with enabled type."
+    },
+    "budget-tokens-explanation": {
+      "anchor": "budget-tokens-explanation",
+      "tags": ["thinking", "cost", "api-only", "decision"],
+      "notes": "Enabling thinking: type=enabled + budget_tokens. Adaptive recommended for Opus 4.6/Sonnet 4.6. budget_tokens limits full thinking tokens (not summarized output); larger budgets improve quality but Claude may not use full allocation above 32k."
+    },
+    "budget-tokens-deprecation-warning": {
+      "anchor": "budget-tokens-deprecation-warning",
+      "tags": ["thinking", "caveat", "api-only", "model"],
+      "notes": "Warning: budget_tokens deprecated on Opus 4.6 and Sonnet 4.6; use adaptive thinking + effort instead."
+    },
+    "output-token-limits-note": {
+      "anchor": "output-token-limits-note",
+      "tags": ["thinking", "model", "api-only", "cost"],
+      "notes": "Output token limits per model: Mythos/Opus 4.7/Opus 4.6 = 128k; Sonnet 4.6/Haiku 4.5 = 64k. Batch API beta header raises to 300k for select models."
+    },
+    "budget-tokens-max-tokens-constraint": {
+      "anchor": "budget-tokens-max-tokens-constraint",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "budget_tokens must be less than max_tokens, except with interleaved thinking where the context window becomes the limit."
+    },
+    "summarized-thinking": {
+      "anchor": "summarized-thinking",
+      "tags": ["thinking", "api-only", "model"],
+      "notes": "Claude 4 models return summarized thinking by default. Default display is summarized except Opus 4.7 and Mythos Preview which default to omitted."
+    },
+    "summarized-thinking-considerations": {
+      "anchor": "summarized-thinking-considerations",
+      "tags": ["thinking", "cost", "api-only", "caveat"],
+      "notes": "Key points: billed for full thinking tokens not summary; billed count won't match visible token count; Claude 4 first lines more verbose; Mythos summarizes from first token; summarization behavior may change; minimal added latency; summarized by a different model (thinking model doesn't see summary)."
+    },
+    "sonnet-37-full-thinking-note": {
+      "anchor": "sonnet-37-full-thinking-note",
+      "tags": ["thinking", "model", "api-only"],
+      "notes": "Sonnet 3.7 returns full thinking output, not summarized. Full output for Claude 4 requires contacting sales."
+    },
+    "controlling-thinking-display": {
+      "anchor": "controlling-thinking-display",
+      "tags": ["thinking", "api-only"],
+      "notes": "display field controls how thinking content returned: summarized (default on Opus 4.6, Sonnet 4.6, earlier Claude 4) or omitted (default on Opus 4.7 and Mythos Preview)."
+    },
+    "display-omitted-use-case": {
+      "anchor": "display-omitted-use-case",
+      "tags": ["thinking", "api-only", "decision"],
+      "notes": "display: omitted useful when app doesn't surface thinking. Primary benefit: faster time-to-first-text-token in streaming."
+    },
+    "display-sdk-support-note": {
+      "anchor": "display-sdk-support-note",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "No SDK currently includes display in type definitions. Python forwards unknown dict keys transparently; TypeScript needs type assertion; C#/Go/Java/PHP/Ruby need direct HTTP until native support lands."
+    },
+    "omitted-thinking-considerations": {
+      "anchor": "omitted-thinking-considerations",
+      "tags": ["thinking", "cost", "api-only", "caveat"],
+      "notes": "Still charged for full thinking tokens with omitted. Pass thinking blocks back unchanged in multi-turn. display invalid with type:disabled. With adaptive type, no thinking block produced when model skips thinking."
+    },
+    "signature-field-note": {
+      "anchor": "signature-field-note",
+      "tags": ["thinking", "api-only"],
+      "notes": "signature field is identical for summarized and omitted. Switching display between turns is supported."
+    },
+    "mythos-display-default-note": {
+      "anchor": "mythos-display-default-note",
+      "tags": ["thinking", "model", "api-only"],
+      "notes": "Mythos Preview defaults display to omitted; pass display:summarized explicitly to get summarized thinking."
+    },
+    "automated-pipeline-use-case": {
+      "anchor": "automated-pipeline-use-case",
+      "tags": ["thinking", "api-only", "decision"],
+      "notes": "Automated pipelines that don't surface thinking can skip receiving thinking tokens; latency-sensitive apps benefit."
+    },
+    "display-omitted-code-examples": {
+      "anchor": "display-omitted-code-examples",
+      "tags": ["thinking", "api-only"],
+      "notes": "Code examples for display:omitted across multiple languages (placeholder — truncated in source)."
+    },
+    "display-omitted-response-example": {
+      "anchor": "display-omitted-response-example",
+      "tags": ["thinking", "api-only"],
+      "notes": "JSON output showing thinking block with empty thinking field and non-empty signature when display:omitted."
+    },
+    "display-omitted-streaming-note": {
+      "anchor": "display-omitted-streaming-note",
+      "tags": ["thinking", "api-only"],
+      "notes": "When display:omitted, no thinking_delta events emitted during streaming."
+    },
+    "streaming-thinking": {
+      "anchor": "streaming-thinking",
+      "tags": ["thinking", "api-only"],
+      "notes": "Extended thinking supports SSE streaming; thinking content arrives via thinking_delta events."
+    },
+    "streaming-thinking-code-examples": {
+      "anchor": "streaming-thinking-code-examples",
+      "tags": ["thinking", "api-only"],
+      "notes": "Multi-language streaming code examples (placeholder — truncated in source)."
+    },
+    "streaming-sse-example": {
+      "anchor": "streaming-sse-example",
+      "tags": ["thinking", "api-only"],
+      "notes": "Full SSE event sequence example: message_start, content_block_start (thinking), thinking_delta events, signature_delta, content_block_stop, then text block events."
+    },
+    "streaming-omitted-sse-example": {
+      "anchor": "streaming-omitted-sse-example",
+      "tags": ["thinking", "api-only"],
+      "notes": "SSE sequence with display:omitted — thinking block opens, single signature_delta, block closes immediately, text streaming begins."
+    },
+    "streaming-chunky-note": {
+      "anchor": "streaming-chunky-note",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "Text may arrive in larger chunks alternating with token-by-token delivery — expected behavior due to batch processing. Anthropic working to improve."
+    },
+    "extended-thinking-with-tool-use": {
+      "anchor": "extended-thinking-with-tool-use",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Extended thinking can be combined with tool use for reasoning through tool selection and results."
+    },
+    "tool-use-limitations": {
+      "anchor": "tool-use-limitations",
+      "tags": ["thinking", "tools", "api-only", "caveat"],
+      "notes": "Two limitations: (1) tool_choice only supports auto or none — any/specific tool forces error; (2) thinking blocks must be passed back to API for last assistant message."
+    },
+    "toggling-thinking-modes": {
+      "anchor": "toggling-thinking-modes",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "Cannot toggle thinking mid-assistant-turn including during tool use loops. Entire assistant turn must use single thinking mode. Tool use loops are part of the assistant turn."
+    },
+    "single-assistant-turn-example": {
+      "anchor": "single-assistant-turn-example",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Example showing multi-message tool use loop as conceptually one continuous assistant turn."
+    },
+    "graceful-thinking-degradation": {
+      "anchor": "graceful-thinking-degradation",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "Mid-turn thinking conflict causes API to silently disable thinking (no error). API may strip thinking blocks or disable thinking when conversation history is incompatible. Confirm via presence of thinking blocks in response."
+    },
+    "practical-guidance-toggling": {
+      "anchor": "practical-guidance-toggling",
+      "tags": ["thinking", "api-only", "decision"],
+      "notes": "Best practice: plan thinking strategy at start of each turn. Complete assistant turn before toggling thinking to ensure it's actually enabled."
+    },
+    "caching-toggle-invalidation-note": {
+      "anchor": "caching-toggle-invalidation-note",
+      "tags": ["thinking", "api-only", "caveat"],
+      "notes": "Toggling thinking modes invalidates prompt caching for message history."
+    },
+    "passing-thinking-blocks-example": {
+      "anchor": "passing-thinking-blocks-example",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Practical example section showing how to preserve thinking blocks with tool results — code truncated in source."
+    },
+    "tool-use-response-examples": {
+      "anchor": "tool-use-response-examples",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "API response JSON examples for tool use with thinking: first shows thinking+text+tool_use; final shows only text after tool results processed."
+    },
+    "preserving-thinking-blocks": {
+      "anchor": "preserving-thinking-blocks",
+      "tags": ["thinking", "tools", "api-only", "caveat"],
+      "notes": "Must pass complete unmodified thinking blocks back to API during tool use. API auto-filters and uses relevant blocks; only bills input tokens for blocks shown to Claude."
+    },
+    "preserving-thinking-blocks-tip": {
+      "anchor": "preserving-thinking-blocks-tip",
+      "tags": ["thinking", "tools", "api-only", "decision"],
+      "notes": "Tip: can omit thinking blocks from prior turns but always pass back all for multi-turn; API automatically filters; only billed for blocks shown to Claude."
+    },
+    "preserving-thinking-blocks-reasoning": {
+      "anchor": "preserving-thinking-blocks-reasoning",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Two reasons for preservation: (1) reasoning continuity — Claude continues from where it left off; (2) context maintenance — tool results are user messages but part of continuous reasoning flow. Sequence of thinking blocks must not be rearranged or modified."
+    },
+    "interleaved-thinking": {
+      "anchor": "interleaved-thinking",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Claude 4 supports interleaved thinking — thinking between tool calls, after receiving tool results. Enables chained tool calls with reasoning steps between."
+    },
+    "interleaved-thinking-model-support": {
+      "anchor": "interleaved-thinking-model-support",
+      "tags": ["thinking", "tools", "model", "api-only"],
+      "notes": "Model support matrix: Mythos Preview (automatic, no beta header); Opus 4.7 (automatic with adaptive); Opus 4.6 (automatic with adaptive, beta header deprecated); Sonnet 4.6 (adaptive recommended, manual+beta header deprecated); other Claude 4 (need interleaved-thinking-2025-05-14 beta header)."
+    },
+    "interleaved-thinking-considerations": {
+      "anchor": "interleaved-thinking-considerations",
+      "tags": ["thinking", "tools", "api-only", "caveat", "cost"],
+      "notes": "budget_tokens can exceed max_tokens with interleaved (total across all thinking blocks per turn). Only supported for Messages API tool use. Beta header has no effect on direct API for unsupported models. 3rd-party platforms fail if header passed to unsupported models."
+    },
+    "tool-use-without-interleaved": {
+      "anchor": "tool-use-without-interleaved",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "Without interleaved: Claude thinks once at start of turn; subsequent tool result responses have no thinking blocks."
+    },
+    "tool-use-with-interleaved": {
+      "anchor": "tool-use-with-interleaved",
+      "tags": ["thinking", "tools", "api-only"],
+      "notes": "With interleaved: Claude thinks after each tool result before deciding next step."
+    },
+    "extended-thinking-with-prompt-caching": {
+      "anchor": "extended-thinking-with-prompt-caching",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "Section intro: prompt caching with thinking has important considerations."
+    },
+    "prompt-caching-1hr-tip": {
+      "anchor": "prompt-caching-1hr-tip",
+      "tags": ["thinking", "cost", "api-only", "decision"],
+      "notes": "Extended thinking tasks often take 5+ minutes — use 1-hour cache duration to maintain cache hits across long sessions and multi-step workflows."
+    },
+    "thinking-block-context-removal": {
+      "anchor": "thinking-block-context-removal",
+      "tags": ["thinking", "cost", "api-only", "caveat"],
+      "notes": "Thinking blocks from previous turns removed from context affecting cache breakpoints. With tool use, thinking blocks are cached and count as input tokens when read from cache. Tradeoff: don't consume context window visually but count toward input token usage when cached. If thinking disabled mid-turn, thinking content stripped."
+    },
+    "cache-invalidation-patterns": {
+      "anchor": "cache-invalidation-patterns",
+      "tags": ["thinking", "cost", "api-only", "caveat"],
+      "notes": "Changes to thinking parameters invalidate message cache breakpoints. Interleaved thinking amplifies invalidation (thinking blocks between multiple tool calls). System prompts and tools remain cached despite thinking parameter changes."
+    },
+    "thinking-block-preservation-note": {
+      "anchor": "thinking-block-preservation-note",
+      "tags": ["thinking", "tools", "api-only", "caveat"],
+      "notes": "Thinking blocks removed for caching/context but must be preserved when continuing tool use conversations, especially with interleaved thinking."
+    },
+    "understanding-thinking-block-caching": {
+      "anchor": "understanding-thinking-block-caching",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "Section: how thinking block caching works with tool use. Four key mechanics listed."
+    },
+    "caching-how-it-works": {
+      "anchor": "caching-how-it-works",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "Four-step caching mechanics: (1) caching only on subsequent request with tool results; (2) prior history can be cached; (3) cached thinking blocks count as input tokens; (4) non-tool-result user block causes all prior thinking blocks to be ignored."
+    },
+    "caching-detailed-example": {
+      "anchor": "caching-detailed-example",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "Three-request example flow showing when thinking blocks are written to cache, when they count as input tokens, and how Request 3 strips prior thinking for older models (Opus 4.5 and later keeps them by default)."
+    },
+    "caching-key-points": {
+      "anchor": "caching-key-points",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "Caching happens automatically without explicit cache_control markers; consistent between regular and interleaved thinking."
+    },
+    "system-prompt-caching-section": {
+      "anchor": "system-prompt-caching-section",
+      "tags": ["thinking", "cost", "api-only"],
+      "notes": "System prompt caching preserved when thinking changes — code examples truncated in source."
+    },
+    "differences-in-thinking-across-model-versions": {
+      "anchor": "differences-in-thinking-across-model-versions",
+      "tags": ["thinking", "model", "api-only"],
+      "notes": "Section referenced in source but content truncated — differences across Claude Sonnet 3.7 and Claude 4 models not included."
+    },
+    "truncation-notice": {
+      "anchor": "truncation-notice",
+      "tags": ["caveat"],
+      "notes": "Source note: content truncated — sections on model version differences, thinking encryption, and other advanced topics not included."
+    }
+  }
+}

@@ -1,0 +1,196 @@
+<role_archetypes version="0.1.0"
+  source_plan="plans/subagent-builder-skill-plan.md"
+  verified_against="research/sources/official-effort.md"
+  verified_at="2026-04-28">
+
+  <archetype>
+    name: scout
+    purpose: fast, shallow extraction; no synthesis, no judgment
+    typical_model: claude-haiku-4-5-20251001
+    typical_effort: low
+    typical_tools: [Read, Grep, Glob]
+    permission_mode: default
+    isolation: single-subagent
+    when_to_use: |
+      You need a fast map of a codebase, a list of files matching a pattern,
+      or verbatim excerpts from one or more sources. The role reports raw
+      findings — it does not synthesize or evaluate them. Use when completeness
+      and speed outweigh deliberation.
+    when_NOT_to_use: |
+      The task requires comparing findings, making recommendations, judging
+      quality, or synthesizing across sources. Those belong to analyst, planner,
+      or critic roles.
+    example_prompt_shape: |
+      "Find all files matching <pattern> in <directory>. For each file, return
+      the line number and full text of every match. Do not synthesize or
+      summarize — return raw findings with file paths."
+  </archetype>
+
+  <archetype>
+    name: analyst
+    purpose: synthesis from scout outputs or structured sources; produces written reports
+    typical_model: claude-sonnet-4-6
+    typical_effort: medium
+    typical_tools: [Read, Grep, Glob, Write]
+    permission_mode: default
+    isolation: single-subagent
+    when_to_use: |
+      You have raw scout findings that need cross-source synthesis, or structured
+      inputs that need reasoning and report generation. Analyst roles read widely
+      and write summary output; they do not modify production code.
+    when_NOT_to_use: |
+      Adversarial review (use critic). Long-horizon architecture decisions (use
+      architect). Simple extraction where Haiku at low effort suffices (use scout
+      to keep cost down).
+    example_prompt_shape: |
+      "Given these scout findings: <findings>, synthesize a summary that
+      identifies <patterns/gaps/risks>. Write the output to <path>. Cite
+      the specific files that support each claim."
+  </archetype>
+
+  <archetype>
+    name: planner
+    purpose: draft plans and design documents without executing any code changes
+    typical_model: claude-sonnet-4-6
+    typical_effort: medium
+    typical_tools: [Read, Grep, Glob]
+    permission_mode: plan
+    isolation: single-subagent
+    when_to_use: |
+      You want structured, deliberate planning before any code changes. Plan mode
+      keeps the subagent in a propose-only state — it cannot call Write, Edit, or
+      Bash. Use when the desired output is a plan document, not a code change.
+    when_NOT_to_use: |
+      Implementation tasks (analyst or architect). Roles that must write files
+      as part of their output (plan mode blocks Write). Any task where the
+      subagent must produce code or modify files.
+    example_prompt_shape: |
+      "Review the existing architecture in <directory> and draft an implementation
+      plan for <feature>. Do not make any changes — produce only a plan document
+      describing the approach, risks, and sequencing."
+  </archetype>
+
+  <archetype>
+    name: critic
+    purpose: adversarial review; surfaces failure modes, contradictions, and gaps; does NOT mutate code
+    typical_model: claude-opus-4-7
+    typical_effort: xhigh
+    typical_tools: [Read, Grep, Glob]
+    permission_mode: default
+    isolation: single-subagent
+    effort_rationale: |
+      xhigh is the recommended starting point for Opus 4.7 coding and agentic work
+      (official-effort.md, verified 2026-04-28). Adversarial review is judgment-heavy —
+      the critic must hold full context to find non-obvious failure paths. xhigh is
+      Opus 4.7 only; use high on Opus 4.6 or Sonnet 4.6 when cost requires.
+    when_to_use: |
+      You want an independent adversarial perspective on a design, plan, or
+      implementation. Critic roles read only — they never write to production code.
+      Use after analyst or architect roles produce a draft.
+    when_NOT_to_use: |
+      Simple correctness checks where Sonnet medium suffices. Tasks that require
+      producing output documents (no write tools present). When you want
+      constructive suggestions rather than adversarial challenge (use analyst).
+    example_prompt_shape: |
+      "Review <plan or implementation>. Find failure modes, missing edge cases,
+      and false assumptions. Produce a prioritized list of objections with
+      specific citations (file + line). Do not suggest fixes — identify gaps only."
+  </archetype>
+
+  <archetype>
+    name: architect
+    purpose: cross-system design; produces architecture documents and code scaffolds
+    typical_model: claude-opus-4-7
+    typical_effort: xhigh
+    typical_tools: [Read, Grep, Glob, Write, Edit]
+    permission_mode: default
+    isolation: single-subagent
+    effort_rationale: |
+      xhigh is the explicitly recommended starting point for Opus 4.7 coding
+      and agentic work (official-effort.md, verified 2026-04-28). Bump to max
+      only if evals on the specific workload show measurable headroom over xhigh —
+      expect significant cost increase for marginal quality gain otherwise.
+    when_to_use: |
+      Cross-system design requiring wide codebase reads and production of both
+      design documents and code scaffolds. Higher blast radius than analyst or
+      critic — this role can write and edit files.
+    when_NOT_to_use: |
+      Adversarial review (use critic — no write tools). Simple synthesis (use
+      analyst at lower cost). Propose-only roles (use planner with plan mode).
+    example_prompt_shape: |
+      "Analyze the architecture of <system>. Design the integration for
+      <feature>: produce an architecture document at <path> and scaffold
+      the key files with stubs. Explain each decision."
+  </archetype>
+
+  <archetype>
+    name: lead
+    purpose: team coordinator; routes work to teammates via SendMessage and TaskCreate
+    typical_model: claude-sonnet-4-6
+    typical_effort: medium
+    typical_tools: [Read, Grep, Glob, Write, Task, SendMessage]
+    permission_mode: default
+    isolation: team-teammate
+    when_to_use: |
+      You have a multi-agent team and need a coordinator that delegates work to
+      teammates, monitors task status via TaskList/TaskGet, and synthesizes
+      results. Lead roles require a team context — they have no value as
+      standalone subagents.
+    when_NOT_to_use: |
+      Single-subagent workflows (a Task chain is simpler and cheaper). Work
+      that does not require parallel delegation or real-time inter-agent
+      communication.
+    example_prompt_shape: |
+      "You are the team lead. Delegate <subtask-A> to <agent-A> via SendMessage
+      and <subtask-B> to <agent-B>. Monitor both with TaskList. When both
+      complete, synthesize the results into a final report at <path>."
+  </archetype>
+
+  <archetype>
+    name: messenger
+    purpose: minimal status relay between teammates; no reasoning, no file access
+    typical_model: claude-haiku-4-5-20251001
+    typical_effort: low
+    typical_tools: [SendMessage]
+    permission_mode: default
+    isolation: team-teammate
+    when_to_use: |
+      You need a lightweight agent to ferry a status update, a signal, or a
+      small payload between teammates. Messenger roles have no read tools and
+      no write tools — they only relay messages.
+    when_NOT_to_use: |
+      Any task requiring file reads, file writes, or decisions. Use a lead
+      or analyst role instead.
+    example_prompt_shape: |
+      "When this task completes, send 'done: <task-id>' to <recipient-agent>
+      via SendMessage. Do nothing else."
+  </archetype>
+
+  <archetype>
+    name: adversarial-critic
+    purpose: team-embedded adversarial reviewer; challenges proposals in real-time via SendMessage
+    typical_model: claude-opus-4-7
+    typical_effort: xhigh
+    typical_tools: [Read, Grep, Glob, SendMessage]
+    permission_mode: default
+    isolation: team-teammate
+    effort_rationale: |
+      Same rationale as the standalone critic: xhigh is the recommended starting
+      point for Opus 4.7 deliberation work. In a team context, the adversarial-critic
+      must evaluate multiple teammates' proposals concurrently, sustaining the need
+      for deep deliberation.
+    when_to_use: |
+      You want continuous adversarial review inside a running agent team. The
+      adversarial-critic receives proposals from other teammates via SendMessage
+      and responds with specific objections before the team proceeds.
+    when_NOT_to_use: |
+      One-shot review after the fact (use the standalone critic — simpler, no
+      team overhead). When team cost budget is tight (Opus xhigh in a team is
+      expensive; consider critic at high on Sonnet 4.6).
+    example_prompt_shape: |
+      "When you receive a proposal via SendMessage, evaluate it for failure modes
+      and false assumptions. Send your objections back to <sender> via SendMessage.
+      Send only objections — do not send approval."
+  </archetype>
+
+</role_archetypes>

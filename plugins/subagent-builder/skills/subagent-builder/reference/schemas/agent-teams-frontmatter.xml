@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extracted from official-agent-teams.md — documents subagent definition field behavior when used as an agent team teammate -->
+<schema source_doc="official-agent-teams.md" extracted_at="2026-04-28T12:00:00-04:00" subject="teammate-subagent-definition-behavior">
+
+  <experimental_flag>
+    <name>CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</name>
+    <required>true</required>
+    <description>Agent teams are disabled by default. Must be set to enable the feature.</description>
+    <configuration_options>
+      <option type="settings.json">
+        <example><![CDATA[{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}]]></example>
+      </option>
+      <option type="shell_environment">Set in the shell environment before launching Claude Code.</option>
+    </configuration_options>
+    <source>
+      <url>https://code.claude.com/docs/en/agent-teams</url>
+      <section>Enable agent teams</section>
+      <excerpt>"Agent teams are disabled by default. Enable them by setting the CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS environment variable to 1, either in your shell environment or through settings.json"</excerpt>
+      <fetched_at>2026-04-16T10:15:00-04:00</fetched_at>
+    </source>
+  </experimental_flag>
+
+  <teammate_field>
+    field: tools
+    type: list
+    applicability: cli
+    honored_when_teammate: true
+    description: |
+      The subagent definition's tools allowlist is honored when the definition runs as a teammate.
+      The teammate is restricted to the listed tools, with the exception that team coordination
+      tools (SendMessage and task management tools) are always available regardless of this list.
+    excerpt: "The teammate honors that definition's tools allowlist and model"
+    caveat: |
+      Team coordination tools (SendMessage and task management tools) are always
+      available even when tools restricts other tools.
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: model
+    type: string
+    applicability: cli
+    honored_when_teammate: true
+    description: |
+      The subagent definition's model field is honored when the definition runs as a teammate.
+      The teammate uses the specified model.
+    excerpt: "The teammate honors that definition's tools allowlist and model"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: body (definition body / system prompt content)
+    type: string (markdown body of the subagent definition file)
+    applicability: cli
+    honored_when_teammate: modified
+    description: |
+      The definition's body is applied when running as a teammate, but with modified semantics:
+      it is appended to the teammate's system prompt as additional instructions rather than
+      replacing the system prompt entirely.
+    excerpt: "the definition's body is appended to the teammate's system prompt as additional instructions rather than replacing it"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: skills
+    type: list
+    applicability: cli
+    honored_when_teammate: false
+    description: |
+      The skills field in a subagent definition is silently ignored when the definition
+      runs as a teammate. Teammates load skills from project and user settings instead,
+      the same as a regular session.
+    excerpt: "The skills and mcpServers frontmatter fields in a subagent definition are not applied when that definition runs as a teammate. Teammates load skills and MCP servers from your project and user settings, the same as a regular session."
+    caveat: "silently ignored when used as teammate"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: mcpServers
+    type: list
+    applicability: cli
+    honored_when_teammate: false
+    description: |
+      The mcpServers field in a subagent definition is silently ignored when the definition
+      runs as a teammate. Teammates load MCP servers from project and user settings instead,
+      the same as a regular session.
+    excerpt: "The skills and mcpServers frontmatter fields in a subagent definition are not applied when that definition runs as a teammate. Teammates load skills and MCP servers from your project and user settings, the same as a regular session."
+    caveat: "silently ignored when used as teammate"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: team_coordination_tools (SendMessage, TaskCreate, TaskGet, TaskList, TaskStop, TaskUpdate)
+    type: implicit / always-available
+    applicability: cli
+    honored_when_teammate: true
+    description: |
+      Team coordination tools — SendMessage and the task management tools — are always
+      available to a teammate even when the tools allowlist restricts other tools.
+      These are not declared in the subagent definition frontmatter; they are injected
+      automatically by the agent teams runtime.
+    excerpt: "Team coordination tools such as SendMessage and the task management tools are always available to a teammate even when tools restricts other tools."
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+  <teammate_field>
+    field: subagent_scope (project / user / plugin / CLI-defined)
+    type: enum
+    applicability: cli
+    honored_when_teammate: true
+    description: |
+      Subagent definitions from any scope — project, user, plugin, or CLI-defined — can be
+      referenced when spawning a teammate. The scope resolution works the same as for regular
+      subagent delegation.
+    excerpt: "you can reference a subagent type from any subagent scope: project, user, plugin, or CLI-defined"
+    source:
+      url: https://code.claude.com/docs/en/agent-teams
+      section: Use subagent definitions for teammates
+      fetched_at: 2026-04-16T10:15:00-04:00
+  </teammate_field>
+
+</schema>
