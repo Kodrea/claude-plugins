@@ -1,0 +1,22 @@
+https://arxiv.org/html/2601.20913v1
+Noisy but Valid: Robust Statistical Evaluation of LLMs with Imperfect Judges
+
+Core Framework: Noisy Hypothesis Testing (Noisy HT) - certification procedure addressing judge imperfection through formal statistical guarantees.
+
+Judge Parameter Estimation from small calibration set:
+- True Positive Rate (TPR): probability judge flags response as unreliable when it is unreliable
+- False Positive Rate (FPR): probability judge incorrectly flags reliable response
+- Computed as simple proportions from confusion matrices on human-labeled data
+
+Variance-Corrected Critical Threshold (Equation 6):
+c'_J = α̂' + Φ^(-1)(ζ) × √[variance terms]
+Combines: variance from judge-labeled data (nJ samples), variance from TPR estimate, variance from FPR estimate
+
+Null hypothesis RM ≥ α transforms to: RJ ≥ α' where α' = FPR + (TPR - FPR) · α
+Type-I error Pe(I) ≤ ζ + O(nJ^(-1/2) + nM₁^(-1/2) + nM₀^(-1/2))
+
+Judge Adoption Condition (Theorem 5.4):
+Noisy HT outperforms direct human evaluation only when:
+(TPR - FPR)² > [α² · TPR(1-TPR)/RM + (1-α)² · FPR(1-FPR)/(1-RM)] / [RM(1-RM)]
+
+Two-stage procedure: 1) Judge calibration on small human-labeled set, 2) Variance-corrected testing on large judge-labeled set

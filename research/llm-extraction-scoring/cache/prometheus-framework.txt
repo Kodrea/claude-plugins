@@ -1,0 +1,26 @@
+https://github.com/prometheus-eval/prometheus
+Prometheus: Open-Source Rubric-Based LLM Evaluator (ICLR 2024)
+
+Rubric Format:
+- Five-point scale (1-5)
+- Each rubric specifies: criteria name, five descending quality level descriptions
+- Format: "Score 1: {description}" through "Score 5: {description}"
+- Score 5 = highest quality
+
+Training:
+- Trained on Feedback Collection dataset (kaist-ai on HuggingFace)
+- Learns to produce evaluations with detailed feedback + numeric score (1-5)
+- 13B parameter model (v1), 7B and 8x7B (v2, May 2024)
+
+Performance:
+- Pearson correlation 0.897 with human evaluators (45 customized rubrics)
+- On par with GPT-4 (0.882), far exceeds ChatGPT (0.392)
+- Prometheus 2 (8x7B): 0.6-0.7 correlation with GPT-4-1106
+
+vs G-Eval:
+- G-Eval: framework using GPT-3.5/4, generates rubric via CoT
+- Prometheus: fine-tuned LLM, rubric provided in prompt
+- Both emphasize rubric-based scoring
+
+Multi-dimensional: focuses on single-criteria per rubric, multiple rubrics applied sequentially
+Users must provide: instruction, response, reference answer, score rubrics

@@ -1,0 +1,27 @@
+https://arxiv.org/html/2506.13639v1
+An Empirical Study of LLM-as-a-Judge: How Design Choices Impact Evaluation Reliability
+
+Key findings on scoring variance and design:
+
+Temperature and Decoding:
+- Greedy decoding: zero score variance but poor human correlation (0.593-0.635)
+- Sampling-based: higher variance but better human alignment (0.641-0.666)
+- Mean aggregation of 5 sampled scores: 0.666 correlation (best)
+- Median: 0.648, Majority voting: 0.647
+
+Rubric Granularity:
+- Full rubric (all 5 levels described): 0.666 correlation
+- Minimal (only extremes 1 and 5 described): matched full rubric performance
+- Intermediate score descriptions (2,3,4) had limited impact
+- Providing both reference answers and score descriptions is crucial
+
+Consistency (Krippendorff's alpha across 5 runs):
+- With criteria + reference: α = 0.908
+- Without both: α = 0.896
+- Removing criteria causes noticeable drop
+
+Recommendations:
+1. Sampling-based decoding with mean aggregation over greedy
+2. 5 runs provides adequate sampling for reliable mean
+3. Reference answers matter more than detailed intermediate rubric levels
+4. Direct scoring + averaging beats CoT when criteria are well-defined

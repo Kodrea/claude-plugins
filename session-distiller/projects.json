@@ -1,0 +1,115 @@
+{
+  "_doc": "Project registry for session-distiller. 'aliases' are fuzzy-match terms. Pipeline resolves user input against aliases.",
+  "projects": [
+    {
+      "name": "voicemode-ios",
+      "aliases": ["voicemode ios", "voicemode", "ios app", "ios"],
+      "machine": "mac-mini",
+      "remote": "codyserban@100.81.185.119",
+      "path": "~/.claude/projects/-Users-codyserban-Projects-iOS-apps-voicemode-ios"
+    },
+    {
+      "name": "dell-poweredge",
+      "aliases": ["dell", "poweredge", "c4130", "dell poweredge"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-dell-poweredge"
+    },
+    {
+      "name": "a100-gpu",
+      "aliases": ["a100", "gpu", "a100 gpu"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-A100-gpu"
+    },
+    {
+      "name": "orin-nano",
+      "aliases": ["orin", "orin nano", "jetson", "nano"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-orin-nano-setup"
+    },
+    {
+      "name": "radxa-rock5b",
+      "aliases": ["radxa", "rock5b", "rock5", "rock 5b"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-radxa-rock5B-"
+    },
+    {
+      "name": "voicemode-v2",
+      "aliases": ["voicemode v2", "voicemode remote", "voice bridge"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-ai-ml-voicemode-v2"
+    },
+    {
+      "name": "claude-plugins",
+      "aliases": ["plugins", "claude plugins", "research pipeline"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-utilities-claude-plugins"
+    },
+    {
+      "name": "agent-training",
+      "aliases": ["agent training", "training", "training loop"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-ai-ml-agent-training",
+      "skip_reason": "Paste-heavy sessions, low compression ratio (~2x). Not useful for interaction pattern analysis."
+    },
+    {
+      "name": "ustc-web",
+      "aliases": ["ustc", "web dev", "community heroes"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-web-web-dev-USTC"
+    },
+    {
+      "name": "pi5-remote",
+      "aliases": ["pi5", "pi", "raspberry pi", "pi remote"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-pi5-remote"
+    },
+    {
+      "name": "nissan-frontier",
+      "aliases": ["frontier", "nissan", "truck"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-utilities-nissan-frontier"
+    },
+    {
+      "name": "uhf-rfid",
+      "aliases": ["uhf", "rfid"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-hardware-uhf-rfid"
+    },
+    {
+      "name": "freecad",
+      "aliases": ["freecad", "cad", "3d"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-ai-ml-freecad"
+    },
+    {
+      "name": "pirates-plex",
+      "aliases": ["plex", "pirates", "media"],
+      "machine": "pop-os",
+      "path": "~/.claude/projects/-home-cody-Projects-utilities-pirates-plex"
+    },
+    {
+      "name": "c4130-a100",
+      "aliases": ["c4130 a100", "a100 nas", "a100 iscsi", "c4130 nas a100"],
+      "machine": "c4130",
+      "remote": "cody@c4130",
+      "group": "c4130-a100-all",
+      "path": "~/.claude/projects/-mnt-nas-iscsi-projects-A100"
+    },
+    {
+      "name": "c4130-a100-counterfit",
+      "aliases": ["counterfit", "a100 counterfit", "c4130 counterfit"],
+      "machine": "c4130",
+      "remote": "cody@c4130",
+      "group": "c4130-a100-all",
+      "path": "~/.claude/projects/-mnt-nas-iscsi-projects-A100-counterfit-determination"
+    },
+    {
+      "name": "c4130-a100-server-setup",
+      "aliases": ["a100 server setup", "c4130 server setup", "a100 setup"],
+      "machine": "c4130",
+      "remote": "cody@c4130",
+      "group": "c4130-a100-all",
+      "path": "~/.claude/projects/-mnt-nas-iscsi-projects-A100-server-setup"
+    }
+  ]
+}

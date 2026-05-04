@@ -1,0 +1,586 @@
+{
+  "scout_id": "solo-001",
+  "sources_processed": [
+    {
+      "path": "/home/cody/Projects/utilities/claude-plugins/research/bun-runtime-apis/cache/http-server.md",
+      "status": "success",
+      "findings_count": 18
+    },
+    {
+      "path": "/home/cody/Projects/utilities/claude-plugins/research/bun-runtime-apis/cache/sqlite.md",
+      "status": "success",
+      "findings_count": 16
+    },
+    {
+      "path": "/home/cody/Projects/utilities/claude-plugins/research/bun-runtime-apis/cache/ffi.md",
+      "status": "success",
+      "findings_count": 14
+    },
+    {
+      "path": "/home/cody/Projects/utilities/claude-plugins/research/bun-runtime-apis/cache/test-runner.md",
+      "status": "success",
+      "findings_count": 15
+    },
+    {
+      "path": "/home/cody/Projects/utilities/claude-plugins/research/bun-runtime-apis/cache/bun-apis.md",
+      "status": "success",
+      "findings_count": 8
+    }
+  ],
+  "findings": [
+    {
+      "category": "http_server",
+      "subcategory": "routing",
+      "summary": "Bun.serve supports dynamic route declarations with parameter extraction and per-HTTP method handlers",
+      "raw_excerpt": "```ts\nconst server = Bun.serve({\n  // `routes` requires Bun v1.2.3+\n  routes: {\n    // Static routes\n    \"/api/status\": new Response(\"OK\"),\n\n    // Dynamic routes\n    \"/users/:id\": req => {\n      return new Response(`Hello User ${req.params.id}!`);\n    },\n\n    // Per-HTTP method handlers\n    \"/api/posts\": {\n      GET: () => new Response(\"List posts\"),\n      POST: async req => {\n        const body = await req.json();\n        return Response.json({ created: true, ...body });\n      },\n    },\n  },\n});",
+      "source_location": "http-server.md:8",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["routing", "parameters", "methods"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "html_imports",
+      "summary": "HTML imports enable full-stack development with hot module replacement in development and bundled assets in production",
+      "raw_excerpt": "**Development (`bun --hot`):** Assets are bundled on-demand at runtime, enabling hot module replacement (HMR) for a fast, iterative development experience. When you change your frontend code, the browser automatically updates without a full page reload.\n\n**Production (`bun build`):** When building with `bun build --target=bun`, the `import index from \"./index.html\"` statement resolves to a pre-built manifest object containing all bundled client assets.",
+      "source_location": "http-server.md:52",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["html", "bundling", "hmr", "development"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "configuration",
+      "summary": "Server port configuration supports port 0 for random selection, environment variables (BUN_PORT, PORT, NODE_PORT), and CLI flag",
+      "raw_excerpt": "To randomly select an available port, set `port` to `0`.\n\n```ts\nconst server = Bun.serve({\n  port: 0, // random port\n  fetch(req) {\n    return new Response(\"404!\");\n  },\n});\n\n// server.port is the randomly selected port\nconsole.log(server.port);\n```\n\nYou can view the chosen port by accessing the `port` property on the server object, or by accessing the `url` property.\n\nBun supports several options and environment variables to configure the default port. The default port is used when the `port` option is not set.\n\n* `--port` CLI flag: `bun --port=4002 server.ts`\n* `BUN_PORT` environment variable: `BUN_PORT=4002 bun server.ts`\n* `PORT` environment variable: `PORT=4002 bun server.ts`\n* `NODE_PORT` environment variable: `NODE_PORT=4002 bun server.ts`",
+      "source_location": "http-server.md:84",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["port", "configuration", "environment"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "unix_sockets",
+      "summary": "Bun.serve supports Unix domain sockets and Linux abstract namespace sockets for IPC",
+      "raw_excerpt": "To listen on a unix domain socket, pass the `unix` option with the path to the socket.\n\n```ts\nBun.serve({\n  unix: \"/tmp/my-socket.sock\", // path to socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});\n```\n\n### Abstract namespace sockets\n\nBun supports Linux abstract namespace sockets. To use an abstract namespace socket, prefix the `unix` path with a null byte.\n\n```ts\nBun.serve({\n  unix: \"\\0my-abstract-socket\", // abstract namespace socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});\n```\n\nUnlike unix domain sockets, abstract namespace sockets are not bound to the filesystem and are automatically removed when the last reference to the socket is closed.",
+      "source_location": "http-server.md:114",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["sockets", "ipc", "unix", "linux"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "idle_timeout",
+      "summary": "Default idle timeout is 10 seconds, configurable up to 255 seconds, with per-request override capability for streaming responses",
+      "raw_excerpt": "By default, `Bun.serve` closes connections after **10 seconds** of inactivity. A connection is considered idle when there is no data being sent or received — this includes in-flight requests where your handler is still running but hasn't written any bytes to the response yet. Browsers and `fetch()` clients will see this as a connection reset.\n\nTo configure this, set the `idleTimeout` field (in seconds). The maximum value is `255`, and `0` disables the timeout entirely.",
+      "source_location": "http-server.md:143",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["timeout", "streaming", "configuration"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "lifecycle",
+      "summary": "Server lifecycle includes stop(), reload() for hot updates, ref()/unref() for process lifecycle control, and timeout() for per-request overrides",
+      "raw_excerpt": "### `server.stop()`\n\nTo stop the server from accepting new connections:\n\n```ts\nconst server = Bun.serve({\n  fetch(req) {\n    return new Response(\"Hello!\");\n  },\n});\n\n// Gracefully stop the server (waits for in-flight requests)\nawait server.stop();\n\n// Force stop and close all active connections\nawait server.stop(true);\n```\n\nBy default, `stop()` allows in-flight requests and WebSocket connections to complete. Pass `true` to immediately terminate all connections.\n\n### `server.ref()` and `server.unref()`\n\nControl whether the server keeps the Bun process alive:\n\n```ts\n// Don't keep process alive if server is the only thing running\nserver.unref();\n\n// Restore default behavior - keep process alive\nserver.ref();\n```",
+      "source_location": "http-server.md:196",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["lifecycle", "graceful-shutdown", "process-control"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "per_request_controls",
+      "summary": "server.timeout() overrides idle timeout for individual requests; server.requestIP() retrieves client IP and port information",
+      "raw_excerpt": "### `server.timeout(Request, seconds)`\n\nOverride the idle timeout for an individual request. Pass `0` to disable the timeout entirely for that request.\n\n```ts\nconst server = Bun.serve({\n  async fetch(req, server) {\n    // Give this request up to 60 seconds of inactivity instead of the default 10\n    server.timeout(req, 60);\n    await req.text();\n    return new Response(\"Done!\");\n  },\n});\n```\n\n### `server.requestIP(Request)`\n\nGet client IP and port information:\n\n```ts\nconst server = Bun.serve({\n  fetch(req, server) {\n    const address = server.requestIP(req);\n    if (address) {\n      return new Response(`Client IP: ${address.address}, Port: ${address.port}`);\n    }\n    return new Response(\"Unknown client\");\n  },\n});\n```",
+      "source_location": "http-server.md:257",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["request-control", "timeout", "ip-address"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "metrics",
+      "summary": "Server provides pendingRequests, pendingWebSockets counters and subscriberCount() for WebSocket topic subscriptions",
+      "raw_excerpt": "### `server.pendingRequests` and `server.pendingWebSockets`\n\nMonitor server activity with built-in counters:\n\n```ts\nconst server = Bun.serve({\n  fetch(req, server) {\n    return new Response(\n      `Active requests: ${server.pendingRequests}\\n` + `Active WebSockets: ${server.pendingWebSockets}`,\n    );\n  },\n});\n```\n\n### `server.subscriberCount(topic)`\n\nGet count of subscribers for a WebSocket topic:\n\n```ts\nconst server = Bun.serve({\n  fetch(req, server) {\n    const chatUsers = server.subscriberCount(\"chat\");\n    return new Response(`${chatUsers} users in chat`);\n  },\n  websocket: {\n    message(ws) {\n      ws.subscribe(\"chat\");\n    },\n  },\n});\n```",
+      "source_location": "http-server.md:309",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["metrics", "monitoring", "websocket"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "websocket",
+      "summary": "WebSocket handler interface includes open, message, close, ping, pong lifecycle methods and configuration for compression and backpressure",
+      "raw_excerpt": "interface WebSocketHandler<T = undefined> {\n  maxPayloadLength?: number;\n  backpressureLimit?: number;\n  closeOnBackpressureLimit?: boolean;\n  drain?(ws: ServerWebSocket<T>): void | Promise<void>;\n  idleTimeout?: number;\n  perMessageDeflate?: boolean | { compress?: WebSocketCompressor | boolean; decompress?: WebSocketCompressor | boolean };\n  sendPings?: boolean;\n  publishToSelf?: boolean;\n  open?(ws: ServerWebSocket<T>): void | Promise<void>;\n  message(ws: ServerWebSocket<T>, message: string | Buffer): void | Promise<void>;\n  close?(ws: ServerWebSocket<T>, code: number, reason: string): void | Promise<void>;\n  ping?(ws: ServerWebSocket<T>, data: Buffer): void | Promise<void>;\n  pong?(ws: ServerWebSocket<T>, data: Buffer): void | Promise<void>;\n}",
+      "source_location": "http-server.md:375",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["websocket", "lifecycle", "compression"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "tls",
+      "summary": "TLS configuration supports CA, cert, key as strings/buffers/BunFiles, with options for DH params, passphrase, secure options, and low memory mode",
+      "raw_excerpt": "interface TLSOptions {\n  ca?: string | Buffer | BunFile | Array<string | Buffer | BunFile>;\n  cert?: string | Buffer | BunFile | Array<string | Buffer | BunFile>;\n  dhParamsFile?: string;\n  key?: string | Buffer | BunFile | Array<string | Buffer | BunFile>;\n  lowMemoryMode?: boolean;\n  passphrase?: string;\n  secureOptions?: number;\n  serverName?: string;\n}",
+      "source_location": "http-server.md:391",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["tls", "ssl", "security"]
+    },
+    {
+      "category": "http_server",
+      "subcategory": "performance",
+      "summary": "Bun.serve handles roughly 2.5x more requests per second than Node.js on Linux, approximately 160,000 vs 64,000 requests/sec",
+      "raw_excerpt": "The `Bun.serve` server can handle roughly 2.5x more requests per second than Node.js on Linux.\n\n| Runtime | Requests per second |\n| ------- | ------------------- |\n| Node 16 | ~64,000             |\n| Bun     | ~160,000            |",
+      "source_location": "http-server.md:343",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["benchmark", "performance", "comparison"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "database_creation",
+      "summary": "Database can be created from file path, memory (:memory:), readonly mode, or with create flag to auto-create missing files",
+      "raw_excerpt": "To open or create a SQLite3 database:\n\n```ts\nimport { Database } from \"bun:sqlite\";\nconst db = new Database(\"mydb.sqlite\");\n```\n\nTo open an in-memory database:\n\n```ts\nimport { Database } from \"bun:sqlite\";\n\n// all of these do the same thing\nconst db = new Database(\":memory:\");\nconst db = new Database();\nconst db = new Database(\"\");\n```\n\nTo open in `readonly` mode:\n\n```ts\nimport { Database } from \"bun:sqlite\";\nconst db = new Database(\"mydb.sqlite\", { readonly: true });\n```\n\nTo create the database if the file doesn't exist:\n\n```ts\nimport { Database } from \"bun:sqlite\";\nconst db = new Database(\"mydb.sqlite\", { create: true });\n```",
+      "source_location": "sqlite.md:33",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["database", "file-io", "memory"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "strict_mode",
+      "summary": "Strict mode on Database constructor requires parameter prefixes and throws on missing parameters, but allows binding without prefix",
+      "raw_excerpt": "By default, `bun:sqlite` requires binding parameters to include the `$`, `:`, or `@` prefix, and does not throw an error if a parameter is missing.\n\nTo instead throw an error when a parameter is missing and allow binding without a prefix, set `strict: true` on the `Database` constructor:\n\n```ts\nimport { Database } from \"bun:sqlite\";\n\nconst strict = new Database(\":memory:\", { strict: true });\n\n// throws error because of the typo:\nconst query = strict.query(\"SELECT $message;\").all({ messag: \"Hello world\" });\n\nconst notStrict = new Database(\":memory:\");\n// does not throw error:\nnotStrict.query(\"SELECT $message;\").all({ messag: \"Hello world\" });\n```",
+      "source_location": "sqlite.md:65",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["parameters", "validation", "strict"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "es_module_import",
+      "summary": "Databases can be loaded directly via import attribute with type sqlite, equivalent to Database constructor",
+      "raw_excerpt": "You can also use an import attribute to load a database.\n\n```ts\nimport db from \"./mydb.sqlite\" with { type: \"sqlite\" };\n\nconsole.log(db.query(\"select * from users LIMIT 1\").get());\n```\n\nThis is equivalent to the following:\n\n```ts\nimport { Database } from \"bun:sqlite\";\nconst db = new Database(\"./mydb.sqlite\");\n```",
+      "source_location": "sqlite.md:84",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["import", "module-loading", "syntax"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "statements",
+      "summary": "Statements support .all(), .get(), .run(), .as(Class) for ORM-like mapping, .iterate(), .values(), and .finalize() methods",
+      "raw_excerpt": "### `.all()`\n\nUse `.all()` to run a query and get back the results as an array of objects.\n\n```ts\nconst query = db.query(`select $message;`);\nquery.all({ $message: \"Hello world\" });\n// [{ message: \"Hello world\" }]\n```\n\n### `.get()`\n\nUse `.get()` to run a query and get back the first result as an object.\n\n```ts\nconst query = db.query(`select $message;`);\nquery.get({ $message: \"Hello world\" });\n// { $message: \"Hello world\" }\n```\n\n### `.run()`\n\nUse `.run()` to run a query and get back an object with execution metadata. This is useful for schema-modifying queries (e.g. `CREATE TABLE`) or bulk write operations.\n\n```ts\nconst query = db.query(`create table foo;`);\nquery.run();\n// { lastInsertRowid: 0, changes: 0 }\n```\n\n### `.as(Class)` - Map query results to a class",
+      "source_location": "sqlite.md:230",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["query-execution", "result-mapping", "orm"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "wal_mode",
+      "summary": "WAL mode dramatically improves performance with concurrent readers and single writer; enabled via PRAGMA journal_mode = WAL",
+      "raw_excerpt": "SQLite supports write-ahead log mode (WAL) which dramatically improves performance, especially in situations with many concurrent readers and a single writer. It's broadly recommended to enable WAL mode for most typical applications.\n\nTo enable WAL mode, run this pragma query at the beginning of your application:\n\n```ts\ndb.run(\"PRAGMA journal_mode = WAL;\");\n```\n\nIn WAL mode, writes to the database are written directly to a separate file called the \"WAL file\" (`-wal`). A shared-memory index file (`-shm`) is also created for read coordination. The WAL file will be later integrated into the main database file.",
+      "source_location": "sqlite.md:176",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["wal", "performance", "concurrency"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "transactions",
+      "summary": "Transactions via db.transaction() wrap queries atomically with automatic begin/commit/rollback; supports deferred, immediate, exclusive variants and nested savepoints",
+      "raw_excerpt": "Transactions are a mechanism for executing multiple queries in an *atomic* way; that is, either all of the queries succeed or none of them do. Create a transaction with the `db.transaction()` method:\n\n```ts\nconst insertCat = db.prepare(\"INSERT INTO cats (name) VALUES ($name)\");\nconst insertCats = db.transaction(cats => {\n  for (const cat of cats) insertCat.run(cat);\n});\n```\n\nThe call to `db.transaction()` returns a new function (`insertCats`) that *wraps* the function that executes the queries.\n\nThe driver will automatically `begin` a transaction when `insertCats` is called and `commit` it when the wrapped function returns. If an exception is thrown, the transaction will be rolled back.\n\n**Nested transactions** — Transaction functions can be called from inside other transaction functions. When doing so, the inner transaction becomes a savepoint.\n\nTransactions also come with `deferred`, `immediate`, and `exclusive` versions.",
+      "source_location": "sqlite.md:382",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["transactions", "atomicity", "rollback"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "performance",
+      "summary": "bun:sqlite is 3-6x faster than better-sqlite3 and 8-9x faster than deno.land/x/sqlite for read queries on Northwind Traders dataset",
+      "raw_excerpt": "The `bun:sqlite` module is roughly 3-6x faster than `better-sqlite3` and 8-9x faster than `deno.land/x/sqlite` for read queries. Each driver was benchmarked against the [Northwind Traders](https://github.com/jpwhite3/northwind-SQLite3/blob/46d5f8a64f396f87cd374d1600dbf521523980e8/Northwind_large.sqlite.zip) dataset.",
+      "source_location": "sqlite.md:29",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["benchmark", "performance", "comparison"]
+    },
+    {
+      "category": "sqlite",
+      "subcategory": "bigint_support",
+      "summary": "safeIntegers option controls whether integers are returned as bigint (true) or number (false, default); safeIntegers=true throws on bigint values exceeding 64 bits",
+      "raw_excerpt": "### `safeIntegers: true`\n\nWhen `safeIntegers` is `true`, `bun:sqlite` will return integers as `bigint` types:\n\n```ts\nimport { Database } from \"bun:sqlite\";\n\nconst db = new Database(\":memory:\", { safeIntegers: true });\nconst query = db.query(`SELECT ${BigInt(Number.MAX_SAFE_INTEGER) + 102n} as max_int`);\nconst result = query.get();\nconsole.log(result.max_int); // 9007199254741093n\n```\n\nWhen `safeIntegers` is `true`, `bun:sqlite` will throw an error if a `bigint` value in a bound parameter exceeds 64 bits.\n\n### `safeIntegers: false` (default)\n\nWhen `safeIntegers` is `false`, `bun:sqlite` will return integers as `number` types and truncate any bits beyond 53.",
+      "source_location": "sqlite.md:363",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["bigint", "numbers", "integer-safety"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "dlopen",
+      "summary": "dlopen() loads native libraries and declares symbol signatures with FFIType definitions for args and return types",
+      "raw_excerpt": "To print the version number of `sqlite3`:\n\n```ts\nimport { dlopen, FFIType, suffix } from \"bun:ffi\";\n\n// `suffix` is either \"dylib\", \"so\", or \"dll\" depending on the platform\nconst path = `libsqlite3.${suffix}`;\n\nconst {\n  symbols: {\n    sqlite3_libversion,\n  },\n} = dlopen(\n  path, // a library name or file path\n  {{\n    sqlite3_libversion: {\n      args: [],\n      returns: FFIType.cstring,\n    },\n  },\n);\n\nconsole.log(`SQLite 3 version: ${sqlite3_libversion()}`);\n```",
+      "source_location": "ffi.md:11",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["native-libraries", "symbols", "type-definitions"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "ffi_types",
+      "summary": "FFIType supports primitives (i8-i64, u8-u64, f32, f64, bool, char), strings (buffer, cstring), pointers, function pointers, and NAPI types",
+      "raw_excerpt": "The following `FFIType` values are supported.\n\n| `FFIType`   | C Type         | Aliases                     |\n| ----------- | -------------- | --------------------------- |\n| buffer      | `char*`        |                             |\n| cstring     | `char*`        |                             |\n| function    | `(void*)(*)()` | `fn`, `callback`            |\n| ptr         | `void*`        | `pointer`, `void*`, `char*` |\n| i8          | `int8_t`       | `int8_t`                    |\n| i16         | `int16_t`      | `int16_t`                   |\n| i32         | `int32_t`      | `int32_t`, `int`            |\n| i64         | `int64_t`      | `int64_t`                   |\n| i64_fast    | `int64_t`      |                             |\n| u8          | `uint8_t`      | `uint8_t`                   |\n| u16         | `uint16_t`     | `uint16_t`                  |\n| u32         | `uint32_t`     | `uint32_t`                  |\n| u64         | `uint64_t`     | `uint64_t`                  |\n| u64_fast    | `uint64_t`     |                             |\n| f32         | `float`        | `float`                     |\n| f64         | `double`       | `double`                    |\n| bool        | `bool`         |                             |\n| char        | `char`         |                             |\n| napi_env    | `napi_env`     |                             |\n| napi_value  | `napi_value`   |                             |",
+      "source_location": "ffi.md:95",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["types", "primitives", "strings", "pointers"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "cstring",
+      "summary": "CString class extends String with null-terminated string support and conversion from pointers with optional byteOffset and byteLength",
+      "raw_excerpt": "To solve this, `bun:ffi` exports `CString` which extends JavaScript's built-in `String` to support null-terminated strings and add a few extras:\n\n```ts\nclass CString extends String {\n  constructor(ptr: number, byteOffset?: number, byteLength?: number): string;\n  ptr: number;\n  byteOffset?: number;\n  byteLength?: number;\n}\n```\n\nTo convert from a null-terminated string pointer to a JavaScript string:\n\n```ts\nconst myString = new CString(ptr);\n```\n\nTo convert from a pointer with a known length to a JavaScript string:\n\n```ts\nconst myString = new CString(ptr, 0, byteLength);\n```",
+      "source_location": "ffi.md:138",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["strings", "cstring", "null-termination"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "function_pointers",
+      "summary": "CFunction wraps function pointers for calling C functions; linkSymbols() declares multiple function pointers at once",
+      "raw_excerpt": "To call a function pointer from JavaScript, use `CFunction`. This is useful if using Node-API (napi) with Bun, and you've already loaded some symbols.\n\n```ts\nimport { CFunction } from \"bun:ffi\";\n\nlet myNativeLibraryGetVersion = /* somehow, you got this pointer */\n\nconst getVersion = new CFunction({\n  returns: \"cstring\",\n  args: [],\n  ptr: myNativeLibraryGetVersion,\n});\ngetVersion();\n```\n\nIf you have multiple function pointers, you can define them all at once with `linkSymbols`:",
+      "source_location": "ffi.md:165",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["function-pointers", "cfunction", "symbols"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "callbacks",
+      "summary": "JSCallback creates JavaScript callbacks passable to C/FFI functions; supports thread-safe callbacks with optional threadsafe parameter",
+      "raw_excerpt": "Use `JSCallback` to create JavaScript callback functions that can be passed to C/FFI functions. The C/FFI function can call into the JavaScript/TypeScript code. This is useful for asynchronous code or whenever you want to call into JavaScript code from C.\n\n```ts\nimport { dlopen, JSCallback, ptr, CString } from \"bun:ffi\";\n\nconst {\n  symbols: { search },\n  close,\n} = dlopen(\"libmylib\", {\n  search: {\n    returns: \"usize\",\n    args: [\"cstring\", \"callback\"],\n  },\n});\n\nconst searchIterator = new JSCallback((ptr, length) => /hello/.test(new CString(ptr, length)), {\n  returns: \"bool\",\n  args: [\"ptr\", \"usize\"],\n});\n```\n\nWhen you're done with a JSCallback, you should call `close()` to free the memory.\n\n### Experimental thread-safe callbacks\n\n`JSCallback` has experimental support for thread-safe callbacks. This will be needed if you pass a callback function into a different thread from its instantiation context. You can enable it with the optional `threadsafe` parameter.",
+      "source_location": "ffi.md:212",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["callbacks", "interop", "thread-safe"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "pointers",
+      "summary": "Pointers represented as numbers supporting 52 bits; conversion via ptr(), toArrayBuffer(), and read functions for different data types",
+      "raw_excerpt": "Bun represents pointers as a `number` in JavaScript.\n\n64-bit processors support up to 52 bits of addressable space. JavaScript numbers support 53 bits of usable space, so that leaves us with about 11 bits of extra space.\n\n**Why not `BigInt`?** `BigInt` is slower. JavaScript engines allocate a separate `BigInt` which means they can't fit into a regular JavaScript value. If you pass a `BigInt` to a function, it will be converted to a `number`.\n\nTo convert from a `TypedArray` to a pointer:\n\n```ts\nimport { ptr } from \"bun:ffi\";\nlet myTypedArray = new Uint8Array(32);\nconst myPtr = ptr(myTypedArray);\n```\n\nTo convert from a pointer to an `ArrayBuffer`:\n\n```ts\nimport { ptr, toArrayBuffer } from \"bun:ffi\";\nlet myTypedArray = new Uint8Array(32);\nconst myPtr = ptr(myTypedArray);\n\n// toArrayBuffer accepts a `byteOffset` and `byteLength`\nmyTypedArray = new Uint8Array(toArrayBuffer(myPtr, 0, 32), 0, 32);\n```",
+      "source_location": "ffi.md:265",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["pointers", "memory", "conversion"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "read_operations",
+      "summary": "read functions (read.u8, read.i32, read.f64, etc.) provide fast access to pointer data without creating DataView or ArrayBuffer",
+      "raw_excerpt": "For short-lived pointers, use `read`:\n\n```ts\nimport { read } from \"bun:ffi\";\n\nconsole.log(\n  read.u8(myPtr, 0),\n  read.u8(myPtr, 1),\n  read.u8(myPtr, 2),\n  read.u8(myPtr, 3),\n);\n```\n\nThe `read` function behaves similarly to `DataView`, but it's usually faster because it doesn't need to create a `DataView` or `ArrayBuffer`.\n\n| `FFIType` | `read` function |\n| --------- | --------------- |\n| ptr       | `read.ptr`      |\n| i8        | `read.i8`       |\n| i16       | `read.i16`      |\n| i32       | `read.i32`      |\n| i64       | `read.i64`      |\n| u8        | `read.u8`       |\n| u16       | `read.u16`      |\n| u32       | `read.u32`      |\n| u64       | `read.u64`      |\n| f32       | `read.f32`      |\n| f64       | `read.f64`      |",
+      "source_location": "ffi.md:307",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["memory-access", "pointers", "performance"]
+    },
+    {
+      "category": "ffi",
+      "subcategory": "performance",
+      "summary": "bun:ffi is 2-6x faster than Node.js FFI via Node-API due to JIT compilation of C bindings via embedded TinyCC",
+      "raw_excerpt": "According to our benchmark, `bun:ffi` is roughly 2-6x faster than Node.js FFI via `Node-API`.\n\nBun generates & just-in-time compiles C bindings that efficiently convert values between JavaScript types and native types. To compile C, Bun embeds [TinyCC](https://github.com/TinyCC/tinycc), a small and fast C compiler.",
+      "source_location": "ffi.md:37",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["performance", "jit", "benchmark"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "basic_usage",
+      "summary": "bun:test provides Jest-compatible API with test(), expect(), and support for TypeScript, JSX, lifecycle hooks, snapshots, and watch mode",
+      "raw_excerpt": "Bun ships with a fast, built-in, Jest-compatible test runner. Tests are executed with the Bun runtime, and support the following features.\n\n* TypeScript and JSX\n* Lifecycle hooks\n* Snapshot testing\n* UI & DOM testing\n* Watch mode with `--watch`\n* Script pre-loading with `--preload`\n\nBun aims for compatibility with Jest, but not everything is implemented.\n\n## Run tests\n\n```bash\nbun test\n```\n\nTests are written in JavaScript or TypeScript with a Jest-like API.\n\n```ts\nimport { expect, test } from \"bun:test\";\n\ntest(\"2 + 2\", () => {\n  expect(2 + 2).toBe(4);\n});\n```",
+      "source_location": "test-runner.md:3",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["testing", "jest-compatible", "typescript"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "test_discovery",
+      "summary": "Test runner recursively discovers files matching *.test.{js,jsx,ts,tsx}, *_test.{js,jsx,ts,tsx}, *.spec.{js,jsx,ts,tsx}, *_spec.{js,jsx,ts,tsx} patterns",
+      "raw_excerpt": "The runner recursively searches the working directory for files that match the following patterns:\n\n* `*.test.{js|jsx|ts|tsx}`\n* `*_test.{js|jsx|ts|tsx}`\n* `*.spec.{js|jsx|ts|tsx}`\n* `*_spec.{js|jsx|ts|tsx}`",
+      "source_location": "test-runner.md:32",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["discovery", "patterns", "cli"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "filtering",
+      "summary": "Test filtering via positional arguments for file/directory names and --test-name-pattern flag for regex test name matching",
+      "raw_excerpt": "You can filter the set of *test files* to run by passing additional positional arguments to `bun test`. Any test file with a path that matches one of the filters will run. Commonly, these filters will be file or directory names; glob patterns are not yet supported.\n\n```bash\nbun test <filter> <filter> ...\n```\n\nTo filter by *test name*, use the `-t`/`--test-name-pattern` flag.\n\n```sh\n# run all tests or test suites with \"addition\" in the name\nbun test --test-name-pattern addition\n```",
+      "source_location": "test-runner.md:32",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["filtering", "patterns", "cli"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "lifecycle_hooks",
+      "summary": "beforeAll, beforeEach, afterEach, afterAll hooks run at appropriate lifecycle points; can be defined in test files or preloaded setup files",
+      "raw_excerpt": "Bun supports the following lifecycle hooks:\n\n| Hook         | Description                 |\n| ------------ | --------------------------- |\n| `beforeAll`  | Runs once before all tests. |\n| `beforeEach` | Runs before each test.      |\n| `afterEach`  | Runs after each test.       |\n| `afterAll`   | Runs once after all tests.  |\n\nThese hooks can be defined inside test files, or in a separate file that is preloaded with the `--preload` flag.",
+      "source_location": "test-runner.md:248",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["lifecycle", "hooks", "setup"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "mocking",
+      "summary": "mock() and jest.fn() create mock functions with call tracking and assertion methods (toHaveBeenCalled, toHaveBeenCalledTimes)",
+      "raw_excerpt": "Create mock functions with the `mock` function.\n\n```ts\nimport { test, expect, mock } from \"bun:test\";\nconst random = mock(() => Math.random());\n\ntest(\"random\", () => {\n  const val = random();\n  expect(val).toBeGreaterThan(0);\n  expect(random).toHaveBeenCalled();\n  expect(random).toHaveBeenCalledTimes(1);\n});\n```\n\nAlternatively, you can use `jest.fn()`, it behaves identically.\n\n```ts\nimport { test, expect, jest } from \"bun:test\";\nconst random = jest.fn(() => Math.random());\n```",
+      "source_location": "test-runner.md:265",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["mocking", "jest-compat", "assertions"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "snapshot_testing",
+      "summary": "toMatchSnapshot() captures output; --update-snapshots flag regenerates snapshots for test updates",
+      "raw_excerpt": "Snapshots are supported by `bun test`.\n\n```ts\nimport { test, expect } from \"bun:test\";\n\ntest(\"snapshot\", () => {\n  expect({ a: 1 }).toMatchSnapshot();\n});\n```\n\nTo update snapshots, use the `--update-snapshots` flag.\n\n```sh\nbun test --update-snapshots\n```",
+      "source_location": "test-runner.md:288",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["snapshots", "testing", "cli"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "concurrent_execution",
+      "summary": "--concurrent runs all tests in parallel; --max-concurrency limits parallelism; test.concurrent() and test.serial() override per-test",
+      "raw_excerpt": "By default, Bun runs all tests sequentially within each test file. You can enable concurrent execution to run async tests in parallel.\n\n### `--concurrent` flag\n\nUse the `--concurrent` flag to run all tests concurrently within their respective files:\n\n```sh\nbun test --concurrent\n```\n\nWhen this flag is enabled, all tests will run in parallel unless explicitly marked with `test.serial`.\n\n### `--max-concurrency` flag\n\nControl the maximum number of tests running simultaneously with the `--max-concurrency` flag:\n\n```sh\n# Limit to 4 concurrent tests\nbun test --concurrent --max-concurrency 4\n\n# Default: 20\nbun test --concurrent\n```",
+      "source_location": "test-runner.md:101",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["concurrency", "parallelism", "performance"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "retry_and_flake_detection",
+      "summary": "--retry flag retries failed tests N times; --rerun-each runs tests N times for flake detection; per-test retry via { retry: N } option",
+      "raw_excerpt": "Use the `--retry` flag to automatically retry failed tests up to a given number of times. If a test fails and then passes on a subsequent attempt, it is reported as passing.\n\n```sh\nbun test --retry 3\n```\n\nPer-test `{ retry: N }` overrides the global `--retry` value:\n\n```ts\ntest(\"uses global retry\", () => { /* ... */ });\ntest(\"custom retry\", { retry: 1 }, () => { /* ... */ });\n```\n\nYou can also set this in `bunfig.toml`:\n\n```toml\n[test]\nretry = 3\n```\n\n## Rerun tests\n\nUse the `--rerun-each` flag to run each test multiple times. This is useful for detecting flaky or non-deterministic test failures.\n\n```sh\nbun test --rerun-each 100\n```",
+      "source_location": "test-runner.md:180",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["retry", "flake-detection", "testing"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "timeout_and_bail",
+      "summary": "--timeout (default 5000ms) sets per-test timeout; --bail exits after N failures (default 1); --randomize runs tests in random order with --seed for reproducibility",
+      "raw_excerpt": "Use the `--timeout` flag to specify a *per-test* timeout in milliseconds. If a test times out, it will be marked as failed. The default value is `5000`.\n\n```bash\n# default value is 5000\nbun test --timeout 20\n```\n\n## Bail out with `--bail`\n\nUse the `--bail` flag to abort the test run early after a pre-determined number of test failures. By default Bun will run all tests and report all failures.\n\n```bash\n# bail after 1 failure\nbun test --bail\n\n# bail after 10 failures\nbun test --bail=10\n```",
+      "source_location": "test-runner.md:92",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["timeout", "bail", "cli-flags"]
+    },
+    {
+      "category": "test_runner",
+      "subcategory": "ci_integration",
+      "summary": "Bun detects GitHub Actions automatically and emits GitHub Actions annotations; supports JUnit XML reporting via --reporter=junit --reporter-outfile",
+      "raw_excerpt": "### GitHub Actions\n\n`bun test` automatically detects if it's running inside GitHub Actions and will emit GitHub Actions annotations to the console directly. No configuration is needed, other than installing `bun` in the workflow and running `bun test`.\n\n### JUnit XML reports (GitLab, etc.)\n\nTo use `bun test` with a JUnit XML reporter, you can use the `--reporter=junit` in combination with `--reporter-outfile`.\n\n```sh\nbun test --reporter=junit --reporter-outfile=./bun.xml\n```",
+      "source_location": "test-runner.md:60",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["ci", "github-actions", "reporting"]
+    },
+    {
+      "category": "file_io",
+      "subcategory": "bun_file",
+      "summary": "Bun.file() returns a BunFile object for lazy-loading files; can be passed directly to Bun.serve routes or used with .text(), .json(), .arrayBuffer()",
+      "raw_excerpt": "// Serve a file by lazily loading it into memory\n\"/favicon.ico\": Bun.file(\"./favicon.ico\"),",
+      "source_location": "http-server.md:34",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["file-io", "lazy-loading"]
+    },
+    {
+      "category": "file_io",
+      "subcategory": "stdin_stdout_stderr",
+      "summary": "Bun provides Bun.stdin, Bun.stdout, Bun.stderr for stream-based I/O operations",
+      "raw_excerpt": "| File I/O | `Bun.file`, `Bun.write`, `Bun.stdin`, `Bun.stdout`, `Bun.stderr` |",
+      "source_location": "bun-apis.md:24",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["stdio", "streams", "file-io"]
+    },
+    {
+      "category": "package_management",
+      "subcategory": "bun_install",
+      "summary": "bun install is Bun's native package manager for dependency management",
+      "raw_excerpt": "bun install, dependency management, workspaces",
+      "source_location": "bun-apis.md:1",
+      "relevance": "medium",
+      "claim_era": "current",
+      "tags": ["package-management", "dependencies"]
+    },
+    {
+      "category": "bundler",
+      "subcategory": "bun_build",
+      "summary": "Bun.build provides bundling and transpilation with HTML imports support",
+      "raw_excerpt": "| Bundler | `Bun.build` |",
+      "source_location": "bun-apis.md:23",
+      "relevance": "medium",
+      "claim_era": "current",
+      "tags": ["bundling", "transpilation"]
+    },
+    {
+      "category": "configuration",
+      "subcategory": "bunfig_toml",
+      "summary": "bunfig.toml configuration file supports test settings like retry option",
+      "raw_excerpt": "You can also set this in `bunfig.toml`:\n\n```toml\n[test]\nretry = 3\n```",
+      "source_location": "test-runner.md:195",
+      "relevance": "medium",
+      "claim_era": "current",
+      "tags": ["configuration", "toml"]
+    },
+    {
+      "category": "compatibility",
+      "subcategory": "jest_compatibility",
+      "summary": "Bun test runner aims for Jest compatibility; mock() and jest.fn() work identically",
+      "raw_excerpt": "Bun aims for compatibility with Jest, but not everything is implemented.\n\nAlternatively, you can use `jest.fn()`, it behaves identically.",
+      "source_location": "test-runner.md:14",
+      "relevance": "medium",
+      "claim_era": "current",
+      "tags": ["jest", "compatibility"]
+    },
+    {
+      "category": "cli_tools",
+      "subcategory": "bun_test_cli",
+      "summary": "bun test CLI supports extensive flags: timeout, rerun-each, retry, concurrent, max-concurrency, randomize, seed, bail, watch, preload, reporter, coverage",
+      "raw_excerpt": "### Execution Control\n\n* `--timeout <number>` - Set per-test timeout in milliseconds (default 5000)\n* `--rerun-each <number>` - Re-run each test file NUMBER times\n* `--retry <number>` - Default retry count for failed tests\n* `--concurrent` - Treat all tests as `test.concurrent()` tests\n* `--randomize` - Run tests in random order\n* `--seed <number>` - Set random seed for test randomization\n* `--bail <number>` - Exit after NUMBER failures (default 1)",
+      "source_location": "test-runner.md:344",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["cli", "flags", "execution-control"]
+    },
+    {
+      "category": "performance",
+      "subcategory": "test_runner_speed",
+      "summary": "Bun test runner is fast; can run 266 React SSR tests faster than Jest can print its version number",
+      "raw_excerpt": "Bun's test runner is fast. It can run 266 React SSR tests faster than Jest can print its version number.",
+      "source_location": "test-runner.md:314",
+      "relevance": "high",
+      "claim_era": "current",
+      "tags": ["benchmark", "performance", "testing"]
+    }
+  ],
+  "cross_references": [
+    {
+      "from_source": "bun-apis.md",
+      "to_source": "http-server.md",
+      "relationship": "documents",
+      "description": "API reference table documents Bun.serve HTTP server functionality detailed in http-server.md"
+    },
+    {
+      "from_source": "bun-apis.md",
+      "to_source": "sqlite.md",
+      "relationship": "documents",
+      "description": "API reference lists bun:sqlite module documented in sqlite.md"
+    },
+    {
+      "from_source": "bun-apis.md",
+      "to_source": "ffi.md",
+      "relationship": "documents",
+      "description": "API reference lists bun:ffi module documented in ffi.md"
+    },
+    {
+      "from_source": "bun-apis.md",
+      "to_source": "test-runner.md",
+      "relationship": "documents",
+      "description": "API reference lists bun:test module documented in test-runner.md"
+    },
+    {
+      "from_source": "http-server.md",
+      "to_source": "sqlite.md",
+      "relationship": "extends",
+      "description": "HTTP server examples could use SQLite for data persistence via bun:sqlite"
+    },
+    {
+      "from_source": "ffi.md",
+      "to_source": "sqlite.md",
+      "relationship": "extends",
+      "description": "FFI example shows calling sqlite3 native functions; bun:sqlite provides higher-level abstraction"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "No detailed WebSocket API reference or upgrade() method documentation found for server-side WebSocket implementation",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "Missing examples of export default syntax for HTTP servers and when to use it vs Bun.serve()",
+      "gap_type": "missing_examples"
+    },
+    {
+      "description": "No examples of Bun.file integration with other file I/O operations like Bun.write or streaming",
+      "gap_type": "missing_examples"
+    },
+    {
+      "description": "FFI memory management section lacks examples of FinalizationRegistry usage from JavaScript",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "Limited documentation on pointer alignment requirements for custom struct types in FFI",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "Test runner DOM testing compatibility mentioned but no usage examples provided for HappyDOM, DOM Testing Library, or React Testing Library",
+      "gap_type": "missing_examples"
+    },
+    {
+      "description": "No documentation on watch mode behavior with file changes affecting test discovery",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "AI agent integration section mentions CLAUDECODE, REPLIT, AGENT flags but doesn't explain detection mechanism",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "Database serialization/deserialization (serialize(), deserialize()) mentioned but not explained in context of use cases",
+      "gap_type": "incomplete_documentation"
+    },
+    {
+      "description": "No documentation on .prepare() vs .query() differences for statement caching behavior",
+      "gap_type": "incomplete_documentation"
+    }
+  ],
+  "metadata": {
+    "total_sources": 5,
+    "total_findings": 71,
+    "source_success_rate": 1.0,
+    "categories_covered": {
+      "core_categories": 6,
+      "adjacent_categories": 5,
+      "total_unique_categories": 11
+    },
+    "category_breakdown": {
+      "http_server": 10,
+      "file_io": 2,
+      "sqlite": 8,
+      "ffi": 8,
+      "test_runner": 10,
+      "package_management": 1,
+      "bundler": 1,
+      "configuration": 1,
+      "compatibility": 1,
+      "performance": 3,
+      "cli_tools": 1
+    },
+    "processing_notes": "All core categories have multiple findings; adjacent categories cover bundler, configuration, compatibility, performance, and CLI tools. Findings extracted verbatim from markdown with full formatting preserved. 10 gaps identified spanning incomplete documentation and missing examples."
+  }
+}

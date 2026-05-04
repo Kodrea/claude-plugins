@@ -1,0 +1,29 @@
+https://arxiv.org/html/2505.17265v1
+CaseReportBench: An LLM Benchmark Dataset for Dense Information Extraction
+
+Ground Truth Creation:
+- Two rare disease specialists independently extracted using Prodigy annotation tool
+- Detailed annotation guidelines collaboratively designed
+- Iterative review + discussions to resolve discrepancies
+- 422 problematic instances identified requiring clarification
+- Final dataset: 138 case reports, 14 clinical categories
+
+Scoring Metrics:
+- Token Set Ratio (TSR%): measures token selection correctness (0-100), uses FuzzyWuzzy
+- Levenshtein Similarity: character-level edit distance (0-100)
+- Exact Match: percentage of perfect matches
+- BLEU and ROUGE-L
+- Hallucination Rate: percentage of extracted info absent from benchmark
+
+Partial Match Handling:
+- TSR captures token-level overlap rather than demanding exact matches
+- Computes intersection and differences between token sets
+- Handles "variability in extracted spans caused by subjective clinical classifications"
+
+Inter-Annotator Agreement:
+- Ranges from 42.5% to 98.5% TSR by category
+- Pairwise F1 scores: 0.0 to 0.57 across 14 categories
+- Low agreement in complex categories (History: 42.5%, Lab_Image: 54.9%)
+
+Key insight: "high token-level accuracy does not always translate to clinically actionable outputs"
+Physician re-evaluation used 7 dimensions on 1-5 Likert scales

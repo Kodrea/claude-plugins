@@ -15,33 +15,40 @@ Plugin-based extensions for Claude Code. Each plugin lives under `plugins/` with
 
 ## Research Optimization System
 
-Two autoresearch-style loops optimize agent instructions against an ESP32-S3 benchmark:
+Autoresearch-style loops optimize agent instructions by iterating: edit agent file → spawn agent on benchmark sources → score → keep/discard → repeat.
 
-**Haiku track** — optimizes `plugins/research/agents/solo-haiku-scout.md`
+The training loop lives in a separate repo: `/home/cody/Projects/ai-ml/agent-training/`
+
 ```bash
-claude --dangerously-skip-permissions -p "/optimize-haiku --rounds 100 --tag <tag>"
+# Run from agent-training repo (or a git worktree of it)
+bash scripts/training-loop.sh configs/haiku-esp32s3.json --rounds 20 --tag my-tag
 ```
 
-**Sonnet track** — optimizes `plugins/research/agents/solo-sonnet-researcher.md`
-```bash
-claude --dangerously-skip-permissions -p "/optimize-sonnet --rounds 50 --tag <tag>"
+For parallel runs (both configs edit the same agent file), use git worktrees for isolation.
+
+### Agent-Training Repo Layout
+```
+agent-training/
+├── agents/solo-haiku-scout.md    # Optimization target (Haiku)
+├── agents/solo-sonnet-researcher.md
+├── configs/                      # Benchmark configs (haiku-esp32s3, haiku-sqlite, sonnet-esp32s3)
+├── benchmarks/esp32s3/           # 4 cached docs (datasheet, hw-ref, programming, ai)
+├── benchmarks/sqlite/            # 4 cached docs (architecture, c-api, performance, sql-reference)
+├── rubrics/esp32s3.json          # 28 expected findings
+├── rubrics/sqlite.json           # 32 expected findings
+├── rubrics/esp32s3-sonnet.json   # 32 expected findings (5 sources incl. community thread)
+├── scoring/score.py              # Deterministic scorer, 10 dimensions
+├── scripts/training-loop.sh      # Main loop script
+└── summaries/                    # Auto-generated run summary JSONs
 ```
 
-Each loop: edit agent file → git commit → spawn agent on benchmark sources → score with `score.py` → keep/discard → repeat.
+### Run Summaries
+After each training loop completes, a JSON summary is written to `summaries/` in the agent-training repo. Each file is named `{datetime}_{run-name}.json` and contains baseline/best scores, kept rounds with descriptions, dimension breakdowns, and a full config snapshot. Browse this folder to review completed runs without parsing TSV or logs.
 
-### Benchmark Layout
-```
-plugins/research/benchmark/
-├── sources/esp32s3/     # 5 cached ESP32-S3 docs (datasheet, hw-ref, programming, AI, community)
-├── rubric.json          # 28 expected findings (Haiku track, 4 sources)
-├── rubric-sonnet.json   # 32 expected findings (Sonnet track, 5 sources)
-├── score.py             # Deterministic scorer, 7 dimensions, outputs JSON
-├── results.tsv          # Haiku experiment log (untracked)
-└── results-sonnet.tsv   # Sonnet experiment log (untracked)
-```
+Legacy copies of rubrics and score.py remain in `plugins/research/benchmark/` but are not actively used.
 
 ### Scoring Dimensions (weights)
-finding_recall (25%), verbatim_quality (20%), category_coverage (15%), precision (15%), cross_references (10%), gap_detection (10%), structure_quality (5%)
+finding_recall (25%), verbatim_quality (20%), category_coverage (15%), information_density (15%), cross_references (10%), gap_identification (5%), gap_quality (5%), source_attribution (5%)
 
 ### Plans & Reports
 - `dual-track-optimization-plan.html` — full plan with ESP32-S3 benchmark design

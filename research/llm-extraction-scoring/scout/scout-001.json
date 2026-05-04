@@ -1,0 +1,368 @@
+{
+  "scout_id": "scout-001",
+  "sources_processed": [
+    {
+      "location": "research/llm-extraction-scoring/cache/noisy-hypothesis-testing.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "research/llm-extraction-scoring/cache/llm-judge-design-choices.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "research/llm-extraction-scoring/cache/llm-judge-survey.txt",
+      "type": "file",
+      "status": "success"
+    },
+    {
+      "location": "research/llm-extraction-scoring/cache/prometheus-framework.txt",
+      "type": "file",
+      "status": "success"
+    }
+  ],
+  "findings": [
+    {
+      "category": "scoring_metrics",
+      "subcategory": "correlation_with_humans",
+      "summary": "Prometheus achieves 0.897 Pearson correlation with human evaluators across 45 customized rubrics.",
+      "raw_excerpt": "Pearson correlation 0.897 with human evaluators (45 customized rubrics)",
+      "source_location": "prometheus-framework.txt:16",
+      "relevance": "high",
+      "tags": ["correlation", "prometheus", "human-alignment"]
+    },
+    {
+      "category": "scoring_metrics",
+      "subcategory": "correlation_with_humans",
+      "summary": "Prometheus v2 (8x7B) achieves 0.6-0.7 correlation with GPT-4-1106.",
+      "raw_excerpt": "Prometheus 2 (8x7B): 0.6-0.7 correlation with GPT-4-1106",
+      "source_location": "prometheus-framework.txt:18",
+      "relevance": "high",
+      "tags": ["correlation", "prometheus-v2", "gpt4-comparison"]
+    },
+    {
+      "category": "scoring_metrics",
+      "subcategory": "decoding_strategy_impact",
+      "summary": "Greedy decoding produces zero variance but poor human correlation (0.593-0.635), while sampling-based approaches achieve higher variance and better alignment (0.641-0.666).",
+      "raw_excerpt": "Greedy decoding: zero score variance but poor human correlation (0.593-0.635)\n- Sampling-based: higher variance but better human alignment (0.641-0.666)",
+      "source_location": "llm-judge-design-choices.txt:7-8",
+      "relevance": "high",
+      "tags": ["variance", "temperature", "decoding-strategy", "calibration"]
+    },
+    {
+      "category": "scoring_metrics",
+      "subcategory": "aggregation_methods",
+      "summary": "Mean aggregation of 5 sampled scores achieves best correlation at 0.666, outperforming median (0.648) and majority voting (0.647).",
+      "raw_excerpt": "Mean aggregation of 5 sampled scores: 0.666 correlation (best)\n- Median: 0.648, Majority voting: 0.647",
+      "source_location": "llm-judge-design-choices.txt:9-10",
+      "relevance": "high",
+      "tags": ["aggregation", "statistical-method", "sample-size"]
+    },
+    {
+      "category": "noise_variance",
+      "subcategory": "judge_parameter_estimation",
+      "summary": "Judge reliability is parameterized by True Positive Rate (TPR) and False Positive Rate (FPR), computed as simple proportions from confusion matrices on human-labeled calibration data.",
+      "raw_excerpt": "True Positive Rate (TPR): probability judge flags response as unreliable when it is unreliable\n- False Positive Rate (FPR): probability judge incorrectly flags reliable response\n- Computed as simple proportions from confusion matrices on human-labeled data",
+      "source_location": "noisy-hypothesis-testing.txt:7-9",
+      "relevance": "high",
+      "tags": ["judge-parameters", "calibration", "confusion-matrix"]
+    },
+    {
+      "category": "noise_variance",
+      "subcategory": "variance_estimation",
+      "summary": "Variance-corrected critical threshold combines judge-labeled data variance, TPR estimate variance, and FPR estimate variance using a formal statistical formula (Equation 6).",
+      "raw_excerpt": "Variance-Corrected Critical Threshold (Equation 6):\nc'_J = α̂' + Φ^(-1)(ζ) × √[variance terms]\nCombines: variance from judge-labeled data (nJ samples), variance from TPR estimate, variance from FPR estimate",
+      "source_location": "noisy-hypothesis-testing.txt:11-13",
+      "relevance": "high",
+      "tags": ["statistical-variance", "critical-threshold", "hypothesis-testing"]
+    },
+    {
+      "category": "noise_variance",
+      "subcategory": "type_i_error_bounds",
+      "summary": "Noisy hypothesis testing provides formal Type-I error bounds: Pe(I) ≤ ζ + O(nJ^(-1/2) + nM₁^(-1/2) + nM₀^(-1/2)), showing error scales with calibration and test set sizes.",
+      "raw_excerpt": "Type-I error Pe(I) ≤ ζ + O(nJ^(-1/2) + nM₁^(-1/2) + nM₀^(-1/2))",
+      "source_location": "noisy-hypothesis-testing.txt:16",
+      "relevance": "high",
+      "tags": ["error-bounds", "statistical-guarantee", "sample-size-scaling"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "granularity_impact",
+      "summary": "Full rubric with all 5 levels described achieves 0.666 correlation, while minimal rubric with only extremes (1 and 5) matched full performance, suggesting intermediate descriptions (2,3,4) have limited impact.",
+      "raw_excerpt": "Full rubric (all 5 levels described): 0.666 correlation\n- Minimal (only extremes 1 and 5 described): matched full rubric performance\n- Intermediate score descriptions (2,3,4) had limited impact",
+      "source_location": "llm-judge-design-choices.txt:13-15",
+      "relevance": "high",
+      "tags": ["rubric-efficiency", "level-descriptions", "design-choice"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "reference_answers_impact",
+      "summary": "Providing both reference answers and score descriptions is crucial for consistent evaluation; reference answers matter more than detailed intermediate rubric levels.",
+      "raw_excerpt": "Providing both reference answers and score descriptions is crucial",
+      "source_location": "llm-judge-design-choices.txt:16",
+      "relevance": "high",
+      "tags": ["reference-answers", "rubric-completeness"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "structured_format",
+      "summary": "Prometheus uses five-point scale (1-5) with each rubric specifying criteria name and five descending quality level descriptions in format 'Score 1: {description}' through 'Score 5: {description}'.",
+      "raw_excerpt": "Five-point scale (1-5)\n- Each rubric specifies: criteria name, five descending quality level descriptions\n- Format: \"Score 1: {description}\" through \"Score 5: {description}\"\n- Score 5 = highest quality",
+      "source_location": "prometheus-framework.txt:5-8",
+      "relevance": "high",
+      "tags": ["likert-scale", "rubric-format", "structured-scoring"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "criteria_decomposition",
+      "summary": "Survey recommends breaking evaluation into specific dimensions rather than holistic scoring, using Likert scale structures (1-5) across predefined dimensions with dimension-specific scoring before overall.",
+      "raw_excerpt": "Criteria Decomposition: break evaluation into specific dimensions rather than holistic scoring\n- Likert Scale Structures: 1-5 across predefined dimensions, dimension-specific scoring before overall",
+      "source_location": "llm-judge-survey.txt:5-7",
+      "relevance": "high",
+      "tags": ["multi-dimensional", "decomposition", "structured-evaluation"]
+    },
+    {
+      "category": "calibration",
+      "subcategory": "two_stage_procedure",
+      "summary": "Noisy hypothesis testing uses a two-stage procedure: (1) Judge calibration on small human-labeled set to estimate TPR/FPR, (2) Variance-corrected testing on large judge-labeled set.",
+      "raw_excerpt": "Two-stage procedure: 1) Judge calibration on small human-labeled set, 2) Variance-corrected testing on large judge-labeled set",
+      "source_location": "noisy-hypothesis-testing.txt:22",
+      "relevance": "high",
+      "tags": ["calibration-procedure", "sample-efficiency", "methodology"]
+    },
+    {
+      "category": "calibration",
+      "subcategory": "adoption_condition",
+      "summary": "Noisy hypothesis testing outperforms direct human evaluation only when judge reliability satisfies: (TPR - FPR)² > [α² · TPR(1-TPR)/RM + (1-α)² · FPR(1-FPR)/(1-RM)] / [RM(1-RM)].",
+      "raw_excerpt": "Noisy HT outperforms direct human evaluation only when:\n(TPR - FPR)² > [α² · TPR(1-TPR)/RM + (1-α)² · FPR(1-FPR)/(1-RM)] / [RM(1-RM)]",
+      "source_location": "noisy-hypothesis-testing.txt:19-20",
+      "relevance": "high",
+      "tags": ["theoretical-condition", "judge-adoption", "efficiency-threshold"]
+    },
+    {
+      "category": "calibration",
+      "subcategory": "sampling_runs",
+      "summary": "Five sampling runs provide adequate sampling for reliable mean aggregation in judge scoring.",
+      "raw_excerpt": "5 runs provides adequate sampling for reliable mean",
+      "source_location": "llm-judge-design-choices.txt:25",
+      "relevance": "high",
+      "tags": ["sample-size", "practical-guidance"]
+    },
+    {
+      "category": "calibration",
+      "subcategory": "decoding_recommendation",
+      "summary": "Sampling-based decoding with mean aggregation is recommended over greedy decoding for more reliable judge scores.",
+      "raw_excerpt": "Sampling-based decoding with mean aggregation over greedy",
+      "source_location": "llm-judge-design-choices.txt:24",
+      "relevance": "high",
+      "tags": ["decoding-strategy", "practical-guidance"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "prometheus_performance",
+      "summary": "Prometheus reaches performance on par with GPT-4 (0.882 correlation) while far exceeding ChatGPT (0.392), demonstrating viable open-source alternative.",
+      "raw_excerpt": "On par with GPT-4 (0.882), far exceeds ChatGPT (0.392)",
+      "source_location": "prometheus-framework.txt:17",
+      "relevance": "high",
+      "tags": ["prometheus", "gpt4-comparison", "chatgpt-comparison"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "model_variants",
+      "summary": "Prometheus offers multiple model sizes: 13B parameter model (v1), 7B and 8x7B mixture of experts variants (v2 as of May 2024).",
+      "raw_excerpt": "13B parameter model (v1), 7B and 8x7B (v2, May 2024)",
+      "source_location": "prometheus-framework.txt:13",
+      "relevance": "medium",
+      "tags": ["model-architecture", "efficiency-tradeoff"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "training_approach",
+      "summary": "Prometheus is trained on Feedback Collection dataset to produce evaluations with detailed feedback plus numeric score (1-5), following a fine-tuned LLM approach rather than in-context learning.",
+      "raw_excerpt": "Trained on Feedback Collection dataset (kaist-ai on HuggingFace)\n- Learns to produce evaluations with detailed feedback + numeric score (1-5)",
+      "source_location": "prometheus-framework.txt:11-12",
+      "relevance": "medium",
+      "tags": ["training-methodology", "fine-tuning", "prometheus"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "vs_g_eval_comparison",
+      "summary": "G-Eval uses framework with GPT-3.5/4 to generate rubric via chain-of-thought, while Prometheus uses fine-tuned LLM with provided rubrics in prompt; both emphasize rubric-based scoring.",
+      "raw_excerpt": "G-Eval: framework using GPT-3.5/4, generates rubric via CoT\n- Prometheus: fine-tuned LLM, rubric provided in prompt\n- Both emphasize rubric-based scoring",
+      "source_location": "prometheus-framework.txt:21-23",
+      "relevance": "medium",
+      "tags": ["comparative-analysis", "g-eval", "rubric-generation"]
+    },
+    {
+      "category": "inter_rater_reliability",
+      "subcategory": "krippendorff_alpha",
+      "summary": "Consistency measurement using Krippendorff's alpha across 5 runs: α = 0.908 with criteria + reference answers, α = 0.896 without both, showing removing criteria causes noticeable consistency drop.",
+      "raw_excerpt": "Consistency (Krippendorff's alpha across 5 runs):\n- With criteria + reference: α = 0.908\n- Without both: α = 0.896\n- Removing criteria causes noticeable drop",
+      "source_location": "llm-judge-design-choices.txt:18-21",
+      "relevance": "high",
+      "tags": ["reliability-metric", "consistency", "design-impact"]
+    },
+    {
+      "category": "inter_rater_reliability",
+      "subcategory": "consistency_measurement",
+      "summary": "Primary consistency measurement is alignment between LLM evaluations and human annotations; pairwise comparisons have superior positional consistency versus score-based evaluation.",
+      "raw_excerpt": "Primary: alignment between LLM evaluations and human annotations\n- Pairwise comparisons have superior positional consistency vs score-based",
+      "source_location": "llm-judge-survey.txt:11-12",
+      "relevance": "high",
+      "tags": ["reliability-measurement", "comparison-strategy"]
+    },
+    {
+      "category": "bias_mitigation",
+      "subcategory": "position_bias_reduction",
+      "summary": "Position bias can be reduced through shuffling contents, reordering response pairs, and randomizing positions in the evaluation prompt.",
+      "raw_excerpt": "Position Bias: shuffle contents, reorder response pairs, randomize positions",
+      "source_location": "llm-judge-survey.txt:16",
+      "relevance": "high",
+      "tags": ["bias-type", "mitigation-technique"]
+    },
+    {
+      "category": "bias_mitigation",
+      "subcategory": "length_verbosity_bias_reduction",
+      "summary": "Length/verbosity bias is reduced through prompt design emphasizing criteria over surface features.",
+      "raw_excerpt": "Length/Verbosity Bias: prompt design emphasizing criteria over surface features",
+      "source_location": "llm-judge-survey.txt:17",
+      "relevance": "high",
+      "tags": ["bias-type", "prompt-design"]
+    },
+    {
+      "category": "bias_mitigation",
+      "subcategory": "self_enhancement_bias_reduction",
+      "summary": "Self-enhancement bias is mitigated by using relative (pairwise) evaluation rather than absolute evaluation.",
+      "raw_excerpt": "Self-Enhancement Bias: relative (pairwise) rather than absolute evaluation",
+      "source_location": "llm-judge-survey.txt:18",
+      "relevance": "high",
+      "tags": ["bias-type", "evaluation-design"]
+    },
+    {
+      "category": "bias_mitigation",
+      "subcategory": "inter_rater_variability",
+      "summary": "Inter-rater reliability is affected by inherent LLM generation randomness, which must be accounted for in consistency measurement design.",
+      "raw_excerpt": "Inter-rater reliability affected by inherent LLM generation randomness",
+      "source_location": "llm-judge-survey.txt:13",
+      "relevance": "medium",
+      "tags": ["randomness-impact", "measurement-challenge"]
+    },
+    {
+      "category": "noise_variance",
+      "subcategory": "variance_reduction_strategies",
+      "summary": "Variance reduction approaches include list-wise comparisons using advanced ranking algorithms, best-of-N evaluation for test-time scenarios, and integrating multi-source evaluation results.",
+      "raw_excerpt": "Variance Reduction:\n- List-wise comparisons using advanced ranking algorithms\n- Best-of-N Evaluation for test-time scenarios\n- Integrating Multi-Source Evaluation Results",
+      "source_location": "llm-judge-survey.txt:20-23",
+      "relevance": "medium",
+      "tags": ["variance-reduction", "ensemble-methods"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "step_by_step_verification",
+      "summary": "G-Eval framework decomposes complex judgments into intermediate verification steps for more transparent evaluation.",
+      "raw_excerpt": "Step-by-Step Verification (G-Eval): decompose complex judgments into intermediate steps",
+      "source_location": "llm-judge-survey.txt:6",
+      "relevance": "medium",
+      "tags": ["chain-of-thought", "transparency"]
+    },
+    {
+      "category": "rubric_design",
+      "subcategory": "context_dependent_reliability",
+      "summary": "Survey notes that reliability is context-dependent and rubric calibration choices should adapt to task complexity.",
+      "raw_excerpt": "\"reliability is context-dependent\" - rubric and calibration choices should adapt to task complexity",
+      "source_location": "llm-judge-survey.txt:25",
+      "relevance": "medium",
+      "tags": ["context-awareness", "adaptive-design"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "input_requirements",
+      "summary": "Prometheus requires users to provide: instruction, response, reference answer, and score rubrics for evaluation.",
+      "raw_excerpt": "Users must provide: instruction, response, reference answer, score rubrics",
+      "source_location": "prometheus-framework.txt:26",
+      "relevance": "medium",
+      "tags": ["interface-design", "prometheus"]
+    },
+    {
+      "category": "llm_as_judge",
+      "subcategory": "multi_dimensional_evaluation",
+      "summary": "Prometheus focuses on single-criteria per rubric with multiple rubrics applied sequentially for multi-dimensional evaluation.",
+      "raw_excerpt": "Multi-dimensional: focuses on single-criteria per rubric, multiple rubrics applied sequentially",
+      "source_location": "prometheus-framework.txt:25",
+      "relevance": "medium",
+      "tags": ["multi-dimensional", "sequential-application"]
+    },
+    {
+      "category": "scoring_metrics",
+      "subcategory": "direct_scoring_vs_cot",
+      "summary": "Direct scoring with aggregation beats chain-of-thought approaches when criteria are well-defined.",
+      "raw_excerpt": "Direct scoring + averaging beats CoT when criteria are well-defined",
+      "source_location": "llm-judge-design-choices.txt:27",
+      "relevance": "medium",
+      "tags": ["reasoning-strategy", "efficiency"]
+    }
+  ],
+  "cross_references": [
+    {
+      "from": "llm-judge-design-choices.txt",
+      "to": "llm-judge-survey.txt",
+      "relationship": "extends"
+    },
+    {
+      "from": "prometheus-framework.txt",
+      "to": "llm-judge-survey.txt",
+      "relationship": "documents"
+    },
+    {
+      "from": "noisy-hypothesis-testing.txt",
+      "to": "llm-judge-design-choices.txt",
+      "relationship": "documents"
+    },
+    {
+      "from": "prometheus-framework.txt",
+      "to": "llm-judge-design-choices.txt",
+      "relationship": "documents"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "No specific epsilon (ε) thresholds or practical bounds mentioned for acceptable noise levels in scoring metrics",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Limited discussion of how to select optimal calibration set sizes beyond general sample size scaling laws",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "No detailed analysis of how different types of extraction tasks (entity, relation, event, hierarchical) affect scoring metric choice",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "Missing guidance on handling subjective/ambiguous extractions where ground truth is unclear",
+      "gap_type": "knowledge_gap"
+    },
+    {
+      "description": "No comparison of rubric-based scoring versus other evaluation paradigms (e.g., similarity-based metrics, semantic matching)",
+      "gap_type": "knowledge_gap"
+    }
+  ],
+  "metadata": {
+    "total_sources": 4,
+    "total_findings": 31,
+    "source_success_rate": 1.0,
+    "claim_era_distribution": {
+      "2025-2026": 28,
+      "projection": 3
+    },
+    "category_distribution": {
+      "scoring_metrics": 7,
+      "rubric_design": 8,
+      "noise_variance": 6,
+      "bias_mitigation": 4,
+      "calibration": 5,
+      "inter_rater_reliability": 2,
+      "llm_as_judge": 7
+    }
+  }
+}

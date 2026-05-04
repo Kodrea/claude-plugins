@@ -1,0 +1,9 @@
+{
+  "name": "session-distiller",
+  "description": "Distill Claude Code session JSONLs and analyze interaction patterns. Strips noise, batches into context-sized chunks, and produces ready-to-run analysis prompts. Slash command: /distill",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cody",
+    "email": ""
+  }
+}

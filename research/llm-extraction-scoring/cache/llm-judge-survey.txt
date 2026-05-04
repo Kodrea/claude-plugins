@@ -1,0 +1,26 @@
+https://arxiv.org/html/2411.15594v6
+A Survey on LLM-as-a-Judge (2024)
+
+Rubric Design Best Practices:
+- Criteria Decomposition: break evaluation into specific dimensions rather than holistic scoring
+- Step-by-Step Verification (G-Eval): decompose complex judgments into intermediate steps
+- Likert Scale Structures: 1-5 across predefined dimensions, dimension-specific scoring before overall
+- Clear Scoring Ranges: discrete ranges with explicit criteria for each level
+
+Consistency Measurement:
+- Primary: alignment between LLM evaluations and human annotations
+- Pairwise comparisons have superior positional consistency vs score-based
+- Inter-rater reliability affected by inherent LLM generation randomness
+
+Bias Mitigation:
+- Position Bias: shuffle contents, reorder response pairs, randomize positions
+- Length/Verbosity Bias: prompt design emphasizing criteria over surface features
+- Self-Enhancement Bias: relative (pairwise) rather than absolute evaluation
+
+Variance Reduction:
+- List-wise comparisons using advanced ranking algorithms
+- Best-of-N Evaluation for test-time scenarios
+- Integrating Multi-Source Evaluation Results
+
+Key insight: "reliability is context-dependent" - rubric and calibration choices should adapt to task complexity
+No specific epsilon thresholds mentioned in survey
